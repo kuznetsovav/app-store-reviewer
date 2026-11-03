@@ -6,7 +6,11 @@ import { fileURLToPath } from "node:url";
 export type Db = Database.Database;
 
 /** Index i holds the SQL that takes user_version from i to i + 1. */
-const MIGRATIONS = [readFileSync(fileURLToPath(new URL("./schema.sql", import.meta.url)), "utf8")];
+const MIGRATIONS = [
+  readFileSync(fileURLToPath(new URL("./schema.sql", import.meta.url)), "utf8"),
+  // 2: where the extend phase stopped (next_id is reset to the old frontier when the rescan starts).
+  "ALTER TABLE runs ADD COLUMN extend_end INTEGER;",
+];
 
 export function migrate(db: Db): void {
   const current = db.pragma("user_version", { simple: true }) as number;

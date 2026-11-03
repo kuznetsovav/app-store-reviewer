@@ -1,7 +1,21 @@
 import { readFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
+import { WINDOW_MODES, type WindowMode } from "./scan/dates.js";
+
+export interface Watchlist {
+  /** Case-insensitive substrings matched against app name and description. */
+  keywords: string[];
+  /** Case-insensitive genre names matched against primary and all genres. */
+  genres: string[];
+}
 
 export interface Config {
+  /** How "released in the last 24h" is decided; see inWindow() in src/scan/dates.ts. */
+  windowMode: WindowMode;
+  /** Time zone for calendar-day comparisons. Apple stamps date-only releases at Pacific midnight. */
+  windowTimeZone: string;
+  reportsDir: string;
+  watchlist: Watchlist;
   rateLimitPerMin: number;
   userAgent: string;
   contactUrl: string;
@@ -38,7 +52,8 @@ const NUMERIC_KEYS = [
   "maxConsecutiveFailures",
   "requestTimeoutMs",
 ] as const;
-const STRING_KEYS = ["userAgent", "contactUrl", "dbPath"] as const;
+const STRING_KEYS = ["userAgent", "contactUrl", "dbPath", "windowTimeZone", "reportsDir"] as const;
+const list = (s: string) => s.split(",").map((x) => x.trim()).filter(Boolean);
 
 /** rateLimitPerMin → APPSTORE_RATE_LIMIT_PER_MIN */
 export const envName = (key: string) => "APPSTORE_" + key.replace(/[A-Z]/g, (c) => `_${c}`).toUpperCase();
@@ -55,7 +70,23 @@ export function applyEnv(base: Config, env: NodeJS.ProcessEnv): Config {
     if (v !== undefined) out[key] = v;
   }
   const sf = env[envName("storefronts")];
-  if (sf) out.storefronts = sf.split(",").map((s) => s.trim());
+  if (sf) out.storefronts = list(sf);
+  const mode = env[envName("windowMode")];
+  if (mode !== undefined) out.windowMode = mode as WindowMode;
+  out.watchlist = { keywords: [...(base.watchlist?.keywords ?? [])], genres: [...(base.watchlist?.genres ?? [])] };
+  const kw = env.APPSTORE_WATCHLIST_KEYWORDS;
+  if (kw !== undefined) out.watchlist.keywords = list(kw);
+  const gn = env.APPSTORE_WATCHLIST_GENRES;
+  if (gn !== undefined) out.watchlist.genres = list(gn);
+
+  if (!WINDOW_MODES.includes(out.windowMode)) {
+    throw new Error(`windowMode must be one of ${WINDOW_MODES.join(", ")}, got ${out.windowMode}`);
+  }
+  try {
+    new Intl.DateTimeFormat("en", { timeZone: out.windowTimeZone });
+  } catch {
+    throw new Error(`windowTimeZone is not a valid IANA time zone: ${out.windowTimeZone}`);
+  }
 
   if (!(out.batchSize > 0 && out.batchSize <= 200)) {
     throw new Error(`batchSize must be in (0, 200], got ${out.batchSize}`);

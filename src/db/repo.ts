@@ -21,6 +21,8 @@ export interface RunRow {
   range_to: number;
   next_id: number;
   extend_max_hit: number;
+  /** Last ID looked up in the extend phase; null until the phase ends (and for runs before migration 2). */
+  extend_end: number | null;
   empty_streak: number;
   failed_ranges: string;
   calls: number;
@@ -123,6 +125,36 @@ export function upsertApps(db: Db, apps: { row: AppRow; storefronts: string[] }[
     }
   }
   return inserted;
+}
+
+export function setExtendEnd(db: Db, runId: number, lastId: number): void {
+  db.prepare("UPDATE runs SET extend_end = ? WHERE id = ?").run(lastId, runId);
+}
+
+/** An `apps` row as stored (JSON columns still strings). */
+export interface AppDbRow {
+  track_id: number;
+  bundle_id: string | null;
+  name: string | null;
+  seller_name: string | null;
+  artist_id: number | null;
+  primary_genre: string | null;
+  genres: string;
+  price: number | null;
+  currency: string | null;
+  release_date: string | null;
+  current_version_release_date: string | null;
+  version: string | null;
+  track_view_url: string | null;
+  storefronts: string;
+  first_seen_at: string;
+  last_seen_at: string;
+  raw: string;
+}
+
+/** Apps with release_date at or after `isoLower` (string compare on ISO timestamps). */
+export function appsReleasedSince(db: Db, isoLower: string): AppDbRow[] {
+  return db.prepare("SELECT * FROM apps WHERE release_date >= ?").all(isoLower) as AppDbRow[];
 }
 
 export function recentRuns(db: Db, n: number): RunRow[] {

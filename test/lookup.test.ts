@@ -68,6 +68,9 @@ describe("applyEnv", () => {
     });
     expect(() => applyEnv(cfg, { APPSTORE_RATE_LIMIT_PER_MIN: "30" })).toThrow();
     expect(() => applyEnv(cfg, { APPSTORE_BATCH_SIZE: "300" })).toThrow(/batchSize/);
+    expect(() => applyEnv(cfg, { APPSTORE_WINDOW_MODE: "weekly" })).toThrow(/windowMode/);
+    expect(() => applyEnv(cfg, { APPSTORE_WINDOW_TIME_ZONE: "Mars/Olympus" })).toThrow(/windowTimeZone/);
+    expect(applyEnv(cfg, { APPSTORE_WATCHLIST_KEYWORDS: "todo, notes" }).watchlist).toEqual({ keywords: ["todo", "notes"], genres: [] });
   });
   it("derives env names from config keys", () => {
     expect(envName("emptyBatchesToStop")).toBe("APPSTORE_EMPTY_BATCHES_TO_STOP");

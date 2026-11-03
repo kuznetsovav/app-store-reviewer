@@ -3,7 +3,7 @@ import { loadConfig, type Config } from "../config.js";
 import { openDb, type Db } from "../db/index.js";
 import { countApps, knownIdsBetween, lastFrontier, latestRunForDate, recentRuns } from "../db/repo.js";
 import { daysBetween, estimate } from "./plan.js";
-import { runScan, type Seed } from "./run.js";
+import { runScan, type ScanResult, type Seed } from "./run.js";
 
 const SPIKE_FRONTIER = "data/spike/frontier.json";
 const fmt = (n: number) => n.toLocaleString("en-US");
@@ -37,30 +37,44 @@ export async function scanCommand(args: string[]): Promise<void> {
   const cfg = loadConfig();
   const db = openDb(cfg.dbPath);
   try {
-    const seed = resolveSeed(args);
-    const maxCalls = argNumber(args, "--max-calls");
     if (args.includes("--dry-run")) {
-      dryRun(db, cfg, seed, maxCalls);
+      dryRun(db, cfg, resolveSeed(args), argNumber(args, "--max-calls"));
       return;
     }
 
-    let stopRequested = false;
-    const onSigint = () => {
-      if (stopRequested) {
-        console.error("Second Ctrl+C: exiting now (the last committed batch is saved).");
-        process.exit(130);
-      }
-      stopRequested = true;
-      console.error("Ctrl+C: finishing the current batch, then saving. Press again to quit immediately.");
-    };
-    process.on("SIGINT", onSigint);
-    const res = await runScan({ db, cfg, seed, maxCalls, forceNew: args.includes("--new"), shouldStop: () => stopRequested });
+    const res = await scanWithCli(db, cfg, args);
+    if (!res.skipped && res.run.status === "aborted") process.exitCode = res.run.error === "SIGINT" ? 130 : 1;
+  } finally {
+    db.close();
+  }
+}
+
+/** Runs a scan with CLI flags and Ctrl+C handling, and prints the summary. Shared by `scan` and `run`. */
+export async function scanWithCli(db: Db, cfg: Config, args: string[]): Promise<ScanResult> {
+  const seed = resolveSeed(args);
+  const maxCalls = argNumber(args, "--max-calls");
+  let stopRequested = false;
+  const onSigint = () => {
+    if (stopRequested) {
+      console.error("Second Ctrl+C: exiting now (the last committed batch is saved).");
+      process.exit(130);
+    }
+    stopRequested = true;
+    console.error("Ctrl+C: finishing the current batch, then saving. Press again to quit immediately.");
+  };
+  process.on("SIGINT", onSigint);
+  let res: ScanResult;
+  try {
+    res = await runScan({ db, cfg, seed, maxCalls, forceNew: args.includes("--new"), shouldStop: () => stopRequested });
+  } finally {
     process.off("SIGINT", onSigint);
+  }
 
-    if (res.skipped) {
-      console.error(res.skipped);
-      return;
-    }
+  if (res.skipped) {
+    console.error(res.skipped);
+    return res;
+  }
+  {
     const r = res.run;
     console.error(
       [
@@ -73,10 +87,8 @@ export async function scanCommand(args: string[]): Promise<void> {
         .filter(Boolean)
         .join("\n"),
     );
-    if (r.status === "aborted") process.exitCode = r.error === "SIGINT" ? 130 : 1;
-  } finally {
-    db.close();
   }
+  return res;
 }
 
 function dryRun(db: Db, cfg: Config, seed: (Seed & { source: string }) | undefined, maxCalls?: number): void {

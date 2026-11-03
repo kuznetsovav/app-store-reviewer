@@ -9,6 +9,7 @@ import {
   lastFrontier,
   latestRunForDate,
   saveProgress,
+  setExtendEnd,
   upsertApps,
   type Phase,
   type RunProgress,
@@ -225,6 +226,7 @@ export async function runScan(o: ScanOptions): Promise<ScanResult> {
       if (p.empty_streak >= cfg.emptyBatchesToStop) {
         db.transaction(() => {
           insertFrontier(db, p.extend_max_hit, iso());
+          setExtendEnd(db, runId, p.next_id - 1);
           p.phase = "rescan";
           p.next_id = top;
           p.empty_streak = 0;

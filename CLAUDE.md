@@ -46,9 +46,24 @@ Output: a CSV and a Markdown report per day, committed to the repo.
   day's run; `maxMinutesPerRun` is per invocation. `maxConsecutiveFailures` (10)
   failed batches → `aborted`. Failed batches go to `failed_ranges` and get one retry
   at the end of the rescan.
-- `isRecentRelease()` in `src/scan/dates.ts` is the single definition of "released
-  in the last 24h". Reports must use it.
+- `inWindow()` in `src/scan/dates.ts` is the single definition of "released in the
+  window"; `isRecentRelease()` is its mixed-mode shortcut used by the scanner.
 - First run with an empty DB seeds the frontier from `data/spike/frontier.json`.
+
+## Reports
+- `report [--date YYYY-MM-DD]` builds `reports/YYYY-MM-DD.{csv,json,md}` + `latest.md`
+  from the DB only (no API). `run [scan flags]` = scan then report; exit 0 on
+  done/budget, 1 on aborted (the report is still written).
+- Window ends at the run's `finished_at`. `windowMode`: `mixed` (default: precise
+  dates within 24h, date-only dates by calendar day in `windowTimeZone`),
+  `rolling24h`, or `days`. `windowTimeZone` defaults to America/Los_Angeles because
+  Apple stamps date-only releases at Pacific midnight; `UTC` is allowed.
+- The report queries the whole `apps` table, not just this run's hits.
+- Coverage names skipped ID ranges on budget/aborted runs and states the ~3-day
+  scope. `latest.md` is only replaced by the newest date (backfills keep it).
+- CSV: RFC 4180 quoting, `storefronts` as `us;pl`, and a leading `'` on text that
+  starts with `= + - @` (formula guard). JSON keeps raw values.
+- Reports built from scratch/test DBs are never committed to `reports/`.
 
 ## Decisions
 - 2026-11-03 — Coverage: keep the 6h daily run and accept partial coverage (findings

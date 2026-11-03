@@ -10,6 +10,13 @@
   "maxMinutesPerRun": 340,
   "idsPerDayEstimate": 391000,
   "dbPath": "data/appstore.db",
+  "reportsDir": "reports",
+  "windowMode": "mixed",
+  "windowTimeZone": "America/Los_Angeles",
+  "watchlist": {
+    "keywords": ["wishlist", "gift"],
+    "genres": []
+  },
   "maxRetries": 5,
   "maxConsecutiveFailures": 10,
   "requestTimeoutMs": 30000
