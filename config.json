@@ -1,0 +1,11 @@
+{
+  "rateLimitPerMin": 18,
+  "userAgent": "appstore-new-apps/0.1",
+  "contactUrl": "",
+  "storefronts": ["us"],
+  "batchSize": 200,
+  "lookbackIds": 1300000,
+  "maxRetries": 5,
+  "maxConsecutiveFailures": 3,
+  "requestTimeoutMs": 30000
+}
