@@ -72,6 +72,12 @@ describe("applyEnv", () => {
     expect(() => applyEnv(cfg, { APPSTORE_WINDOW_TIME_ZONE: "Mars/Olympus" })).toThrow(/windowTimeZone/);
     expect(applyEnv(cfg, { APPSTORE_WATCHLIST_KEYWORDS: "todo, notes" }).watchlist).toEqual({ keywords: ["todo", "notes"], genres: [] });
   });
+  it("treats empty env values as unset (scheduled CI runs pass empty inputs)", () => {
+    const c = applyEnv(cfg, { APPSTORE_MAX_CALLS_PER_RUN: "", APPSTORE_LOOKBACK_IDS: "  ", APPSTORE_WINDOW_MODE: "" });
+    expect(c.maxCallsPerRun).toBe(cfg.maxCallsPerRun);
+    expect(c.lookbackIds).toBe(cfg.lookbackIds);
+    expect(c.windowMode).toBe("mixed");
+  });
   it("derives env names from config keys", () => {
     expect(envName("emptyBatchesToStop")).toBe("APPSTORE_EMPTY_BATCHES_TO_STOP");
   });

@@ -30,7 +30,8 @@ Output: a CSV and a Markdown report per day, committed to the repo.
 
 ## Conventions
 - Small modules, pure functions where possible, I/O at the edges.
-- Every network call goes through `src/lookup/client.ts`.
+- Every Apple API call goes through `src/lookup/client.ts`. (The optional webhook in
+  `src/notify.ts` is the one other network call; it must never log its URL.)
 - Tests never hit the network: use recorded fixtures in `test/fixtures/`.
 - Log one JSON line per batch (range, ids, hits, status, ms).
 - When a measured number changes a default, update `config.json` and this file.
@@ -49,6 +50,8 @@ Output: a CSV and a Markdown report per day, committed to the repo.
 - `inWindow()` in `src/scan/dates.ts` is the single definition of "released in the
   window"; `isRecentRelease()` is its mixed-mode shortcut used by the scanner.
 - First run with an empty DB seeds the frontier from `data/spike/frontier.json`.
+- A run that stops while still extending saves its highest hit as a frontier row,
+  so the next day continues upward instead of re-extending the same IDs.
 
 ## Reports
 - `report [--date YYYY-MM-DD]` builds `reports/YYYY-MM-DD.{csv,json,md}` + `latest.md`
@@ -64,6 +67,18 @@ Output: a CSV and a Markdown report per day, committed to the repo.
 - CSV: RFC 4180 quoting, `storefronts` as `us;pl`, and a leading `'` on text that
   starts with `= + - @` (formula guard). JSON keeps raw values.
 - Reports built from scratch/test DBs are never committed to `reports/`.
+
+## Daily job
+- `.github/workflows/daily.yml`: 05:17 UTC + manual dispatch (`maxCallsPerRun`,
+  `lookbackIds` inputs, passed via env; empty env values mean "unset"). Scheduled
+  runs pass `--new`; manual runs resume today's run.
+- DB lives in the Actions cache (`db-<run_id>-<attempt>`, restore prefix `db-`) with a
+  7-day artifact backup. `state/state.json` (frontier + last run) is committed every
+  run; an empty DB seeds from it (`--seed` → state.json → spike frontier) and the
+  run records a warning that the report shows.
+- After `run`: `prune` (raw JSON → '{}' for apps below frontier − lookbackIds released
+  over 3 days ago, then VACUUM), `notify`, commit `reports/` + `state/`.
+- Lint the workflow with `actionlint` before changing it.
 
 ## Decisions
 - 2026-11-03 — Coverage: keep the 6h daily run and accept partial coverage (findings

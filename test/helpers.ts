@@ -17,6 +17,7 @@ export function testConfig(overrides: Partial<Config> = {}): Config {
     idsPerDayEstimate: 391_000,
     dbPath: ":memory:",
     reportsDir: "reports",
+    statePath: "state/state.json",
     windowMode: "mixed",
     windowTimeZone: "America/Los_Angeles",
     watchlist: { keywords: ["wishlist", "gift"], genres: [] },

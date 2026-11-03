@@ -107,6 +107,7 @@ export function coverageLines(d: ReportData, cfg: Config): string[] {
     return lines;
   }
 
+  for (const w of JSON.parse(r.warnings ?? "[]") as string[]) lines.push(`**Warning:** ${w}`);
   const finished = r.finished_at ? `finished ${utc(r.finished_at)}` : "still running";
   lines.push(`Run #${r.id}: **${r.status}**${r.error ? ` (${r.error})` : ""}, ${fmt(r.calls)} calls, ${finished}.`);
 

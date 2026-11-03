@@ -23,6 +23,8 @@ export interface RunRow {
   extend_max_hit: number;
   /** Last ID looked up in the extend phase; null until the phase ends (and for runs before migration 2). */
   extend_end: number | null;
+  /** JSON array of strings shown at the top of the report's coverage section. */
+  warnings: string;
   empty_streak: number;
   failed_ranges: string;
   calls: number;
@@ -125,6 +127,11 @@ export function upsertApps(db: Db, apps: { row: AppRow; storefronts: string[] }[
     }
   }
   return inserted;
+}
+
+export function addWarning(db: Db, runId: number, text: string): void {
+  const current = JSON.parse((db.prepare("SELECT warnings FROM runs WHERE id = ?").pluck().get(runId) as string) ?? "[]") as string[];
+  db.prepare("UPDATE runs SET warnings = ? WHERE id = ?").run(JSON.stringify([...current, text]), runId);
 }
 
 export function setExtendEnd(db: Db, runId: number, lastId: number): void {

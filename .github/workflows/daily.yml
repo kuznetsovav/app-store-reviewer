@@ -1,0 +1,131 @@
+name: daily
+
+on:
+  schedule:
+    - cron: "17 5 * * *" # 05:17 UTC every day
+  workflow_dispatch:
+    inputs:
+      maxCallsPerRun:
+        description: "Lookup call budget for this run (empty = config.json, 6100)"
+        required: false
+        default: ""
+        type: string
+      lookbackIds:
+        description: "IDs to rescan below the previous frontier (empty = config.json, 820000)"
+        required: false
+        default: ""
+        type: string
+
+# Never two scans at once; a queued run waits instead of cancelling the running one.
+concurrency:
+  group: daily-scan
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    env:
+      # Inputs go through env, never straight into scripts. Empty means "use config.json".
+      APPSTORE_MAX_CALLS_PER_RUN: ${{ inputs.maxCallsPerRun }}
+      APPSTORE_LOOKBACK_IDS: ${{ inputs.lookbackIds }}
+      # Scheduled runs always start a fresh daily run, even if a manual test already
+      # used today's date; manual runs resume today's run if it was interrupted.
+      SCAN_FLAGS: ${{ github.event_name == 'schedule' && '--new' || '' }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Restore database
+        id: restore-db
+        uses: actions/cache/restore@v6
+        with:
+          path: data/appstore.db
+          key: db-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: db-
+
+      - name: Warn when no database was restored
+        if: steps.restore-db.outputs.cache-matched-key == ''
+        run: echo "::warning::No cached database found. The scan starts from state/state.json and the report says so."
+
+      - name: Scan and report
+        id: run
+        run: |
+          mkdir -p logs
+          set +e
+          # shellcheck disable=SC2086 # SCAN_FLAGS is empty or a single flag
+          npx tsx src/cli.ts run $SCAN_FLAGS 2>&1 | tee logs/run.log
+          code=${PIPESTATUS[0]}
+          echo "exit=$code" >> "$GITHUB_OUTPUT"
+          echo "Scan exited with $code"
+
+      - name: Prune database
+        if: always() && hashFiles('data/appstore.db') != ''
+        run: npx tsx src/cli.ts prune 2>&1 | tee -a logs/run.log
+
+      - name: Save database to cache
+        if: always() && hashFiles('data/appstore.db') != ''
+        uses: actions/cache/save@v6
+        with:
+          path: data/appstore.db
+          key: db-${{ github.run_id }}-${{ github.run_attempt }}
+
+      - name: Back up database as artifact
+        if: always() && hashFiles('data/appstore.db') != ''
+        uses: actions/upload-artifact@v7
+        with:
+          name: db
+          path: data/appstore.db
+          retention-days: 7
+          if-no-files-found: warn
+
+      - name: Notify
+        if: always()
+        env:
+          NOTIFY_WEBHOOK_URL: ${{ secrets.NOTIFY_WEBHOOK_URL }}
+        run: npx tsx src/cli.ts notify
+
+      - name: Commit reports and state
+        if: always()
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          for p in reports state; do
+            if [ -e "$p" ]; then git add "$p"; fi
+          done
+          if git diff --cached --quiet; then
+            echo "Nothing to commit."
+            exit 0
+          fi
+          # shellcheck disable=SC2016 # the ${...} below is JavaScript, not shell
+          msg=$(node -e 'const s = require("./state/state.json"); const n = s.newApps; console.log(`report ${s.reportDate}: ${n} new app${n === 1 ? "" : "s"}`)' 2>/dev/null) \
+            || msg="report $(date -u +%F)"
+          git commit -m "$msg"
+          git pull --rebase
+          git push
+
+      - name: Upload logs
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: logs
+          path: logs/
+          retention-days: 14
+          if-no-files-found: warn
+
+      - name: Fail if the scan aborted
+        if: always() && steps.run.outputs.exit != '0'
+        env:
+          SCAN_EXIT: ${{ steps.run.outputs.exit }}
+        run: |
+          echo "::error::The scan exited with code ${SCAN_EXIT:-unknown}. Reports, state and the database were still saved."
+          exit 1

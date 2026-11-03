@@ -1,6 +1,13 @@
+import { existsSync, readFileSync, statSync } from "node:fs";
+import { join } from "node:path";
 import { loadConfig, type Config } from "../config.js";
+import { pruneRaw } from "../db/prune.js";
+import { notificationText, sendNotification } from "../notify.js";
+import { readState } from "../state.js";
 import { openDb, type Db } from "../db/index.js";
+import { getRun } from "../db/repo.js";
 import { scanWithCli } from "../scan/commands.js";
+import { buildState, writeState } from "../state.js";
 import { buildReport } from "./build.js";
 import { loadReportData } from "./query.js";
 import { writeReports } from "./write.js";
@@ -34,6 +41,41 @@ export function reportCommand(args: string[]): void {
   }
 }
 
+/** Drops raw JSON for old apps and compacts the DB file. */
+export function pruneCommand(): void {
+  const cfg = loadConfig();
+  const db = openDb(cfg.dbPath);
+  try {
+    const before = cfg.dbPath === ":memory:" || !existsSync(cfg.dbPath) ? 0 : statSync(cfg.dbPath).size;
+    const r = pruneRaw(db, cfg.lookbackIds);
+    db.pragma("wal_checkpoint(TRUNCATE)");
+    const after = cfg.dbPath === ":memory:" ? 0 : statSync(cfg.dbPath).size;
+    const kb = (n: number) => `${(n / 1024).toFixed(0)} KB`;
+    console.error(
+      r.belowId === null
+        ? "Nothing to prune: no frontier yet."
+        : `Pruned raw JSON of ${r.pruned} apps below ID ${r.belowId.toLocaleString("en-US")}; DB ${kb(before)} → ${kb(after)}.`,
+    );
+  } finally {
+    db.close();
+  }
+}
+
+/** POSTs the headline and watchlist of a report to NOTIFY_WEBHOOK_URL; silent no-op when unset. */
+export async function notifyCommand(args: string[]): Promise<void> {
+  const url = process.env.NOTIFY_WEBHOOK_URL;
+  if (!url || !url.trim()) return;
+  const cfg = loadConfig();
+  const explicit = args.includes("--date") || args.some((a) => a.startsWith("--date="));
+  const date = explicit ? parseDate(args) : (readState(cfg.statePath)?.reportDate ?? todayUtc());
+  const path = join(cfg.reportsDir, `${date}.md`);
+  if (!existsSync(path)) {
+    console.error(`No report for ${date}; nothing to send.`);
+    return;
+  }
+  await sendNotification({ url, text: notificationText(readFileSync(path, "utf8")) });
+}
+
 /** scan, then report. Exit 0 on done/budget (or today already finished), 1 on aborted. */
 export async function runCommand(args: string[]): Promise<void> {
   if (args.includes("--dry-run")) throw new Error("`run` has no --dry-run; use `scan --dry-run`.");
@@ -42,7 +84,9 @@ export async function runCommand(args: string[]): Promise<void> {
   try {
     const res = await scanWithCli(db, cfg, args);
     // Written even after an abort: a partial list is still useful, and coverage says what's missing.
-    produceReport(db, cfg, res.run.run_date);
+    const { out } = produceReport(db, cfg, res.run.run_date);
+    writeState(cfg.statePath, buildState(db, getRun(db, res.run.id), res.run.run_date, out.count));
+    console.error(`  wrote ${cfg.statePath}`);
     process.exitCode = !res.skipped && res.run.status === "aborted" ? 1 : 0;
   } finally {
     db.close();

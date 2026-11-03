@@ -1,6 +1,7 @@
 import type { Config } from "../config.js";
 import type { Db } from "../db/index.js";
 import {
+  addWarning,
   createRun,
   finishRun,
   getRun,
@@ -25,6 +26,8 @@ import { extendBatch, nextRescanBatch } from "./plan.js";
 export interface Seed {
   id: number;
   observedAt: string;
+  /** Where the seed came from (e.g. state/state.json), for the report warning. */
+  source?: string;
 }
 
 export interface ScanOptions {
@@ -75,10 +78,15 @@ export async function runScan(o: ScanOptions): Promise<ScanResult> {
   }
   if (!resumable) {
     let frontier = lastFrontier(db);
+    let seededWarning: string | null = null;
     if (!frontier) {
       if (!o.seed) throw new Error("No frontier in the database. Pass --seed <id> or run `spike` first (data/spike/frontier.json).");
       insertFrontier(db, o.seed.id, o.seed.observedAt);
       frontier = { max_hit_id: o.seed.id, observed_at: o.seed.observedAt };
+      seededWarning =
+        `The database was empty, so this run started from ${o.seed.source ?? "the given seed"} ` +
+        `(frontier ${o.seed.id.toLocaleString("en-US")}, observed ${o.seed.observedAt}). ` +
+        `Apps stored by earlier runs are not available, so releases they would have contributed may be missing.`;
     }
     const top = frontier.max_hit_id;
     run = createRun(db, {
@@ -89,6 +97,10 @@ export async function runScan(o: ScanOptions): Promise<ScanResult> {
       next_id: top + 1,
       extend_max_hit: top,
     });
+    if (seededWarning) {
+      addWarning(db, run.id, seededWarning);
+      log({ ts: iso(), run: run.id, event: "warning", message: seededWarning });
+    }
   }
   const r = run!;
   const runId = r.id;
@@ -281,6 +293,10 @@ export async function runScan(o: ScanOptions): Promise<ScanResult> {
 
   p.status = ctl.stop!.status;
   p.error = ctl.stop!.error;
+  // Stopped while still extending: keep what we learned, or after a long outage every
+  // daily budget would be spent re-extending the same IDs and the frontier would never move.
+  // (A same-day resume continues from the run row; this only affects the next new run.)
+  if (p.phase === "extend" && p.extend_max_hit > top) insertFrontier(db, p.extend_max_hit, iso());
   finishRun(db, runId, p, iso());
   return { run: getRun(db, runId), resumed: resumable, inserted };
 }

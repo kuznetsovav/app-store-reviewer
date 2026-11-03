@@ -11,6 +11,7 @@
   "idsPerDayEstimate": 391000,
   "dbPath": "data/appstore.db",
   "reportsDir": "reports",
+  "statePath": "state/state.json",
   "windowMode": "mixed",
   "windowTimeZone": "America/Los_Angeles",
   "watchlist": {

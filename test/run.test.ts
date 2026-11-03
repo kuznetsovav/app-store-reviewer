@@ -75,10 +75,14 @@ describe("runScan", () => {
   });
 
   it("stops on the call budget and does not restart a finished day", async () => {
-    const { base } = setup({ cfg: { storefronts: ["us"] } });
+    const { base, db } = setup({ cfg: { storefronts: ["us"] } });
     const res = await runScan({ ...base(), maxCalls: 7 });
     expect(res.run.status).toBe("budget");
     expect(res.run.calls).toBe(7);
+
+    // Stopped while extending: the highest hit so far becomes the frontier for the next run.
+    expect(res.run.phase).toBe("extend");
+    expect(lastFrontier(db)?.max_hit_id).toBe(1055);
 
     const again = await runScan(base());
     expect(again.skipped).toMatch(/already finished \(budget\)/);

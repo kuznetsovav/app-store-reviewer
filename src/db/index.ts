@@ -10,6 +10,8 @@ const MIGRATIONS = [
   readFileSync(fileURLToPath(new URL("./schema.sql", import.meta.url)), "utf8"),
   // 2: where the extend phase stopped (next_id is reset to the old frontier when the rescan starts).
   "ALTER TABLE runs ADD COLUMN extend_end INTEGER;",
+  // 3: notes the report must show, e.g. that the run started without the previous database.
+  "ALTER TABLE runs ADD COLUMN warnings TEXT NOT NULL DEFAULT '[]';",
 ];
 
 export function migrate(db: Db): void {

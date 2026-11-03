@@ -3,6 +3,7 @@ import { loadConfig, type Config } from "../config.js";
 import { openDb, type Db } from "../db/index.js";
 import { countApps, knownIdsBetween, lastFrontier, latestRunForDate, recentRuns } from "../db/repo.js";
 import { daysBetween, estimate } from "./plan.js";
+import { seedFromState } from "../state.js";
 import { runScan, type ScanResult, type Seed } from "./run.js";
 
 const SPIKE_FRONTIER = "data/spike/frontier.json";
@@ -22,10 +23,15 @@ function argNumber(args: string[], name: string): number | undefined {
   return n;
 }
 
-/** --seed wins; otherwise the spike's last frontier. Only used while the frontier table is empty. */
-function resolveSeed(args: string[]): (Seed & { source: string }) | undefined {
+/**
+ * Only used while the frontier table is empty: --seed, then state/state.json (committed by
+ * CI, survives a lost DB cache), then the spike's frontier.
+ */
+function resolveSeed(args: string[], cfg: Config): (Seed & { source: string }) | undefined {
   const seed = argNumber(args, "--seed");
   if (seed !== undefined) return { id: seed, observedAt: new Date().toISOString(), source: "--seed" };
+  const fromState = seedFromState(cfg.statePath);
+  if (fromState) return fromState;
   if (existsSync(SPIKE_FRONTIER)) {
     const f = JSON.parse(readFileSync(SPIKE_FRONTIER, "utf8")) as { frontier: number; measuredAt: string };
     return { id: f.frontier, observedAt: f.measuredAt, source: SPIKE_FRONTIER };
@@ -38,7 +44,7 @@ export async function scanCommand(args: string[]): Promise<void> {
   const db = openDb(cfg.dbPath);
   try {
     if (args.includes("--dry-run")) {
-      dryRun(db, cfg, resolveSeed(args), argNumber(args, "--max-calls"));
+      dryRun(db, cfg, resolveSeed(args, cfg), argNumber(args, "--max-calls"));
       return;
     }
 
@@ -51,7 +57,7 @@ export async function scanCommand(args: string[]): Promise<void> {
 
 /** Runs a scan with CLI flags and Ctrl+C handling, and prints the summary. Shared by `scan` and `run`. */
 export async function scanWithCli(db: Db, cfg: Config, args: string[]): Promise<ScanResult> {
-  const seed = resolveSeed(args);
+  const seed = resolveSeed(args, cfg);
   const maxCalls = argNumber(args, "--max-calls");
   let stopRequested = false;
   const onSigint = () => {

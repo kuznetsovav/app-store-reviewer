@@ -15,6 +15,8 @@ export interface Config {
   /** Time zone for calendar-day comparisons. Apple stamps date-only releases at Pacific midnight. */
   windowTimeZone: string;
   reportsDir: string;
+  /** Small committed file (frontier + last run) so a lost DB cache only costs re-discovery. */
+  statePath: string;
   watchlist: Watchlist;
   rateLimitPerMin: number;
   userAgent: string;
@@ -52,7 +54,7 @@ const NUMERIC_KEYS = [
   "maxConsecutiveFailures",
   "requestTimeoutMs",
 ] as const;
-const STRING_KEYS = ["userAgent", "contactUrl", "dbPath", "windowTimeZone", "reportsDir"] as const;
+const STRING_KEYS = ["userAgent", "contactUrl", "dbPath", "windowTimeZone", "reportsDir", "statePath"] as const;
 const list = (s: string) => s.split(",").map((x) => x.trim()).filter(Boolean);
 
 /** rateLimitPerMin → APPSTORE_RATE_LIMIT_PER_MIN */
@@ -61,22 +63,27 @@ export const envName = (key: string) => "APPSTORE_" + key.replace(/[A-Z]/g, (c) 
 /** Env overrides: APPSTORE_<UPPER_SNAKE_KEY>, e.g. APPSTORE_MAX_CALLS_PER_RUN=30. */
 export function applyEnv(base: Config, env: NodeJS.ProcessEnv): Config {
   const out: Config = { ...base };
+  // An empty value means "not set": scheduled CI runs pass empty workflow inputs.
+  const get = (name: string) => {
+    const v = env[name];
+    return v === undefined || v.trim() === "" ? undefined : v.trim();
+  };
   for (const key of NUMERIC_KEYS) {
-    const v = env[envName(key)];
+    const v = get(envName(key));
     if (v !== undefined) out[key] = Number(v);
   }
   for (const key of STRING_KEYS) {
-    const v = env[envName(key)];
+    const v = get(envName(key));
     if (v !== undefined) out[key] = v;
   }
-  const sf = env[envName("storefronts")];
+  const sf = get(envName("storefronts"));
   if (sf) out.storefronts = list(sf);
-  const mode = env[envName("windowMode")];
+  const mode = get(envName("windowMode"));
   if (mode !== undefined) out.windowMode = mode as WindowMode;
   out.watchlist = { keywords: [...(base.watchlist?.keywords ?? [])], genres: [...(base.watchlist?.genres ?? [])] };
-  const kw = env.APPSTORE_WATCHLIST_KEYWORDS;
+  const kw = get("APPSTORE_WATCHLIST_KEYWORDS");
   if (kw !== undefined) out.watchlist.keywords = list(kw);
-  const gn = env.APPSTORE_WATCHLIST_GENRES;
+  const gn = get("APPSTORE_WATCHLIST_GENRES");
   if (gn !== undefined) out.watchlist.genres = list(gn);
 
   if (!WINDOW_MODES.includes(out.windowMode)) {

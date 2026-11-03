@@ -28,6 +28,16 @@ async function main(): Promise<void> {
       await runCommand(args);
       return;
     }
+    case "prune": {
+      const { pruneCommand } = await import("./report/commands.js");
+      pruneCommand();
+      return;
+    }
+    case "notify": {
+      const { notifyCommand } = await import("./report/commands.js");
+      await notifyCommand(args);
+      return;
+    }
     default:
       console.error(
         [
@@ -36,7 +46,9 @@ async function main(): Promise<void> {
           "  scan [--dry-run] [--max-calls N] [--seed ID] [--new] scan for new apps (resumes today's run)",
           "  status                                              last 5 runs and the frontier",
           "  report [--date YYYY-MM-DD]                          write reports/ from the database (no API calls)",
-          "  run [scan options]                                  scan, then report; exit 1 if the scan aborted",
+          "  run [scan options]                                  scan, then report, then write state/state.json; exit 1 if aborted",
+          "  prune                                               drop raw JSON of old apps and compact the DB",
+          "  notify [--date YYYY-MM-DD]                          POST headline + watchlist to NOTIFY_WEBHOOK_URL (no-op if unset)",
         ].join("\n"),
       );
       process.exit(2);
