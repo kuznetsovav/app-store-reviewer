@@ -1,6 +1,8 @@
 node_modules/
 *.db
 *.db-journal
+*.db-wal
+*.db-shm
 .env
 # Raw Apple responses are large; summaries in data/spike/*.json are kept.
 data/spike/raw/

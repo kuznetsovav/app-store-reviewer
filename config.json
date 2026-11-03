@@ -5,7 +5,12 @@
   "storefronts": ["us"],
   "batchSize": 200,
   "lookbackIds": 820000,
+  "emptyBatchesToStop": 50,
+  "maxCallsPerRun": 6100,
+  "maxMinutesPerRun": 340,
+  "idsPerDayEstimate": 391000,
+  "dbPath": "data/appstore.db",
   "maxRetries": 5,
-  "maxConsecutiveFailures": 3,
+  "maxConsecutiveFailures": 10,
   "requestTimeoutMs": 30000
 }

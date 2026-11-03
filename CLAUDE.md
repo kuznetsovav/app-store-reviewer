@@ -35,6 +35,21 @@ Output: a CSV and a Markdown report per day, committed to the repo.
 - Log one JSON line per batch (range, ids, hits, status, ms).
 - When a measured number changes a default, update `config.json` and this file.
 
+## Scanner
+- `npx tsx src/cli.ts scan [--dry-run] [--max-calls N] [--seed ID] [--new]` and `status`.
+- A run extends upward from the last frontier until `emptyBatchesToStop` empty
+  batches (empty = no result of any kind), records the new frontier, then rescans
+  down to `previous frontier − lookbackIds`, skipping apps already stored.
+- Checkpoint after every batch (one SQLite transaction). Today's `running`/`aborted`
+  run resumes; a `done`/`budget` run is not restarted without `--new`.
+- `maxCallsPerRun` counts HTTP requests incl. retries, summed across resumes of the
+  day's run; `maxMinutesPerRun` is per invocation. `maxConsecutiveFailures` (10)
+  failed batches → `aborted`. Failed batches go to `failed_ranges` and get one retry
+  at the end of the rescan.
+- `isRecentRelease()` in `src/scan/dates.ts` is the single definition of "released
+  in the last 24h". Reports must use it.
+- First run with an empty DB seeds the frontier from `data/spike/frontier.json`.
+
 ## Decisions
 - 2026-11-03 — Coverage: keep the 6h daily run and accept partial coverage (findings
   option 4). No tiered rescans, no runs longer than 6h.

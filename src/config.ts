@@ -10,6 +10,15 @@ export interface Config {
   batchSize: number;
   /** How far below the previous frontier each run rescans; sized with the upward extension to fit 340 min (see CLAUDE.md Decisions). */
   lookbackIds: number;
+  /** Consecutive batches with no result of any kind before the upward extension stops. */
+  emptyBatchesToStop: number;
+  /** Lookup HTTP requests per run (retries included), summed across resumes on the same day. */
+  maxCallsPerRun: number;
+  /** Wall-clock minutes per process invocation. */
+  maxMinutesPerRun: number;
+  /** Used only by `scan --dry-run` to estimate how many new IDs appeared since the last frontier. */
+  idsPerDayEstimate: number;
+  dbPath: string;
   maxRetries: number;
   maxConsecutiveFailures: number;
   requestTimeoutMs: number;
@@ -17,25 +26,47 @@ export interface Config {
 
 const CONFIG_PATH = fileURLToPath(new URL("../config.json", import.meta.url));
 
-/** Env overrides: APPSTORE_<UPPER_SNAKE_KEY>, e.g. APPSTORE_RATE_LIMIT_PER_MIN=12. */
+const NUMERIC_KEYS = [
+  "rateLimitPerMin",
+  "batchSize",
+  "lookbackIds",
+  "emptyBatchesToStop",
+  "maxCallsPerRun",
+  "maxMinutesPerRun",
+  "idsPerDayEstimate",
+  "maxRetries",
+  "maxConsecutiveFailures",
+  "requestTimeoutMs",
+] as const;
+const STRING_KEYS = ["userAgent", "contactUrl", "dbPath"] as const;
+
+/** rateLimitPerMin → APPSTORE_RATE_LIMIT_PER_MIN */
+export const envName = (key: string) => "APPSTORE_" + key.replace(/[A-Z]/g, (c) => `_${c}`).toUpperCase();
+
+/** Env overrides: APPSTORE_<UPPER_SNAKE_KEY>, e.g. APPSTORE_MAX_CALLS_PER_RUN=30. */
 export function applyEnv(base: Config, env: NodeJS.ProcessEnv): Config {
   const out: Config = { ...base };
-  const num = (k: string) => (env[k] !== undefined ? Number(env[k]) : undefined);
-  out.rateLimitPerMin = num("APPSTORE_RATE_LIMIT_PER_MIN") ?? out.rateLimitPerMin;
-  out.maxRetries = num("APPSTORE_MAX_RETRIES") ?? out.maxRetries;
-  out.maxConsecutiveFailures = num("APPSTORE_MAX_CONSECUTIVE_FAILURES") ?? out.maxConsecutiveFailures;
-  out.requestTimeoutMs = num("APPSTORE_REQUEST_TIMEOUT_MS") ?? out.requestTimeoutMs;
-  out.userAgent = env.APPSTORE_USER_AGENT ?? out.userAgent;
-  out.contactUrl = env.APPSTORE_CONTACT_URL ?? out.contactUrl;
-  if (env.APPSTORE_STOREFRONTS) out.storefronts = env.APPSTORE_STOREFRONTS.split(",").map((s) => s.trim());
-  out.batchSize = num("APPSTORE_BATCH_SIZE") ?? out.batchSize;
-  out.lookbackIds = num("APPSTORE_LOOKBACK_IDS") ?? out.lookbackIds;
+  for (const key of NUMERIC_KEYS) {
+    const v = env[envName(key)];
+    if (v !== undefined) out[key] = Number(v);
+  }
+  for (const key of STRING_KEYS) {
+    const v = env[envName(key)];
+    if (v !== undefined) out[key] = v;
+  }
+  const sf = env[envName("storefronts")];
+  if (sf) out.storefronts = sf.split(",").map((s) => s.trim());
+
   if (!(out.batchSize > 0 && out.batchSize <= 200)) {
     throw new Error(`batchSize must be in (0, 200], got ${out.batchSize}`);
   }
   if (!(out.rateLimitPerMin > 0 && out.rateLimitPerMin <= 20)) {
     throw new Error(`rateLimitPerMin must be in (0, 20], got ${out.rateLimitPerMin}`);
   }
+  for (const key of NUMERIC_KEYS) {
+    if (!Number.isFinite(out[key]) || out[key] < 0) throw new Error(`${key} must be a non-negative number, got ${out[key]}`);
+  }
+  if (out.storefronts.length === 0) throw new Error("storefronts must not be empty");
   return out;
 }
 
