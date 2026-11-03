@@ -71,7 +71,17 @@ export async function scanWithCli(db: Db, cfg: Config, args: string[]): Promise<
   process.on("SIGINT", onSigint);
   let res: ScanResult;
   try {
-    res = await runScan({ db, cfg, seed, maxCalls, forceNew: args.includes("--new"), shouldStop: () => stopRequested });
+    res = await runScan({
+      db,
+      cfg,
+      seed,
+      maxCalls,
+      forceNew: args.includes("--new"),
+      restartFinished: args.includes("--restart-finished"),
+      shouldStop: () => stopRequested,
+      // One JSON line per HTTP request, so `check-log` can prove the rate limit held.
+      callLog: (line) => console.log(JSON.stringify(line)),
+    });
   } finally {
     process.off("SIGINT", onSigint);
   }

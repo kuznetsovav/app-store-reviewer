@@ -18,6 +18,13 @@ export function testConfig(overrides: Partial<Config> = {}): Config {
     dbPath: ":memory:",
     reportsDir: "reports",
     statePath: "state/state.json",
+    displayTimeZone: "Europe/Warsaw",
+    // Tests opt in to the canary; the dense-range guard is off unless a test sets it.
+    canaryIds: [],
+    canaryMinFound: 0,
+    denseEmptyBatchesToAbort: 0,
+    denseMinHitsPer1000: 20,
+    maxInvalidShare: 0.05,
     windowMode: "mixed",
     windowTimeZone: "America/Los_Angeles",
     watchlist: { keywords: ["wishlist", "gift"], genres: [] },
@@ -50,8 +57,12 @@ export interface World {
   songEvery: number;
   /** App IDs per storefront. */
   apps: Record<string, Set<number>>;
-  /** Return true to answer this request with 503. */
-  fail?: (ids: number[], country: string) => boolean;
+  /** Return true to answer with 503, or a number to answer with that status. */
+  fail?: (ids: number[], country: string) => boolean | number;
+  /** Return a string to send it as a 200 body instead of JSON (e.g. an HTML error page). */
+  rawBody?: (ids: number[]) => string | undefined;
+  /** Rewrite a result before it is sent (to simulate response drift). */
+  transform?: (r: LookupResult) => LookupResult;
 }
 
 /** A fake iTunes Lookup built from recorded fixtures; records every request. */
@@ -65,12 +76,16 @@ export function fakeLookup(world: World) {
     const ids = url.searchParams.get("id")!.split(",").map(Number);
     const country = url.searchParams.get("country")!;
     requests.push({ ids, country });
-    if (world.fail?.(ids, country)) return new Response("unavailable", { status: 503 });
-    const results: LookupResult[] = [];
+    const failed = world.fail?.(ids, country);
+    if (failed) return new Response("unavailable", { status: typeof failed === "number" ? failed : 503 });
+    const raw = world.rawBody?.(ids);
+    if (raw !== undefined) return new Response(raw, { status: 200 });
+    let results: LookupResult[] = [];
     for (const id of ids) {
       if (world.apps[country]?.has(id)) results.push({ ...app, trackId: id, trackName: `App ${id}` });
       else if (id <= world.frontier && id % world.songEvery === 0) results.push({ ...song, trackId: id });
     }
+    if (world.transform) results = results.map(world.transform);
     return new Response(JSON.stringify({ resultCount: results.length, results }), { status: 200 });
   }) as unknown as typeof fetch;
   return { fetchImpl, requests };

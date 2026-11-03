@@ -28,7 +28,36 @@ function releaseDay(iso: string, t: number, timeZone: string): string {
 }
 
 /**
- * Is `releaseDate` inside the window that ends at `end`?
+ * Is `releaseDate` between `start` and `end`?
+ * - rolling24h: as an instant.
+ * - days: its calendar day in `timeZone` against the days of start and end.
+ * - mixed (default): day-level values by `days`, precise values by `rolling24h`.
+ * `startInclusive: false` makes the lower bound exclusive (used to keep consecutive reports disjoint).
+ */
+export function inRange(
+  releaseDate: string | null | undefined,
+  start: number,
+  end: number,
+  mode: WindowMode = "mixed",
+  timeZone: string = DEFAULT_TIME_ZONE,
+  startInclusive = true,
+): boolean {
+  if (!releaseDate) return false;
+  const t = Date.parse(releaseDate);
+  if (Number.isNaN(t)) return false;
+  const instant = () => (startInclusive ? t >= start : t > start) && t <= end;
+  const days = () => {
+    const day = releaseDay(releaseDate, t, timeZone);
+    const s = zonedDate(start, timeZone);
+    return (startInclusive ? day >= s : day > s) && day <= zonedDate(end, timeZone);
+  };
+  if (mode === "rolling24h") return instant();
+  if (mode === "days") return days();
+  return isDayLevel(releaseDate) ? days() : instant();
+}
+
+/**
+ * Is `releaseDate` inside the 24 h window that ends at `end`?
  * - rolling24h: as an instant in [end − 24h, end].
  * - days: its day is today or yesterday in `timeZone` (yesterday = the day of end − 24h).
  * - mixed (default): day-level values by `days`, precise values by `rolling24h`.
@@ -39,17 +68,15 @@ export function inWindow(
   mode: WindowMode = "mixed",
   timeZone: string = DEFAULT_TIME_ZONE,
 ): boolean {
-  if (!releaseDate) return false;
-  const t = Date.parse(releaseDate);
-  if (Number.isNaN(t)) return false;
-  const rolling = () => t <= end && end - t <= DAY_MS;
-  const days = () => {
-    const day = releaseDay(releaseDate, t, timeZone);
-    return day >= zonedDate(end - DAY_MS, timeZone) && day <= zonedDate(end, timeZone);
-  };
-  if (mode === "rolling24h") return rolling();
-  if (mode === "days") return days();
-  return isDayLevel(releaseDate) ? days() : rolling();
+  return inRange(releaseDate, end - DAY_MS, end, mode, timeZone, true);
+}
+
+/** "2026-11-04 06:12 UTC (07:12 Europe/Warsaw)" — reports show UTC plus one local zone. */
+export function formatTimes(ms: number, displayTimeZone: string): string {
+  const local = new Intl.DateTimeFormat("en-GB", { timeZone: displayTimeZone, hour: "2-digit", minute: "2-digit", hourCycle: "h23" }).format(ms);
+  const localDay = zonedDate(ms, displayTimeZone);
+  const utcDay = new Date(ms).toISOString().slice(0, 10);
+  return `${utc(ms)} (${localDay === utcDay ? "" : `${localDay} `}${local} ${displayTimeZone})`;
 }
 
 /** "Released in the last 24h" as the scanner counts it: mixed mode, Pacific days. */

@@ -129,6 +129,37 @@ export function upsertApps(db: Db, apps: { row: AppRow; storefronts: string[] }[
   return inserted;
 }
 
+export const DENSITY_BUCKET = 100_000;
+
+/** Adds one batch's IDs and hits (any kind) to the per-bucket density counters. */
+export function recordDensity(db: Db, ids: number[], hitIds: number[], nowIso: string): void {
+  const add = (m: Map<number, number>, id: number) => m.set(Math.floor(id / DENSITY_BUCKET), (m.get(Math.floor(id / DENSITY_BUCKET)) ?? 0) + 1);
+  const idCount = new Map<number, number>();
+  const hitCount = new Map<number, number>();
+  for (const id of ids) add(idCount, id);
+  for (const id of hitIds) add(hitCount, id);
+  const up = db.prepare(
+    `INSERT INTO density (bucket, ids, hits, updated_at) VALUES (@bucket, @ids, @hits, @now)
+     ON CONFLICT(bucket) DO UPDATE SET ids = ids + @ids, hits = hits + @hits, updated_at = @now`,
+  );
+  for (const [bucket, n] of idCount) up.run({ bucket, ids: n, hits: hitCount.get(bucket) ?? 0, now: nowIso });
+}
+
+/** Buckets with at least `minIds` scanned and `minPer1000` hits per 1,000 IDs. */
+export function denseBuckets(db: Db, minPer1000: number, minIds = 1_000): Set<number> {
+  const rows = db.prepare("SELECT bucket FROM density WHERE ids >= ? AND hits * 1000.0 / ids >= ?").pluck().all(minIds, minPer1000) as number[];
+  return new Set(rows);
+}
+
+/** The run before `beforeRunId` that finished (for report windows). */
+export function previousFinishedRun(db: Db, beforeRunId: number | null, beforeIso: string): RunRow | undefined {
+  return (
+    beforeRunId !== null
+      ? db.prepare("SELECT * FROM runs WHERE id < ? AND finished_at IS NOT NULL ORDER BY id DESC LIMIT 1").get(beforeRunId)
+      : db.prepare("SELECT * FROM runs WHERE finished_at IS NOT NULL AND finished_at <= ? ORDER BY finished_at DESC LIMIT 1").get(beforeIso)
+  ) as RunRow | undefined;
+}
+
 export function addWarning(db: Db, runId: number, text: string): void {
   const current = JSON.parse((db.prepare("SELECT warnings FROM runs WHERE id = ?").pluck().get(runId) as string) ?? "[]") as string[];
   db.prepare("UPDATE runs SET warnings = ? WHERE id = ?").run(JSON.stringify([...current, text]), runId);

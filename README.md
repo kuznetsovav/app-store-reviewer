@@ -11,10 +11,11 @@ App Store IDs are assigned roughly in creation order. Each run:
 
 1. **Extends** upward from the last known frontier (highest ID with any result) until
    50 batches in a row return nothing, and records the new frontier.
-2. **Rescans** 820,000 IDs below the previous frontier, newest first, skipping apps
+2. **Rescans** 740,000 IDs below the previous frontier, newest first, skipping apps
    already stored.
-3. **Reports** every stored app whose release date falls in the window, from the whole
-   database rather than just today's hits.
+3. **Reports** every app first found since the previous run whose release is recent, plus
+   apps found earlier (pre-orders) whose release date has now arrived. Consecutive reports
+   never lose or repeat an app.
 
 It looks up 200 IDs per call at 18 calls per minute, with one shared rate limiter,
 exponential backoff on 403/429/5xx, and a checkpoint after every batch. Details and
@@ -37,6 +38,23 @@ measurements are in [docs/spike-findings.md](docs/spike-findings.md).
   more than a home connection. The client backs off and the run stops cleanly after
   10 failed batches in a row.
 
+## Guards against quiet failures
+
+The danger with this design is a run that looks healthy but isn't, for example when Apple
+answers 200 with empty results. Each of these aborts the run (status `aborted`, job fails):
+
+- **Canary:** 20 long-lived apps are looked up first; fewer than 18 back → "canary failed".
+- **Empty where it used to be full:** 300 empty batches in a row inside ID ranges that
+  earlier runs found dense → "silent blocking suspected".
+- **Response drift:** every result is validated with zod; over 5% invalid → "response
+  drift". Unknown or missing fields are logged and shown as a warning in the report.
+- **Rate limit proof:** every request is logged with its start time, and the workflow runs
+  `check-log` to fail the job if any 60-second window exceeded the limit.
+- **Garbage 200s:** a 200 whose body isn't Lookup JSON is a failed batch, never an empty
+  one. Batches Apple 500s on every time are split in halves on retry.
+- **Anomaly line:** a warning at the top of the report when today's count is under 50% or
+  over 200% of the median of the last 7 reports.
+
 ## Run locally
 
 ```bash
@@ -51,6 +69,7 @@ npm ci && npx tsx src/cli.ts run
 | `run [scan options]` | Scan, report, write `state/state.json`. Exit 1 if the scan aborted |
 | `status` | Last 5 runs and the frontier |
 | `prune` | Drop raw JSON of old apps and compact the database |
+| `check-log FILE [--rate N]` | Fail if any 60 s window in a run log had more calls than the rate limit |
 | `notify [--date YYYY-MM-DD]` | POST headline + watchlist to `NOTIFY_WEBHOOK_URL` (no-op if unset) |
 | `spike` | Re-measure the ID space (see docs/spike-findings.md) |
 
@@ -67,13 +86,19 @@ variable; an empty value means "use config.json".
 | --- | --- | --- | --- |
 | `rateLimitPerMin` | 18 | `APPSTORE_RATE_LIMIT_PER_MIN` | Lookup calls per minute (max 20) |
 | `batchSize` | 200 | `APPSTORE_BATCH_SIZE` | IDs per call. Max 200: above that Apple silently drops results |
-| `lookbackIds` | 820000 | `APPSTORE_LOOKBACK_IDS` | IDs rescanned below the previous frontier |
+| `lookbackIds` | 740000 | `APPSTORE_LOOKBACK_IDS` | IDs rescanned below the previous frontier |
 | `emptyBatchesToStop` | 50 | `APPSTORE_EMPTY_BATCHES_TO_STOP` | Empty batches that end the upward extension |
-| `maxCallsPerRun` | 6100 | `APPSTORE_MAX_CALLS_PER_RUN` | Call budget per day, retries included |
-| `maxMinutesPerRun` | 340 | `APPSTORE_MAX_MINUTES_PER_RUN` | Wall-clock limit per invocation |
+| `maxCallsPerRun` | 5850 | `APPSTORE_MAX_CALLS_PER_RUN` | Call budget per day, retries included |
+| `maxMinutesPerRun` | 325 | `APPSTORE_MAX_MINUTES_PER_RUN` | Wall-clock limit per invocation |
 | `storefronts` | `["us"]` | `APPSTORE_STOREFRONTS` (comma list) | Storefronts looked up for each batch |
 | `windowMode` | `mixed` | `APPSTORE_WINDOW_MODE` | `mixed`, `rolling24h` or `days` |
 | `windowTimeZone` | `America/Los_Angeles` | `APPSTORE_WINDOW_TIME_ZONE` | Time zone for calendar-day comparisons |
+| `displayTimeZone` | `Europe/Warsaw` | `APPSTORE_DISPLAY_TIME_ZONE` | Reports show times in UTC and this zone |
+| `canaryIds` | 20 long-lived apps | config only | Looked up first every run |
+| `canaryMinFound` | 18 | `APPSTORE_CANARY_MIN_FOUND` | Fewer canary apps back → run aborts ("canary failed") |
+| `denseEmptyBatchesToAbort` | 300 | `APPSTORE_DENSE_EMPTY_BATCHES_TO_ABORT` | Empty batches in a row inside previously dense ranges → abort (0 = off) |
+| `denseMinHitsPer1000` | 20 | `APPSTORE_DENSE_MIN_HITS_PER1000` | What counts as a dense 100k-ID range |
+| `maxInvalidShare` | 0.05 | `APPSTORE_MAX_INVALID_SHARE` | Share of results failing validation that aborts the run |
 | `watchlist.keywords` | `["wishlist","gift"]` | `APPSTORE_WATCHLIST_KEYWORDS` (comma list) | Matched in name or description |
 | `watchlist.genres` | `[]` | `APPSTORE_WATCHLIST_GENRES` (comma list) | Matched against the app's genres |
 | `userAgent` | `appstore-new-apps/0.1` | `APPSTORE_USER_AGENT` | Sent with every request |
@@ -117,7 +142,7 @@ a Slack incoming webhook. The job POSTs `{"text": "<headline + watchlist>"}` to 
 no secret set it does nothing, and the URL is never printed.
 
 **Costs and limits:**
-- A daily run of up to ~340 minutes is ~10,000 Actions minutes a month. That's free
+- A daily run of up to ~330 minutes is ~10,000 Actions minutes a month. That's free
   on a **public** repository but well over GitHub Free's 2,000 included minutes for a
   **private** one.
 - GitHub disables scheduled workflows after 60 days without repository activity. The

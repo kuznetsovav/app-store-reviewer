@@ -12,6 +12,13 @@ const MIGRATIONS = [
   "ALTER TABLE runs ADD COLUMN extend_end INTEGER;",
   // 3: notes the report must show, e.g. that the run started without the previous database.
   "ALTER TABLE runs ADD COLUMN warnings TEXT NOT NULL DEFAULT '[]';",
+  // 4: hit density per 100k-ID bucket, so a run can tell "empty because blocked" from "empty range".
+  `CREATE TABLE density (
+     bucket     INTEGER PRIMARY KEY,  -- floor(id / 100000)
+     ids        INTEGER NOT NULL DEFAULT 0,
+     hits       INTEGER NOT NULL DEFAULT 0,  -- results of any kind
+     updated_at TEXT NOT NULL
+   );`,
 ];
 
 export function migrate(db: Db): void {

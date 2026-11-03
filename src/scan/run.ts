@@ -1,14 +1,17 @@
 import type { Config } from "../config.js";
 import type { Db } from "../db/index.js";
 import {
+  DENSITY_BUCKET,
   addWarning,
   createRun,
+  denseBuckets,
   finishRun,
   getRun,
   insertFrontier,
   knownIdsBetween,
   lastFrontier,
   latestRunForDate,
+  recordDensity,
   saveProgress,
   setExtendEnd,
   upsertApps,
@@ -17,8 +20,9 @@ import {
   type RunRow,
   type RunStatus,
 } from "../db/repo.js";
-import { BudgetExceededError, LookupClient, RequestFailedError, type ClientOptions } from "../lookup/client.js";
+import { BudgetExceededError, LookupClient, RequestFailedError, type CallLog, type ClientOptions, type LookupResult } from "../lookup/client.js";
 import { parseApp, type AppRow } from "../lookup/parse.js";
+import { emptyStats, invalidShare, validateResults } from "../lookup/schema.js";
 import { range } from "../spike-math.js";
 import { isRecentRelease } from "./dates.js";
 import { extendBatch, nextRescanBatch } from "./plan.js";
@@ -38,12 +42,17 @@ export interface ScanOptions {
   shouldStop?: () => boolean;
   /** Used only when the frontier table is empty. */
   seed?: Seed;
-  /** Start a new run even if today's run exists. */
+  /** Start a new run even if today's run exists (and abandon an interrupted one). */
   forceNew?: boolean;
+  /** Start a new run if today's run already finished (done/budget); resume it if it was interrupted. */
+  restartFinished?: boolean;
   /** Overrides cfg.maxCallsPerRun. */
   maxCalls?: number;
-  clientOptions?: Omit<ClientOptions, "maxLookupCalls">;
+  clientOptions?: Omit<ClientOptions, "maxLookupCalls" | "log" | "now">;
+  /** One line per batch / event. */
   log?: (line: Record<string, unknown>) => void;
+  /** One line per HTTP request (used for the rate-limit check). */
+  callLog?: (line: CallLog) => void;
 }
 
 export interface ScanResult {
@@ -57,9 +66,15 @@ export interface ScanResult {
 
 type Merged = { row: AppRow; storefronts: string[] };
 type BatchOutcome =
-  | { kind: "ok"; anyKindHits: number; maxHit: number | null; apps: Merged[] }
+  | { kind: "ok"; hitIds: number[]; maxHit: number | null; apps: Merged[] }
   | { kind: "failed"; error: string }
   | { kind: "budget" };
+
+/** Any result counts as a hit: apps, songs, albums (collectionId), artists. */
+const idOf = (x: LookupResult): number | null => {
+  for (const k of ["trackId", "collectionId", "artistId"] as const) if (typeof x[k] === "number") return x[k] as number;
+  return null;
+};
 
 export async function runScan(o: ScanOptions): Promise<ScanResult> {
   const { db, cfg } = o;
@@ -72,8 +87,9 @@ export async function runScan(o: ScanOptions): Promise<ScanResult> {
 
   // ── Pick up today's run or start a new one ────────────────────────────────
   let run = latestRunForDate(db, today);
-  const resumable = run !== undefined && (run.status === "running" || run.status === "aborted") && !o.forceNew;
-  if (run && !resumable && !o.forceNew) {
+  const interrupted = run !== undefined && (run.status === "running" || run.status === "aborted");
+  const resumable = interrupted && !o.forceNew;
+  if (run && !resumable && !o.forceNew && !o.restartFinished) {
     return { run, resumed: false, inserted: [], skipped: `Today's run #${run.id} already finished (${run.status}). Use --new to start another.` };
   }
   if (!resumable) {
@@ -122,31 +138,46 @@ export async function runScan(o: ScanOptions): Promise<ScanResult> {
   saveProgress(db, runId, p);
 
   // Hard cap at the HTTP level too, so retries can't push past the budget.
-  const client = new LookupClient(cfg, { ...o.clientOptions, maxLookupCalls: Math.max(0, maxCalls - p.calls) });
+  const client = new LookupClient(cfg, {
+    ...o.clientOptions,
+    now,
+    log: o.callLog,
+    maxLookupCalls: Math.max(0, maxCalls - p.calls),
+  });
   const inserted: AppRow[] = [];
   let known = p.phase === "rescan" ? knownIdsBetween(db, bottom, top) : new Set<number>();
   let consecutiveFailures = 0;
   const ctl: { stop: { status: RunStatus; error: string | null } | null } = { stop: null };
+  const sf = cfg.storefronts.length;
+  const schema = emptyStats();
+  // Ranges that earlier runs found dense: a long empty streak there means we're being blocked.
+  const dense = cfg.denseEmptyBatchesToAbort > 0 ? denseBuckets(db, cfg.denseMinHitsPer1000) : new Set<number>();
+  let denseEmptyStreak = 0;
 
-  const outOfBudget = () => p.calls + cfg.storefronts.length > maxCalls || now() - t0 >= cfg.maxMinutesPerRun * 60_000;
+  const outOfTime = () => now() - t0 >= cfg.maxMinutesPerRun * 60_000;
+  /** Main loop keeps calls back so failed batches still get their retry (~8 calls to split one). */
+  const reserve = () => Math.min(p.failed.length * 8, 40) * sf;
+  const mainLoopOutOfBudget = () => p.calls + sf + reserve() > maxCalls || outOfTime();
+  const outOfBudget = () => p.calls + sf > maxCalls || outOfTime();
 
   /** Looks up one batch in every storefront. Nothing is written here. */
-  async function lookupBatch(ids: number[]): Promise<BatchOutcome> {
+  async function lookupBatch(ids: number[], retryServerErrors = true): Promise<BatchOutcome> {
     const merged = new Map<number, Merged>();
     const anyKind = new Set<number>();
     const before = client.lookupCalls;
     try {
-      for (const sf of cfg.storefronts) {
-        const res = await client.lookup(ids, sf);
+      for (const s of cfg.storefronts) {
+        const res = await client.lookup(ids, s, { retryServerErrors });
         if (res.status !== 200) return { kind: "failed", error: `status ${res.status}` };
-        for (const x of res.results) {
-          if (typeof x.trackId !== "number") continue;
-          anyKind.add(x.trackId);
+        for (const x of validateResults(res.results, schema)) {
+          const id = idOf(x);
+          if (id === null) continue;
+          anyKind.add(id);
           const app = parseApp(x);
           if (!app) continue;
           const m = merged.get(app.trackId);
-          if (m) m.storefronts.push(sf);
-          else merged.set(app.trackId, { row: app, storefronts: [sf] });
+          if (m) m.storefronts.push(s);
+          else merged.set(app.trackId, { row: app, storefronts: [s] });
         }
       }
     } catch (e) {
@@ -156,16 +187,19 @@ export async function runScan(o: ScanOptions): Promise<ScanResult> {
     } finally {
       p.calls += client.lookupCalls - before;
     }
-    return { kind: "ok", anyKindHits: anyKind.size, maxHit: anyKind.size ? Math.max(...anyKind) : null, apps: [...merged.values()] };
+    const hitIds = [...anyKind];
+    return { kind: "ok", hitIds, maxHit: hitIds.length ? Math.max(...hitIds) : null, apps: [...merged.values()] };
   }
 
-  /** Upserts apps and saves the checkpoint in one transaction. */
-  function commit(apps: Merged[]): AppRow[] {
+  /** Upserts apps, density and the checkpoint in one transaction. */
+  function commit(ids: number[], out: Extract<BatchOutcome, { kind: "ok" }>): AppRow[] {
     return db.transaction(() => {
-      const ins = upsertApps(db, apps, iso());
-      p.hits += apps.length;
+      const ins = upsertApps(db, out.apps, iso());
+      recordDensity(db, ids, out.hitIds, iso());
+      p.hits += out.apps.length;
       p.new_releases += ins.filter((a) => isRecentRelease(a.releaseDate, now())).length;
       saveProgress(db, runId, p);
+      inserted.push(...ins);
       return ins;
     })();
   }
@@ -178,7 +212,7 @@ export async function runScan(o: ScanOptions): Promise<ScanResult> {
       first: ids[0],
       last: ids.at(-1),
       ids: ids.length,
-      hits: out.kind === "ok" ? out.anyKindHits : 0,
+      hits: out.kind === "ok" ? out.hitIds.length : 0,
       apps: out.kind === "ok" ? out.apps.length : 0,
       new: ins.length,
       status: out.kind === "ok" ? "ok" : out.kind,
@@ -196,32 +230,97 @@ export async function runScan(o: ScanOptions): Promise<ScanResult> {
     }
   }
 
-  const collect = (ins: AppRow[]) => {
-    inserted.push(...ins);
-    return ins;
-  };
+  /** Quiet-failure guards, checked after every successful batch. */
+  function checkGuards(ids: number[], out: Extract<BatchOutcome, { kind: "ok" }>) {
+    if (schema.results >= 200 && invalidShare(schema) > cfg.maxInvalidShare) {
+      ctl.stop = {
+        status: "aborted",
+        error: `response drift: ${(invalidShare(schema) * 100).toFixed(1)}% of ${schema.results} results failed validation (${schema.samples[0] ?? "see log"})`,
+      };
+      return;
+    }
+    if (dense.size === 0) return;
+    if (out.hitIds.length > 0) denseEmptyStreak = 0;
+    else if (dense.has(Math.floor(ids[0]! / DENSITY_BUCKET))) {
+      denseEmptyStreak++;
+      if (denseEmptyStreak >= cfg.denseEmptyBatchesToAbort) {
+        ctl.stop = {
+          status: "aborted",
+          error: `silent blocking suspected: ${denseEmptyStreak} consecutive empty batches in ID ranges that earlier runs found dense`,
+        };
+      }
+    }
+  }
 
-  /** One more try for batches that failed earlier in this run. Leftovers stay in failed_ranges. */
+  /**
+   * One more try for batches that failed earlier in this run. Apple sometimes answers 500
+   * for the same batch every time (one ID in it seems to break the response), so a range
+   * that fails again is split in halves, up to 3 levels deep, without retrying 5xx. That
+   * recovers most of the batch and narrows the failure down. Leftovers stay in failed_ranges.
+   */
   async function retryFailed() {
     const pending = p.failed;
     p.failed = [];
-    for (const f of pending) {
+    const attempt = async (phase: Phase, ids: number[], depth: number): Promise<void> => {
       if (o.shouldStop?.() || outOfBudget()) {
-        p.failed.push(f);
-        continue;
+        p.failed.push({ phase, first: Math.min(...ids), last: Math.max(...ids) });
+        return;
       }
-      const ids = range(f.first, f.last - f.first + 1).filter((id) => !known.has(id));
-      if (ids.length === 0) continue;
       const started = now();
-      const out = await lookupBatch(ids);
-      if (out.kind === "ok") logBatch(f.phase, ids, started, out, collect(commit(out.apps)));
-      else {
-        p.failed.push(f);
-        logBatch(f.phase, ids, started, out);
+      // The original batch already had its full retries; here one attempt per piece is enough.
+      const out = await lookupBatch(ids, false);
+      if (out.kind === "ok") {
+        logBatch(phase, ids, started, out, commit(ids, out));
+        return;
       }
+      logBatch(phase, ids, started, out);
+      if (out.kind === "failed" && ids.length > 1 && depth < 3) {
+        const mid = Math.ceil(ids.length / 2);
+        await attempt(phase, ids.slice(0, mid), depth + 1);
+        await attempt(phase, ids.slice(mid), depth + 1);
+        return;
+      }
+      p.failed.push({ phase, first: Math.min(...ids), last: Math.max(...ids) });
+    };
+    for (const f of pending) {
+      const ids = range(f.first, f.last - f.first + 1).filter((id) => !known.has(id));
+      if (ids.length) await attempt(f.phase, ids, 0);
     }
     saveProgress(db, runId, p);
   }
+
+  // ── Canary: known-released apps must come back, or Apple is answering empty ──
+  async function canary(): Promise<void> {
+    if (cfg.canaryIds.length === 0) return;
+    const before = client.lookupCalls;
+    let found = 0;
+    let error: string | null = null;
+    try {
+      const res = await client.lookup(cfg.canaryIds, cfg.storefronts[0]!);
+      const want = new Set(cfg.canaryIds);
+      found = validateResults(res.results, schema).filter((x) => x.kind === "software" && typeof x.trackId === "number" && want.has(x.trackId)).length;
+      if (res.status !== 200) error = `status ${res.status}`;
+    } catch (e) {
+      if (e instanceof BudgetExceededError) {
+        ctl.stop = { status: "budget", error: null };
+        return;
+      }
+      if (!(e instanceof RequestFailedError)) throw e;
+      error = e.message;
+    } finally {
+      p.calls += client.lookupCalls - before;
+    }
+    log({ ts: iso(), run: runId, event: "canary", found, of: cfg.canaryIds.length, ...(error ? { error } : {}) });
+    if (error || found < cfg.canaryMinFound) {
+      ctl.stop = {
+        status: "aborted",
+        error: `canary failed: ${found}/${cfg.canaryIds.length} known apps returned (need ${cfg.canaryMinFound})${error ? `; ${error}` : ""}`,
+      };
+    }
+    saveProgress(db, runId, p);
+  }
+
+  await canary();
 
   // ── Main loop: extend upward, then rescan downward ────────────────────────
   while (!ctl.stop) {
@@ -229,7 +328,7 @@ export async function runScan(o: ScanOptions): Promise<ScanResult> {
       ctl.stop = { status: "aborted", error: "SIGINT" };
       break;
     }
-    if (outOfBudget()) {
+    if (mainLoopOutOfBudget()) {
       ctl.stop = { status: "budget", error: null };
       break;
     }
@@ -263,13 +362,13 @@ export async function runScan(o: ScanOptions): Promise<ScanResult> {
         continue;
       }
       consecutiveFailures = 0;
-      p.empty_streak = out.anyKindHits === 0 ? p.empty_streak + 1 : 0;
+      p.empty_streak = out.hitIds.length === 0 ? p.empty_streak + 1 : 0;
       if (out.maxHit !== null) p.extend_max_hit = Math.max(p.extend_max_hit, out.maxHit);
-      logBatch("extend", ids, started, out, collect(commit(out.apps)));
+      logBatch("extend", ids, started, out, commit(ids, out));
+      checkGuards(ids, out);
     } else {
       const ids = nextRescanBatch({ from: p.next_id, bottom, known, batchSize: cfg.batchSize });
       if (!ids) {
-        await retryFailed();
         ctl.stop = { status: "done", error: null };
         break;
       }
@@ -287,12 +386,31 @@ export async function runScan(o: ScanOptions): Promise<ScanResult> {
         continue;
       }
       consecutiveFailures = 0;
-      logBatch("rescan", ids, started, out, collect(commit(out.apps)));
+      logBatch("rescan", ids, started, out, commit(ids, out));
+      checkGuards(ids, out);
     }
   }
 
-  p.status = ctl.stop!.status;
-  p.error = ctl.stop!.error;
+  // Failed batches get their retry when the run ends normally (done or out of budget),
+  // using the calls the main loop kept in reserve. Not after an abort: the cause may persist.
+  const stop = ctl.stop!;
+  if ((stop.status === "done" || stop.status === "budget") && p.failed.length) await retryFailed();
+
+  if (schema.results > 0) {
+    log({ ts: iso(), run: runId, event: "schema", results: schema.results, invalid: schema.invalid, unknownFields: schema.unknownFields, missingFields: schema.missingFields, samples: schema.samples });
+    const unknown = Object.keys(schema.unknownFields);
+    const missing = Object.keys(schema.missingFields);
+    if (unknown.length || missing.length) {
+      addWarning(
+        db,
+        runId,
+        `Apple's response format changed: ${unknown.length ? `new fields ${unknown.join(", ")}` : ""}${unknown.length && missing.length ? "; " : ""}${missing.length ? `missing fields ${missing.join(", ")}` : ""}.`,
+      );
+    }
+  }
+
+  p.status = stop.status;
+  p.error = stop.error;
   // Stopped while still extending: keep what we learned, or after a long outage every
   // daily budget would be spent re-extending the same IDs and the frontier would never move.
   // (A same-day resume continues from the run row; this only affects the next new run.)

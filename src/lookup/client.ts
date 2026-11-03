@@ -24,6 +24,10 @@ export interface LookupResponse {
 
 export interface CallLog {
   ts: string;
+  /** When the request was sent (after the limiter let it through). Rate checks use this. */
+  start?: string;
+  /** A 200 whose body was not Lookup JSON; treated as a retryable failure. */
+  badBody?: boolean;
   kind: "lookup" | "rss";
   country?: string;
   ids?: number;
@@ -54,6 +58,7 @@ export interface ClientOptions {
   fetchImpl?: typeof fetch;
   limiter?: RateLimiter;
   sleep?: (ms: number) => Promise<void>;
+  now?: () => number;
 }
 
 const LOOKUP_URL = "https://itunes.apple.com/lookup";
@@ -75,12 +80,16 @@ export class LookupClient {
     this.ua = cfg.contactUrl ? `${cfg.userAgent} (+${cfg.contactUrl})` : cfg.userAgent;
   }
 
-  async lookup(ids: number[], country: string): Promise<LookupResponse> {
+  /**
+   * `retryServerErrors: false` fails fast on 5xx (403/429 and network errors are still
+   * retried with backoff). Used when bisecting a batch that Apple 500s on every time.
+   */
+  async lookup(ids: number[], country: string, opts: { retryServerErrors?: boolean } = {}): Promise<LookupResponse> {
     if (ids.length === 0) throw new Error("lookup needs at least one id");
     const url = `${LOOKUP_URL}?id=${ids.join(",")}&country=${encodeURIComponent(country)}`;
     const sorted = [...ids].sort((a, b) => a - b);
     const meta = { kind: "lookup" as const, country, ids: ids.length, range: [sorted[0]!, sorted.at(-1)!] as [number, number] };
-    const r = await this.request(url, meta, true);
+    const r = await this.request(url, meta, true, opts.retryServerErrors ?? true);
     const body = r.body as { resultCount?: number; results?: LookupResult[] } | null;
     const results = Array.isArray(body?.results) ? body!.results : [];
     return { status: r.status, resultCount: body?.resultCount ?? results.length, results, ms: r.ms, attempts: r.attempts, raw: r.body };
@@ -96,6 +105,7 @@ export class LookupClient {
     url: string,
     meta: Omit<CallLog, "ts" | "status" | "ms" | "attempt" | "hits">,
     countsTowardBudget: boolean,
+    retryServerErrors = true,
   ): Promise<{ status: number; body: unknown; ms: number; attempts: number }> {
     for (let attempt = 0; ; attempt++) {
       if (countsTowardBudget) {
@@ -104,7 +114,8 @@ export class LookupClient {
         this.lookupCalls++;
       }
       await this.limiter.acquire();
-      const started = Date.now();
+      const now = this.opts.now ?? Date.now;
+      const started = now();
       let status = 0;
       let body: unknown = null;
       try {
@@ -122,12 +133,25 @@ export class LookupClient {
       } catch {
         status = 0; // network error or timeout
       }
-      const ms = Date.now() - started;
+      const ms = now() - started;
       const hits = (body as { results?: unknown[] } | null)?.results?.length ?? 0;
-      this.opts.log?.({ ts: new Date().toISOString(), ...meta, hits, status, ms, attempt });
+      // A 200 whose body isn't Lookup JSON (truncated page, HTML from a proxy) must not
+      // count as "no results": that would silently mark 200 IDs as scanned.
+      const badBody = countsTowardBudget && status === 200 && !Array.isArray((body as { results?: unknown } | null)?.results);
+      this.opts.log?.({
+        ts: new Date(now()).toISOString(),
+        start: new Date(started).toISOString(),
+        ...meta,
+        hits,
+        status,
+        ms,
+        attempt,
+        ...(badBody ? { badBody: true } : {}),
+      });
 
-      if (!isRetryable(status)) return { status, body, ms, attempts: attempt + 1 };
-      if (attempt >= this.cfg.maxRetries) throw new RequestFailedError(status, attempt + 1);
+      if (!badBody && !isRetryable(status)) return { status, body, ms, attempts: attempt + 1 };
+      if (!retryServerErrors && status >= 500) throw new RequestFailedError(status, attempt + 1);
+      if (attempt >= this.cfg.maxRetries) throw new RequestFailedError(badBody ? 200 : status, attempt + 1);
       await this.sleep(backoffMs(attempt));
     }
   }

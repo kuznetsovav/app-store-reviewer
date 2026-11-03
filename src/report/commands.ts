@@ -2,6 +2,7 @@ import { existsSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { loadConfig, type Config } from "../config.js";
 import { pruneRaw } from "../db/prune.js";
+import { checkRateLog } from "../lookup/ratecheck.js";
 import { notificationText, sendNotification } from "../notify.js";
 import { readState } from "../state.js";
 import { openDb, type Db } from "../db/index.js";
@@ -10,7 +11,7 @@ import { scanWithCli } from "../scan/commands.js";
 import { buildState, writeState } from "../state.js";
 import { buildReport } from "./build.js";
 import { loadReportData } from "./query.js";
-import { writeReports } from "./write.js";
+import { readHistory, writeReports } from "./write.js";
 
 const todayUtc = () => new Date().toISOString().slice(0, 10);
 
@@ -24,7 +25,7 @@ function parseDate(args: string[]): string {
 
 /** Builds and writes the reports for one date from the database only. */
 export function produceReport(db: Db, cfg: Config, date: string, now = Date.now()) {
-  const out = buildReport(loadReportData(db, date, cfg, now), cfg);
+  const out = buildReport(loadReportData(db, date, cfg, now, readHistory(cfg.reportsDir, date)), cfg);
   const written = writeReports(cfg.reportsDir, date, out);
   console.error([out.headline, ...written.files.map((f) => `  wrote ${f}`)].join("\n"));
   if (!written.latestUpdated) console.error("  latest.md left alone: a newer report exists.");
@@ -39,6 +40,19 @@ export function reportCommand(args: string[]): void {
   } finally {
     db.close();
   }
+}
+
+/** Replays a run log and fails if any 60-second window had more calls than the rate limit. */
+export function checkLogCommand(args: string[]): void {
+  const file = args.find((a) => !a.startsWith("--"));
+  if (!file) throw new Error("Usage: check-log FILE [--rate N]");
+  const i = args.indexOf("--rate");
+  const rate = i >= 0 ? Number(args[i + 1]) : loadConfig().rateLimitPerMin;
+  const r = checkRateLog(readFileSync(file, "utf8"), rate);
+  console.error(
+    `${r.calls} calls; at most ${r.max} in any 60 s window${r.worstWindowStart ? ` (from ${r.worstWindowStart})` : ""}; limit ${rate}: ${r.ok ? "OK" : "EXCEEDED"}`,
+  );
+  if (!r.ok) process.exitCode = 1;
 }
 
 /** Drops raw JSON for old apps and compacts the DB file. */

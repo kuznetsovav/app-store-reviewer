@@ -14,8 +14,9 @@ export class RateLimiter {
     if (!(ratePerMin > 0)) throw new Error("ratePerMin must be > 0");
   }
 
+  /** Rounded up to whole ms so N intervals always span at least a minute, even in ms-precision logs. */
   get intervalMs(): number {
-    return 60_000 / this.ratePerMin;
+    return Math.ceil(60_000 / this.ratePerMin);
   }
 
   /** Resolves when the caller may make one call. Serialised, so concurrent callers queue. */

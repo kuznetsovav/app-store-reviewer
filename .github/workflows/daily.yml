@@ -27,14 +27,18 @@ permissions:
 jobs:
   scan:
     runs-on: ubuntu-latest
+    # The scan stops at maxMinutesPerRun (325) between batches; the last batch's retries can
+    # add ~6 min, setup and the post-steps ~6 more. 350 leaves ~13 min of slack under 360.
     timeout-minutes: 350
     env:
       # Inputs go through env, never straight into scripts. Empty means "use config.json".
       APPSTORE_MAX_CALLS_PER_RUN: ${{ inputs.maxCallsPerRun }}
       APPSTORE_LOOKBACK_IDS: ${{ inputs.lookbackIds }}
-      # Scheduled runs always start a fresh daily run, even if a manual test already
-      # used today's date; manual runs resume today's run if it was interrupted.
-      SCAN_FLAGS: ${{ github.event_name == 'schedule' && '--new' || '' }}
+      # Contact URL in the User-Agent (CLAUDE.md hard rule).
+      APPSTORE_CONTACT_URL: ${{ github.server_url }}/${{ github.repository }}
+      # Scheduled runs start a fresh run if a manual test already finished today, but
+      # resume an interrupted run (e.g. a re-run of a failed job). Manual runs resume.
+      SCAN_FLAGS: ${{ github.event_name == 'schedule' && '--restart-finished' || '' }}
     steps:
       - uses: actions/checkout@v7
 
@@ -67,6 +71,10 @@ jobs:
           code=${PIPESTATUS[0]}
           echo "exit=$code" >> "$GITHUB_OUTPUT"
           echo "Scan exited with $code"
+
+      - name: Check the rate limit held
+        if: always() && hashFiles('logs/run.log') != ''
+        run: npx tsx src/cli.ts check-log logs/run.log
 
       - name: Prune database
         if: always() && hashFiles('data/appstore.db') != ''
@@ -110,8 +118,13 @@ jobs:
           msg=$(node -e 'const s = require("./state/state.json"); const n = s.newApps; console.log(`report ${s.reportDate}: ${n} new app${n === 1 ? "" : "s"}`)' 2>/dev/null) \
             || msg="report $(date -u +%F)"
           git commit -m "$msg"
-          git pull --rebase
-          git push
+          for attempt in 1 2 3; do
+            if git pull --rebase && git push; then exit 0; fi
+            echo "Push attempt $attempt failed; retrying in $((attempt * 10)) s."
+            sleep $((attempt * 10))
+          done
+          echo "::error::Could not push reports after 3 attempts."
+          exit 1
 
       - name: Upload logs
         if: always()

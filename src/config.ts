@@ -15,6 +15,18 @@ export interface Config {
   /** Time zone for calendar-day comparisons. Apple stamps date-only releases at Pacific midnight. */
   windowTimeZone: string;
   reportsDir: string;
+  /** Reports show times in UTC and in this zone. */
+  displayTimeZone: string;
+  /** Long-lived app IDs looked up at the start of every run to detect silent blocking. */
+  canaryIds: number[];
+  /** Fewer canary apps than this returned → the run aborts ("canary failed"). */
+  canaryMinFound: number;
+  /** Consecutive empty batches inside previously dense ranges before the run aborts. */
+  denseEmptyBatchesToAbort: number;
+  /** A 100k-ID bucket counts as dense at this many hits (any kind) per 1,000 IDs. */
+  denseMinHitsPer1000: number;
+  /** Share of results failing schema validation that aborts the run. */
+  maxInvalidShare: number;
   /** Small committed file (frontier + last run) so a lost DB cache only costs re-discovery. */
   statePath: string;
   watchlist: Watchlist;
@@ -53,8 +65,12 @@ const NUMERIC_KEYS = [
   "maxRetries",
   "maxConsecutiveFailures",
   "requestTimeoutMs",
+  "canaryMinFound",
+  "denseEmptyBatchesToAbort",
+  "denseMinHitsPer1000",
+  "maxInvalidShare",
 ] as const;
-const STRING_KEYS = ["userAgent", "contactUrl", "dbPath", "windowTimeZone", "reportsDir", "statePath"] as const;
+const STRING_KEYS = ["userAgent", "contactUrl", "dbPath", "windowTimeZone", "displayTimeZone", "reportsDir", "statePath"] as const;
 const list = (s: string) => s.split(",").map((x) => x.trim()).filter(Boolean);
 
 /** rateLimitPerMin → APPSTORE_RATE_LIMIT_PER_MIN */
@@ -89,11 +105,20 @@ export function applyEnv(base: Config, env: NodeJS.ProcessEnv): Config {
   if (!WINDOW_MODES.includes(out.windowMode)) {
     throw new Error(`windowMode must be one of ${WINDOW_MODES.join(", ")}, got ${out.windowMode}`);
   }
-  try {
-    new Intl.DateTimeFormat("en", { timeZone: out.windowTimeZone });
-  } catch {
-    throw new Error(`windowTimeZone is not a valid IANA time zone: ${out.windowTimeZone}`);
+  for (const key of ["windowTimeZone", "displayTimeZone"] as const) {
+    try {
+      new Intl.DateTimeFormat("en", { timeZone: out[key] });
+    } catch {
+      throw new Error(`${key} is not a valid IANA time zone: ${out[key]}`);
+    }
   }
+  if (!Array.isArray(out.canaryIds) || out.canaryIds.some((id) => !Number.isInteger(id) || id <= 0)) {
+    throw new Error("canaryIds must be a list of positive integer app IDs");
+  }
+  if (out.canaryMinFound > out.canaryIds.length) {
+    throw new Error(`canaryMinFound (${out.canaryMinFound}) is larger than the number of canaryIds (${out.canaryIds.length})`);
+  }
+  if (!(out.maxInvalidShare >= 0 && out.maxInvalidShare <= 1)) throw new Error("maxInvalidShare must be between 0 and 1");
 
   if (!(out.batchSize > 0 && out.batchSize <= 200)) {
     throw new Error(`batchSize must be in (0, 200], got ${out.batchSize}`);

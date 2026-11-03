@@ -4,20 +4,29 @@
   "contactUrl": "",
   "storefronts": ["us"],
   "batchSize": 200,
-  "lookbackIds": 820000,
+  "lookbackIds": 740000,
   "emptyBatchesToStop": 50,
-  "maxCallsPerRun": 6100,
-  "maxMinutesPerRun": 340,
+  "maxCallsPerRun": 5850,
+  "maxMinutesPerRun": 325,
   "idsPerDayEstimate": 391000,
   "dbPath": "data/appstore.db",
   "reportsDir": "reports",
   "statePath": "state/state.json",
   "windowMode": "mixed",
   "windowTimeZone": "America/Los_Angeles",
+  "displayTimeZone": "Europe/Warsaw",
   "watchlist": {
     "keywords": ["wishlist", "gift"],
     "genres": []
   },
+  "canaryIds": [
+    297606951, 310633997, 309735670, 323229106, 324684580, 333903271, 338137227, 325683306, 326347260, 342792281,
+    298206806, 301387274, 314192799, 317809458, 330247123, 338088432, 343555245, 334235181, 326459697, 294934058
+  ],
+  "canaryMinFound": 18,
+  "denseEmptyBatchesToAbort": 300,
+  "denseMinHitsPer1000": 20,
+  "maxInvalidShare": 0.05,
   "maxRetries": 5,
   "maxConsecutiveFailures": 10,
   "requestTimeoutMs": 30000

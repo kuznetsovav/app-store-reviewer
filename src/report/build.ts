@@ -1,6 +1,6 @@
 import type { Config } from "../config.js";
 import type { AppDbRow, FailedRange } from "../db/repo.js";
-import { describeWindow } from "../scan/dates.js";
+import { formatTimes } from "../scan/dates.js";
 import type { ReportData } from "./query.js";
 import { matchWatchlist } from "./watchlist.js";
 
@@ -40,7 +40,20 @@ export interface ReportOutput {
 }
 
 const fmt = (n: number) => n.toLocaleString("en-US");
-const utc = (iso: string) => iso.slice(0, 16).replace("T", " ") + " UTC";
+const DAY_MS = 86_400_000;
+
+/** Median of the last 7 earlier reports; null when fewer than 3 exist. */
+export function anomalyLine(count: number, history: { count: number }[]): string | null {
+  const last = history.slice(0, 7).map((h) => h.count).sort((a, b) => a - b);
+  if (last.length < 3) return null;
+  const mid = Math.floor(last.length / 2);
+  const median = last.length % 2 ? last[mid]! : (last[mid - 1]! + last[mid]!) / 2;
+  if (median <= 0) return null;
+  const pct = Math.round((count / median) * 100);
+  if (count < 0.5 * median) return `**Anomaly:** ${count} new apps is ${pct}% of the median of the last ${last.length} reports (${median}). Check the coverage below before trusting this list.`;
+  if (count > 2 * median) return `**Anomaly:** ${count} new apps is ${pct}% of the median of the last ${last.length} reports (${median}). Check for duplicates or a change in what Apple returns.`;
+  return null;
+}
 const cmp = (a: string, b: string) => (a < b ? -1 : a > b ? 1 : 0);
 
 /** release_date newest first, then name. */
@@ -103,12 +116,12 @@ export function coverageLines(d: ReportData, cfg: Config): string[] {
   const r = d.run;
   if (!r) {
     lines.push(`No scan ran on ${d.date}. The list below comes from apps stored by earlier runs.`);
-    if (d.frontier) lines.push(`Latest frontier: ${fmt(d.frontier.max_hit_id)} (observed ${utc(d.frontier.observed_at)}).`);
+    if (d.frontier) lines.push(`Latest frontier: ${fmt(d.frontier.max_hit_id)} (observed ${formatTimes(Date.parse(d.frontier.observed_at), cfg.displayTimeZone)}).`);
     return lines;
   }
 
   for (const w of JSON.parse(r.warnings ?? "[]") as string[]) lines.push(`**Warning:** ${w}`);
-  const finished = r.finished_at ? `finished ${utc(r.finished_at)}` : "still running";
+  const finished = r.finished_at ? `finished ${formatTimes(Date.parse(r.finished_at), cfg.displayTimeZone)}` : "still running";
   lines.push(`Run #${r.id}: **${r.status}**${r.error ? ` (${r.error})` : ""}, ${fmt(r.calls)} calls, ${finished}.`);
 
   const extendDone = r.phase === "rescan";
@@ -164,7 +177,15 @@ export function toMarkdown(d: ReportData, apps: AppDbRow[], cfg: Config): string
   const n = apps.length;
   const out: string[] = [];
   out.push(`# ${n} new app${n === 1 ? "" : "s"} — ${d.date}`, "");
-  out.push(`Window: ${describeWindow(d.windowEnd, cfg.windowMode, cfg.windowTimeZone)}. Storefronts: ${cfg.storefronts.join(", ")}.`, "");
+  const anomaly = anomalyLine(n, d.history);
+  if (anomaly) out.push(anomaly, "");
+  const t = (ms: number) => formatTimes(ms, cfg.displayTimeZone);
+  out.push(
+    `Window: apps first found between ${t(d.windowStart)} and ${t(d.windowEnd)} and released since ${t(d.windowStart - DAY_MS)}, ` +
+      `plus apps found earlier whose release date arrived in that span. Date-only release dates count by calendar day in ${cfg.windowTimeZone}` +
+      `${cfg.windowMode === "mixed" ? "" : ` (window mode: ${cfg.windowMode})`}. Storefronts: ${cfg.storefronts.join(", ")}.`,
+    "",
+  );
 
   out.push("## Coverage", "", ...coverageLines(d, cfg).map((l) => `- ${l}`), "");
 

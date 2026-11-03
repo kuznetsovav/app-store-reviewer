@@ -28,6 +28,11 @@ async function main(): Promise<void> {
       await runCommand(args);
       return;
     }
+    case "check-log": {
+      const { checkLogCommand } = await import("./report/commands.js");
+      checkLogCommand(args);
+      return;
+    }
     case "prune": {
       const { pruneCommand } = await import("./report/commands.js");
       pruneCommand();
@@ -48,6 +53,7 @@ async function main(): Promise<void> {
           "  report [--date YYYY-MM-DD]                          write reports/ from the database (no API calls)",
           "  run [scan options]                                  scan, then report, then write state/state.json; exit 1 if aborted",
           "  prune                                               drop raw JSON of old apps and compact the DB",
+          "  check-log FILE [--rate N]                           fail if any 60 s window in a run log exceeds the rate limit",
           "  notify [--date YYYY-MM-DD]                          POST headline + watchlist to NOTIFY_WEBHOOK_URL (no-op if unset)",
         ].join("\n"),
       );

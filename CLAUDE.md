@@ -42,13 +42,32 @@ Output: a CSV and a Markdown report per day, committed to the repo.
   batches (empty = no result of any kind), records the new frontier, then rescans
   down to `previous frontier − lookbackIds`, skipping apps already stored.
 - Checkpoint after every batch (one SQLite transaction). Today's `running`/`aborted`
-  run resumes; a `done`/`budget` run is not restarted without `--new`.
+  run resumes; a `done`/`budget` run is not restarted without `--new` (abandons an
+  interrupted run too) or `--restart-finished` (new run only if today's finished).
 - `maxCallsPerRun` counts HTTP requests incl. retries, summed across resumes of the
   day's run; `maxMinutesPerRun` is per invocation. `maxConsecutiveFailures` (10)
-  failed batches → `aborted`. Failed batches go to `failed_ranges` and get one retry
-  at the end of the rescan.
-- `inWindow()` in `src/scan/dates.ts` is the single definition of "released in the
-  window"; `isRecentRelease()` is its mixed-mode shortcut used by the scanner.
+  failed batches → `aborted`. Failed batches go to `failed_ranges`; when the run ends
+  as done or budget they are retried once, split in halves (≤3 levels, no 5xx retries)
+  because Apple 500s on some batches every time. The main loop reserves 8 calls per
+  failed range (max 40) for this.
+- A 200 whose body is not Lookup JSON is a failed batch, never an empty one.
+- A hit is any result with a trackId, collectionId or artistId.
+- `isRecentRelease()` (scanner's `new_releases` counter) = `inWindow(…, "mixed")`;
+  reports use `inRange()` with the discovery rule below. All in `src/scan/dates.ts`.
+
+## Quiet-failure guards (all abort with status `aborted` and a reason)
+- Canary: every invocation first looks up `canaryIds` (20 long-lived US apps); fewer
+  than `canaryMinFound` (18) apps back → "canary failed". Refresh the list if apps
+  get delisted.
+- Dense ranges: per-100k-ID hit counts live in the `density` table. 300
+  (`denseEmptyBatchesToAbort`) consecutive empty batches inside buckets that earlier
+  runs found dense (≥ 20 hits per 1,000 IDs) → "silent blocking suspected".
+- Response drift: every result is validated with zod (`src/lookup/schema.ts`).
+  Unknown/missing app fields are counted, logged and added as a run warning; over
+  5% invalid results (after ≥ 200) → "response drift".
+- Rate limit proof: the client logs one JSON line per request with its start time;
+  `check-log FILE` fails if any 60 s window exceeds `rateLimitPerMin` (CI runs it).
+  The limiter interval is rounded up to whole ms (3,334 ms at 18/min).
 - First run with an empty DB seeds the frontier from `data/spike/frontier.json`.
 - A run that stops while still extending saves its highest hit as a frontier row,
   so the next day continues upward instead of re-extending the same IDs.
@@ -57,13 +76,23 @@ Output: a CSV and a Markdown report per day, committed to the repo.
 - `report [--date YYYY-MM-DD]` builds `reports/YYYY-MM-DD.{csv,json,md}` + `latest.md`
   from the DB only (no API). `run [scan flags]` = scan then report; exit 0 on
   done/budget, 1 on aborted (the report is still written).
-- Window ends at the run's `finished_at`. `windowMode`: `mixed` (default: precise
-  dates within 24h, date-only dates by calendar day in `windowTimeZone`),
-  `rolling24h`, or `days`. `windowTimeZone` defaults to America/Los_Angeles because
-  Apple stamps date-only releases at Pacific midnight; `UTC` is allowed.
+- Discovery rule (`selectForReport` in `src/report/query.ts`), so consecutive
+  reports never lose or repeat an app: start = previous run's finish, end = this
+  run's finish. Listed: apps first stored in (start, end] released since start − 24h,
+  plus apps stored earlier (pre-orders) whose release date arrived in (start, end].
+  A fixed "24 h before finish" window lost apps that went live after their ID was
+  scanned. Release dates compare by `windowMode`: `mixed` (default: precise as
+  instants, date-only by calendar day in `windowTimeZone`), `rolling24h`, or `days`.
+  `windowTimeZone` is America/Los_Angeles (Apple stamps date-only at Pacific midnight).
 - The report queries the whole `apps` table, not just this run's hits.
-- Coverage names skipped ID ranges on budget/aborted runs and states the ~3-day
-  scope. `latest.md` is only replaced by the newest date (backfills keep it).
+- Times are stored as UTC ISO strings; reports show UTC plus `displayTimeZone`
+  (Europe/Warsaw).
+- Anomaly line at the top when the count is < 50% or > 200% of the median of the
+  last 7 reports (needs ≥ 3; read from `reports/*.json`).
+- Coverage names skipped ID ranges on budget/aborted runs, run warnings, and the
+  ~3-day scope. `latest.md` is only replaced by the newest date (backfills keep it).
+- Idempotent: `state.json` `updatedAt` is the run's finish time, so a repeated `run`
+  on a finished day rewrites identical files and CI makes no second commit.
 - CSV: RFC 4180 quoting, `storefronts` as `us;pl`, and a leading `'` on text that
   starts with `= + - @` (formula guard). JSON keeps raw values.
 - Reports built from scratch/test DBs are never committed to `reports/`.
@@ -71,7 +100,9 @@ Output: a CSV and a Markdown report per day, committed to the repo.
 ## Daily job
 - `.github/workflows/daily.yml`: 05:17 UTC + manual dispatch (`maxCallsPerRun`,
   `lookbackIds` inputs, passed via env; empty env values mean "unset"). Scheduled
-  runs pass `--new`; manual runs resume today's run.
+  runs pass `--restart-finished` (a re-run of a failed job resumes); manual runs
+  resume today's run. `APPSTORE_CONTACT_URL` = the repository URL. `check-log` runs
+  after the scan; `git push` is retried 3 times.
 - DB lives in the Actions cache (`db-<run_id>-<attempt>`, restore prefix `db-`) with a
   7-day artifact backup. `state/state.json` (frontier + last run) is committed every
   run; an empty DB seeds from it (`--seed` → state.json → spike frontier) and the
@@ -83,10 +114,12 @@ Output: a CSV and a Markdown report per day, committed to the repo.
 ## Decisions
 - 2026-11-03 — Coverage: keep the 6h daily run and accept partial coverage (findings
   option 4). No tiered rescans, no runs longer than 6h.
-  - Per run: maxMinutesPerRun 340 × 18 calls/min ≈ 6,100 calls ≈ 1.22M IDs in total.
-    That budget covers both the upward extension (~391k new IDs/day) and the
-    rescan below the previous frontier, so `lookbackIds` = 820,000. Together they
-    give a window of ~3.1 days of IDs below the new frontier.
+  - Per run (revised in the Prompt 6 hardening pass): maxMinutesPerRun 325 × 18
+    calls/min = 5,850 calls. A healthy day needs ~2,005 extend calls (~391k new IDs
+    + 50 empty batches) + 3,701 rescan calls (`lookbackIds` 740,000) + 1 canary
+    ≈ 5,707, leaving ~140 calls for retries so a normal run ends `done`. Window ≈
+    1.13M IDs ≈ 2.9 days below the new frontier. 325 min + ~6 min retry tail +
+    setup/post-steps stays under the 350-minute job timeout.
   - Reports must say so, in words like "Apps first released in the last 24h whose
     App Store record was created within the last ~3 days. Apps that sat
     unreleased for longer are not covered (most apps: median lag ~13 days)."
@@ -113,3 +146,5 @@ Output: a CSV and a Markdown report per day, committed to the repo.
 - Storefront: `pl` added no unique hits over `us` (music-heavy sample). Scan `us`.
 - Apple's RSS CDN 403s any User-Agent containing `example.com`; keep `contactUrl`
   empty or real.
+- Some 200-ID batches get HTTP 500 on every attempt, hours apart (seen 2026-11-03:
+  6,830,318,424–623, narrowed by splitting to 6,830,318,424–448). Likely one bad ID.

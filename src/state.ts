@@ -37,7 +37,9 @@ export function buildState(db: Db, run: RunRow | null, reportDate: string, newAp
       : null,
     reportDate,
     newApps,
-    updatedAt: new Date(now).toISOString(),
+    // The run's finish time, not "now": a repeated `run` on a finished day must write an
+    // identical file, so the CI commit step sees no change and makes no second commit.
+    updatedAt: run?.finished_at ?? new Date(now).toISOString(),
   };
 }
 

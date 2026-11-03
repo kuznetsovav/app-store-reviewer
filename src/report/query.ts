@@ -1,7 +1,15 @@
 import type { Config } from "../config.js";
 import type { Db } from "../db/index.js";
-import { appsReleasedSince, lastFrontier, latestRunForDate, type AppDbRow, type FrontierRow, type RunRow } from "../db/repo.js";
-import { inWindow } from "../scan/dates.js";
+import {
+  appsReleasedSince,
+  lastFrontier,
+  latestRunForDate,
+  previousFinishedRun,
+  type AppDbRow,
+  type FrontierRow,
+  type RunRow,
+} from "../db/repo.js";
+import { inRange, type WindowMode } from "../scan/dates.js";
 
 const DAY_MS = 86_400_000;
 
@@ -9,19 +17,42 @@ export interface ReportData {
   /** YYYY-MM-DD (UTC), same convention as runs.run_date. */
   date: string;
   run: RunRow | null;
-  /** The window ends at the run's finish time (or now / end of day when there is none). */
+  /** The previous finished run's end (or windowEnd − 24h when there is none). */
+  windowStart: number;
+  /** This run's finish time (or now / end of day when there is none). */
   windowEnd: number;
-  /** Apps whose release_date is in the window, from the whole apps table. */
+  previousRun: RunRow | null;
+  /** Apps selected for this report (see selectForReport). */
   apps: AppDbRow[];
   frontier: FrontierRow | undefined;
+  /** New-app counts of earlier reports, newest first (for the anomaly line). */
+  history: { date: string; count: number }[];
 }
 
-export function loadReportData(db: Db, date: string, cfg: Config, now = Date.now()): ReportData {
+/**
+ * Consecutive reports must neither lose nor repeat apps. An ID is looked up once per run,
+ * somewhere in a ~5-hour scan, so a fixed "24 h before finish" window loses apps that went
+ * live after their ID was scanned. Instead, with start = previous run's finish and end =
+ * this run's finish, an app is listed when either:
+ *  - fresh: first stored in (start, end] and released on or after start − 24 h, or
+ *  - matured: stored earlier (e.g. a pre-order) and its release date arrived in (start, end].
+ * Each app therefore lands in exactly one report.
+ */
+export function selectForReport(a: Pick<AppDbRow, "first_seen_at" | "release_date">, start: number, end: number, mode: WindowMode, tz: string): boolean {
+  const seen = Date.parse(a.first_seen_at);
+  if (seen > start && seen <= end) return inRange(a.release_date, start - DAY_MS, end, mode, tz, true);
+  if (seen <= start) return inRange(a.release_date, start, end, mode, tz, false);
+  return false; // first seen after this report's end
+}
+
+export function loadReportData(db: Db, date: string, cfg: Config, now = Date.now(), history: { date: string; count: number }[] = []): ReportData {
   const run = latestRunForDate(db, date) ?? null;
   const endOfDay = Date.parse(`${date}T00:00:00Z`) + DAY_MS;
   const windowEnd = run ? (run.finished_at ? Date.parse(run.finished_at) : now) : Math.min(endOfDay, now);
-  // Pre-filter in SQL (index on release_date), then apply the exact rule. 3 days covers every mode.
-  const lower = new Date(windowEnd - 3 * DAY_MS).toISOString();
-  const apps = appsReleasedSince(db, lower).filter((a) => inWindow(a.release_date, windowEnd, cfg.windowMode, cfg.windowTimeZone));
-  return { date, run, windowEnd, apps, frontier: lastFrontier(db) };
+  const previousRun = previousFinishedRun(db, run?.id ?? null, new Date(windowEnd).toISOString()) ?? null;
+  const windowStart = Math.min(windowEnd, previousRun?.finished_at ? Date.parse(previousRun.finished_at) : windowEnd - DAY_MS);
+  // Pre-filter in SQL (index on release_date); 2 extra days cover date-only values in any zone.
+  const lower = new Date(windowStart - 3 * DAY_MS).toISOString();
+  const apps = appsReleasedSince(db, lower).filter((a) => selectForReport(a, windowStart, windowEnd, cfg.windowMode, cfg.windowTimeZone));
+  return { date, run, windowStart, windowEnd, previousRun, apps, frontier: lastFrontier(db), history: history.filter((h) => h.date < date) };
 }
