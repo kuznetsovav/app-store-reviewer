@@ -4,7 +4,7 @@
   "contactUrl": "",
   "storefronts": ["us"],
   "batchSize": 200,
-  "lookbackIds": 1300000,
+  "lookbackIds": 820000,
   "maxRetries": 5,
   "maxConsecutiveFailures": 3,
   "requestTimeoutMs": 30000

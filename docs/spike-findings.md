@@ -59,13 +59,15 @@ A full rescan of 14 days or more does not fit in 24 hours at 18 calls/min, let a
 
 Also, `entity=software` on Lookup was not tested. It might trim response size but would not reduce the number of calls.
 
+**Decision (2026-11-03): option 4.** Keep the 6 h run and label the report's coverage. See `CLAUDE.md` → Decisions.
+
 ## Recommended config
 
 | Key | Value | Why |
 | --- | --- | --- |
 | `batchSize` | 200 | Largest size that returned every valid ID; anything above truncates silently |
 | `storefronts` | `["us"]` | `pl` added nothing unique (weak evidence, music-heavy sample) |
-| `lookbackIds` | 1,300,000 | What a 6 h run covers. Raise it if the run window grows (option 3). |
+| `lookbackIds` | 820,000 | Below the *previous* frontier. With ~391k new IDs/day from the upward extension, that's ~1.22M IDs ≈ 6,100 calls ≈ 340 min. |
 | `rateLimitPerMin` | 18 | No throttling seen; there's no reason to go closer to Apple's ~20 |
 
 ## To confirm

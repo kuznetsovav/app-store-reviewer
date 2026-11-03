@@ -35,6 +35,21 @@ Output: a CSV and a Markdown report per day, committed to the repo.
 - Log one JSON line per batch (range, ids, hits, status, ms).
 - When a measured number changes a default, update `config.json` and this file.
 
+## Decisions
+- 2026-11-03 — Coverage: keep the 6h daily run and accept partial coverage (findings
+  option 4). No tiered rescans, no runs longer than 6h.
+  - Per run: maxMinutesPerRun 340 × 18 calls/min ≈ 6,100 calls ≈ 1.22M IDs in total.
+    That budget covers both the upward extension (~391k new IDs/day) and the
+    rescan below the previous frontier, so `lookbackIds` = 820,000. Together they
+    give a window of ~3.1 days of IDs below the new frontier.
+  - Reports must say so, in words like "Apps first released in the last 24h whose
+    App Store record was created within the last ~3 days. Apps that sat
+    unreleased for longer are not covered (most apps: median lag ~13 days)."
+  - Store only results with `kind === "software"`; everything else is music,
+    books, podcasts.
+  - "Last 24h" must treat day-level releaseDates (`T07:00:00Z` / `T08:00:00Z`) as
+    a US Pacific calendar day, not an instant.
+
 ## Measured facts (spike 2026-11-03, details in docs/spike-findings.md)
 - Max IDs per call: 200. Above 200, Lookup silently drops results (300 → 210 back,
   still 200 OK); 500 → 502, 1000 → 400. Never raise `batchSize` above 200.

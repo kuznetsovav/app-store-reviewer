@@ -8,7 +8,7 @@ export interface Config {
   storefronts: string[];
   /** IDs per Lookup call. Measured max is 200; above that Apple silently drops results. */
   batchSize: number;
-  /** How far below the frontier each run rescans (~3.3 days of IDs at 6h/18 per min). */
+  /** How far below the previous frontier each run rescans; sized with the upward extension to fit 340 min (see CLAUDE.md Decisions). */
   lookbackIds: number;
   maxRetries: number;
   maxConsecutiveFailures: number;
