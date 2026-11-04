@@ -1,0 +1,21 @@
+{
+  "frontier": {
+    "max_hit_id": 6830593734,
+    "observed_at": "2026-11-04T10:12:39.409Z"
+  },
+  "lastRun": {
+    "id": 1,
+    "run_date": "2026-11-04",
+    "status": "budget",
+    "phase": "rescan",
+    "calls": 3866,
+    "hits": 152,
+    "new_releases": 151,
+    "next_id": 6829933023,
+    "finished_at": "2026-11-04T13:02:51.355Z",
+    "error": null
+  },
+  "reportDate": "2026-11-04",
+  "newApps": 152,
+  "updatedAt": "2026-11-04T13:02:51.355Z"
+}
