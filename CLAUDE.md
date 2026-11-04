@@ -46,10 +46,11 @@ Output: a CSV and a Markdown report per day, committed to the repo.
   interrupted run too) or `--restart-finished` (new run only if today's finished).
 - `maxCallsPerRun` counts HTTP requests incl. retries, summed across resumes of the
   day's run; `maxMinutesPerRun` is per invocation. `maxConsecutiveFailures` (10)
-  failed batches → `aborted`. Failed batches go to `failed_ranges`; when the run ends
-  as done or budget they are retried once, split in halves (≤3 levels, no 5xx retries)
-  because Apple 500s on some batches every time. The main loop reserves 8 calls per
-  failed range (max 40) for this.
+  failed batches → `aborted`. A 5xx gets only `maxServerErrorRetries` (1) retries;
+  403/429/network keep `maxRetries` (5). Failed batches go to `failed_ranges`; when the
+  run ends as done or budget they are retried once, split in halves (≤3 levels, no 5xx
+  retries) because Apple 500s on some batches every time. The main loop reserves 8 calls
+  per failed range (max 40) and the time to make them (runs usually end on time).
 - A 200 whose body is not Lookup JSON is a failed batch, never an empty one.
 - A hit is any result with a trackId, collectionId or artistId.
 - `isRecentRelease()` (scanner's `new_releases` counter) = `inWindow(…, "mixed")`;
@@ -148,3 +149,6 @@ Output: a CSV and a Markdown report per day, committed to the repo.
   empty or real.
 - Some 200-ID batches get HTTP 500 on every attempt, hours apart (seen 2026-11-03:
   6,830,318,424–623, narrowed by splitting to 6,830,318,424–448). Likely one bad ID.
+  First full run (2026-11-04): ~100 of ~3,700 batches (~3%), all still 500 hours later
+  while neighbours returned 200. With 5 retries and backoff they cost ~80 s each, ~2.2 h
+  of the 5.4 h run (3,866 calls instead of 5,850), hence `maxServerErrorRetries` 1.

@@ -47,7 +47,10 @@ export interface Config {
   /** Used only by `scan --dry-run` to estimate how many new IDs appeared since the last frontier. */
   idsPerDayEstimate: number;
   dbPath: string;
+  /** Retries per request on 403/429, network errors and non-JSON bodies. */
   maxRetries: number;
+  /** Retries on 5xx (capped by maxRetries). Low because some batches 500 every time. */
+  maxServerErrorRetries: number;
   maxConsecutiveFailures: number;
   requestTimeoutMs: number;
 }
@@ -63,6 +66,7 @@ const NUMERIC_KEYS = [
   "maxMinutesPerRun",
   "idsPerDayEstimate",
   "maxRetries",
+  "maxServerErrorRetries",
   "maxConsecutiveFailures",
   "requestTimeoutMs",
   "canaryMinFound",

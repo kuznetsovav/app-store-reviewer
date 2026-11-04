@@ -51,7 +51,9 @@ answers 200 with empty results. Each of these aborts the run (status `aborted`, 
 - **Rate limit proof:** every request is logged with its start time, and the workflow runs
   `check-log` to fail the job if any 60-second window exceeded the limit.
 - **Garbage 200s:** a 200 whose body isn't Lookup JSON is a failed batch, never an empty
-  one. Batches Apple 500s on every time are split in halves on retry.
+  one. About 3% of 200-ID batches get a 500 from Apple every time, so a 5xx is retried
+  only once (`maxServerErrorRetries`) and the run moves on. At the end those batches are
+  split in halves and tried again, using calls and time the main loop kept back.
 - **Anomaly line:** a warning at the top of the report when today's count is under 50% or
   over 200% of the median of the last 7 reports.
 
@@ -107,7 +109,8 @@ variable; an empty value means "use config.json".
 | `reportsDir` | `reports` | `APPSTORE_REPORTS_DIR` | Where reports are written |
 | `statePath` | `state/state.json` | `APPSTORE_STATE_PATH` | Committed frontier and last-run summary |
 | `idsPerDayEstimate` | 391000 | `APPSTORE_IDS_PER_DAY_ESTIMATE` | Used by `--dry-run` and the coverage note |
-| `maxRetries` | 5 | `APPSTORE_MAX_RETRIES` | Retries per request on 403/429/5xx |
+| `maxRetries` | 5 | `APPSTORE_MAX_RETRIES` | Retries per request on 403/429, network errors, non-JSON 200s |
+| `maxServerErrorRetries` | 1 | `APPSTORE_MAX_SERVER_ERROR_RETRIES` | Retries per request on 5xx (capped by `maxRetries`) |
 | `maxConsecutiveFailures` | 10 | `APPSTORE_MAX_CONSECUTIVE_FAILURES` | Failed batches in a row before the run aborts |
 | `requestTimeoutMs` | 30000 | `APPSTORE_REQUEST_TIMEOUT_MS` | Per-request timeout |
 

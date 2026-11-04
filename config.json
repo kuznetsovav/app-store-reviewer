@@ -28,6 +28,7 @@
   "denseMinHitsPer1000": 20,
   "maxInvalidShare": 0.05,
   "maxRetries": 5,
+  "maxServerErrorRetries": 1,
   "maxConsecutiveFailures": 10,
   "requestTimeoutMs": 30000
 }

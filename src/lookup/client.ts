@@ -150,8 +150,11 @@ export class LookupClient {
       });
 
       if (!badBody && !isRetryable(status)) return { status, body, ms, attempts: attempt + 1 };
-      if (!retryServerErrors && status >= 500) throw new RequestFailedError(status, attempt + 1);
-      if (attempt >= this.cfg.maxRetries) throw new RequestFailedError(badBody ? 200 : status, attempt + 1);
+      // Apple 500s on ~3% of 200-ID batches every time (measured 2026-11-04), so 5xx gets
+      // few retries: the run moves on and retryFailed() splits the batch at the end.
+      const serverErrorRetries = retryServerErrors ? Math.min(this.cfg.maxRetries, this.cfg.maxServerErrorRetries) : 0;
+      const limit = status >= 500 ? serverErrorRetries : this.cfg.maxRetries;
+      if (attempt >= limit) throw new RequestFailedError(badBody ? 200 : status, attempt + 1);
       await this.sleep(backoffMs(attempt));
     }
   }

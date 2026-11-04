@@ -128,6 +128,19 @@ describe("LookupClient", () => {
     await expect(client.lookup([1], "us")).rejects.toBeInstanceOf(RequestFailedError);
   });
 
+  it("retries 5xx only maxServerErrorRetries times (some batches 500 forever)", async () => {
+    const { client, calls } = make([500, 500, 200]);
+    await expect(client.lookup([1], "us")).rejects.toMatchObject({ status: 500, attempts: 2 });
+    expect(calls).toHaveLength(2);
+  });
+
+  it("keeps the full maxRetries for 429", async () => {
+    const { client } = make([429, 429, 200]);
+    const r = await client.lookup([1], "us");
+    expect(r.status).toBe(200);
+    expect(r.attempts).toBe(3);
+  });
+
   it("enforces the call budget, retries included", async () => {
     const { client } = make([429, 200], 1);
     await expect(client.lookup([1], "us")).rejects.toBeInstanceOf(BudgetExceededError);

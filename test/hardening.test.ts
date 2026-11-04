@@ -316,9 +316,20 @@ describe("reviewer findings", () => {
     expect(left[0]!.first).toBeLessThanOrEqual(1007);
     expect(left[0]!.last).toBeGreaterThanOrEqual(1007);
     expect(left[0]!.last - left[0]!.first + 1).toBeLessThanOrEqual(2);
-    // Splitting never retries the 500s: 3 attempts for the first try, then 1 per piece.
+    // 5xx gets maxServerErrorRetries (1): 2 attempts for the first try, then 1 per piece.
     const poisonCalls = s.calls.filter((c) => c.status === 500).length;
-    expect(poisonCalls).toBe(3 + 4);
+    expect(poisonCalls).toBe(2 + 4);
+  });
+
+  it("still retries failed batches when the run ends on time, not on calls (live run 2026-11-04)", async () => {
+    const s = setup({ world: world({ fail: (ids) => (ids.includes(1007) ? 500 : false) }), cfg: { maxRetries: 2, maxMinutesPerRun: 1 } });
+    const res = await runScan(s.base());
+    expect(res.run.status).toBe("budget");
+    // 1003 shares the poison batch; only the retry's split brings it back.
+    expect(s.db.prepare("SELECT track_id FROM apps").pluck().all()).toContain(1003);
+    const left = JSON.parse(res.run.failed_ranges) as { first: number; last: number }[];
+    expect(left).toHaveLength(1);
+    expect(left[0]!.last - left[0]!.first + 1).toBeLessThanOrEqual(2);
   });
 
   it("counts results without a trackId (albums, artists) as hits (finding 7)", async () => {

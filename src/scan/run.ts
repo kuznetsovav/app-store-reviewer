@@ -154,10 +154,14 @@ export async function runScan(o: ScanOptions): Promise<ScanResult> {
   const dense = cfg.denseEmptyBatchesToAbort > 0 ? denseBuckets(db, cfg.denseMinHitsPer1000) : new Set<number>();
   let denseEmptyStreak = 0;
 
-  const outOfTime = () => now() - t0 >= cfg.maxMinutesPerRun * 60_000;
-  /** Main loop keeps calls back so failed batches still get their retry (~8 calls to split one). */
+  const outOfTime = (keepMs = 0) => now() - t0 + keepMs >= cfg.maxMinutesPerRun * 60_000;
+  /**
+   * Main loop keeps calls (and the time to make them) back so failed batches still get their
+   * retry (~8 calls to split one). Runs usually end on time, so a calls-only reserve was not enough.
+   */
   const reserve = () => Math.min(p.failed.length * 8, 40) * sf;
-  const mainLoopOutOfBudget = () => p.calls + sf + reserve() > maxCalls || outOfTime();
+  const intervalMs = Math.ceil(60_000 / cfg.rateLimitPerMin);
+  const mainLoopOutOfBudget = () => p.calls + sf + reserve() > maxCalls || outOfTime(reserve() * intervalMs);
   const outOfBudget = () => p.calls + sf > maxCalls || outOfTime();
 
   /** Looks up one batch in every storefront. Nothing is written here. */

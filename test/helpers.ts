@@ -29,6 +29,7 @@ export function testConfig(overrides: Partial<Config> = {}): Config {
     windowTimeZone: "America/Los_Angeles",
     watchlist: { keywords: ["wishlist", "gift"], genres: [] },
     maxRetries: 0,
+    maxServerErrorRetries: 1,
     maxConsecutiveFailures: 10,
     requestTimeoutMs: 1_000,
     ...overrides,

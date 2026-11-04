@@ -6,12 +6,12 @@ on:
   workflow_dispatch:
     inputs:
       maxCallsPerRun:
-        description: "Lookup call budget for this run (empty = config.json, 6100)"
+        description: "Lookup call budget for this run (empty = config.json, 5850)"
         required: false
         default: ""
         type: string
       lookbackIds:
-        description: "IDs to rescan below the previous frontier (empty = config.json, 820000)"
+        description: "IDs to rescan below the previous frontier (empty = config.json, 740000)"
         required: false
         default: ""
         type: string
