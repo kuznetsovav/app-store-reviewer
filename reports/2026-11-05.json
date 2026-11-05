@@ -1,0 +1,856 @@
+[
+  {
+    "track_id": 6830488778,
+    "name": "AntennLabb",
+    "seller_name": "Yatin Tuli",
+    "primary_genre": "Developer Tools",
+    "price": 0,
+    "currency": "USD",
+    "release_date": "2026-11-05T13:38:30Z",
+    "storefronts": [
+      "us"
+    ],
+    "track_view_url": "https://apps.apple.com/us/app/antennlabb/id6830488778?uo=4",
+    "bundle_id": "com.AntennLabbApp.AntennLabb"
+  },
+  {
+    "track_id": 6830455103,
+    "name": "Polska Pulse: Discover Poland",
+    "seller_name": "Ashok Jain",
+    "primary_genre": "Utilities",
+    "price": 0,
+    "currency": "USD",
+    "release_date": "2026-11-05T10:23:36Z",
+    "storefronts": [
+      "us"
+    ],
+    "track_view_url": "https://apps.apple.com/us/app/polska-pulse-discover-poland/id6830455103?uo=4",
+    "bundle_id": "com.polskapulse"
+  },
+  {
+    "track_id": 6830421198,
+    "name": "Byeshot: Screenshot Cleaner",
+    "seller_name": "Rikuto Yasuda",
+    "primary_genre": "Productivity",
+    "price": 0,
+    "currency": "USD",
+    "release_date": "2026-11-05T08:00:00Z",
+    "storefronts": [
+      "us"
+    ],
+    "track_view_url": "https://apps.apple.com/us/app/byeshot-screenshot-cleaner/id6830421198?uo=4",
+    "bundle_id": "com.rikutoyasuda.ScreenshotTrash"
+  },
+  {
+    "track_id": 6830196690,
+    "name": "Calibar",
+    "seller_name": "BION.TV d.o.o.",
+    "primary_genre": "Business",
+    "price": 0,
+    "currency": "USD",
+    "release_date": "2026-11-05T08:00:00Z",
+    "storefronts": [
+      "us"
+    ],
+    "track_view_url": "https://apps.apple.com/us/app/calibar/id6830196690?uo=4",
+    "bundle_id": "com.bion.calibar"
+  },
+  {
+    "track_id": 6830143890,
+    "name": "Cardbreath: Exam Flashcards",
+    "seller_name": "JAEBAEK LEE",
+    "primary_genre": "Education",
+    "price": 0,
+    "currency": "USD",
+    "release_date": "2026-11-05T08:00:00Z",
+    "storefronts": [
+      "us"
+    ],
+    "track_view_url": "https://apps.apple.com/us/app/cardbreath-exam-flashcards/id6830143890?uo=4",
+    "bundle_id": "com.jaebaek.examcards"
+  },
+  {
+    "track_id": 6830514846,
+    "name": "DasaPikkksaz",
+    "seller_name": "Selman Turkay",
+    "primary_genre": "Entertainment",
+    "price": 0,
+    "currency": "USD",
+    "release_date": "2026-11-05T08:00:00Z",
+    "storefronts": [
+      "us"
+    ],
+    "track_view_url": "https://apps.apple.com/us/app/dasapikkksaz/id6830514846?uo=4",
+    "bundle_id": "com.ksaz.DasaPikkksaz"
+  },
+  {
+    "track_id": 6830324500,
+    "name": "EasyOS POS",
+    "seller_name": "Elena Rosca",
+    "primary_genre": "Business",
+    "price": 0,
+    "currency": "USD",
+    "release_date": "2026-11-05T08:00:00Z",
+    "storefronts": [
+      "us"
+    ],
+    "track_view_url": "https://apps.apple.com/us/app/easyos-pos/id6830324500?uo=4",
+    "bundle_id": "com.easyos.business"
+  },
+  {
+    "track_id": 6830523266,
+    "name": "Echo Fire",
+    "seller_name": "Keito Shiokawa",
+    "primary_genre": "Games",
+    "price": 0,
+    "currency": "USD",
+    "release_date": "2026-11-05T08:00:00Z",
+    "storefronts": [
+      "us"
+    ],
+    "track_view_url": "https://apps.apple.com/us/app/echo-fire/id6830523266?uo=4",
+    "bundle_id": "com.k8migi.echofire"
+  },
+  {
+    "track_id": 6830452780,
+    "name": "GatiLekha",
+    "seller_name": "Ishaan Khatri",
+    "primary_genre": "Education",
+    "price": 0,
+    "currency": "USD",
+    "release_date": "2026-11-05T08:00:00Z",
+    "storefronts": [
+      "us"
+    ],
+    "track_view_url": "https://apps.apple.com/us/app/gatilekha/id6830452780?uo=4",
+    "bundle_id": "com.GatiLekhaApp.GatiLekha"
+  },
+  {
+    "track_id": 6830114819,
+    "name": "Golf Match Score",
+    "seller_name": "DOGUSHA",
+    "primary_genre": "Sports",
+    "price": 0,
+    "currency": "USD",
+    "release_date": "2026-11-05T08:00:00Z",
+    "storefronts": [
+      "us"
+    ],
+    "track_view_url": "https://apps.apple.com/us/app/golf-match-score/id6830114819?uo=4",
+    "bundle_id": "jp.dogusha.golfscore"
+  },
+  {
+    "track_id": 6830521642,
+    "name": "Grove",
+    "seller_name": "新勇 曾",
+    "primary_genre": "Lifestyle",
+    "price": 0,
+    "currency": "USD",
+    "release_date": "2026-11-05T08:00:00Z",
+    "storefronts": [
+      "us"
+    ],
+    "track_view_url": "https://apps.apple.com/us/app/grove/id6830521642?uo=4",
+    "bundle_id": "com.groves.app"
+  },
+  {
+    "track_id": 6830710283,
+    "name": "Himalaya B",
+    "seller_name": "PC TECH MILLENIUM S A S",
+    "primary_genre": "Utilities",
+    "price": 0,
+    "currency": "USD",
+    "release_date": "2026-11-05T08:00:00Z",
+    "storefronts": [
+      "us"
+    ],
+    "track_view_url": "https://apps.apple.com/us/app/himalaya-b/id6830710283?uo=4",
+    "bundle_id": "com.velnixa"
+  },
+  {
+    "track_id": 6830752526,
+    "name": "JFS-MI",
+    "seller_name": "SETTRA Green-tech s. r. o.",
+    "primary_genre": "Finance",
+    "price": 0,
+    "currency": "USD",
+    "release_date": "2026-11-05T08:00:00Z",
+    "storefronts": [
+      "us"
+    ],
+    "track_view_url": "https://apps.apple.com/us/app/jfs-mi/id6830752526?uo=4",
+    "bundle_id": "com.jfsmi"
+  },
+  {
+    "track_id": 6830523811,
+    "name": "LabelLoop",
+    "seller_name": "春春 余",
+    "primary_genre": "Lifestyle",
+    "price": 0,
+    "currency": "USD",
+    "release_date": "2026-11-05T08:00:00Z",
+    "storefronts": [
+      "us"
+    ],
+    "track_view_url": "https://apps.apple.com/us/app/labelloop/id6830523811?uo=4",
+    "bundle_id": "com.labelloop.app"
+  },
+  {
+    "track_id": 6830542032,
+    "name": "LEFTORA",
+    "seller_name": "Urvashi Gugnil",
+    "primary_genre": "Lifestyle",
+    "price": 0,
+    "currency": "USD",
+    "release_date": "2026-11-05T08:00:00Z",
+    "storefronts": [
+      "us"
+    ],
+    "track_view_url": "https://apps.apple.com/us/app/leftora/id6830542032?uo=4",
+    "bundle_id": "com.LEFTORA"
+  },
+  {
+    "track_id": 6830480199,
+    "name": "LejeKlar",
+    "seller_name": "Ho Hei Leung",
+    "primary_genre": "Business",
+    "price": 0,
+    "currency": "USD",
+    "release_date": "2026-11-05T08:00:00Z",
+    "storefronts": [
+      "us"
+    ],
+    "track_view_url": "https://apps.apple.com/us/app/lejeklar/id6830480199?uo=4",
+    "bundle_id": "com.LejeKlarApp.LejeKlar"
+  },
+  {
+    "track_id": 6830512738,
+    "name": "LogSub: Drama & Sub Tracker",
+    "seller_name": "Toshiya Okado",
+    "primary_genre": "Entertainment",
+    "price": 0,
+    "currency": "USD",
+    "release_date": "2026-11-05T08:00:00Z",
+    "storefronts": [
+      "us"
+    ],
+    "track_view_url": "https://apps.apple.com/us/app/logsub-drama-sub-tracker/id6830512738?uo=4",
+    "bundle_id": "com.shia.dramaLog.ios"
+  },
+  {
+    "track_id": 6830507876,
+    "name": "MeasureTrace",
+    "seller_name": "Vu Quang Trung",
+    "primary_genre": "Productivity",
+    "price": 0,
+    "currency": "USD",
+    "release_date": "2026-11-05T08:00:00Z",
+    "storefronts": [
+      "us"
+    ],
+    "track_view_url": "https://apps.apple.com/us/app/measuretrace/id6830507876?uo=4",
+    "bundle_id": "com.MeasureTrace"
+  },
+  {
+    "track_id": 6830237403,
+    "name": "molkhsaty",
+    "seller_name": "MAHMOUD MOATAMED ALI MOHAMMED",
+    "primary_genre": "Education",
+    "price": 0,
+    "currency": "USD",
+    "release_date": "2026-11-05T08:00:00Z",
+    "storefronts": [
+      "us"
+    ],
+    "track_view_url": "https://apps.apple.com/us/app/molkhsaty/id6830237403?uo=4",
+    "bundle_id": "site.mol5saty.app"
+  },
+  {
+    "track_id": 6830137450,
+    "name": "MONEY CHART - ローソク足家計簿",
+    "seller_name": "Naoki Kimura",
+    "primary_genre": "Finance",
+    "price": 2.99,
+    "currency": "USD",
+    "release_date": "2026-11-05T08:00:00Z",
+    "storefronts": [
+      "us"
+    ],
+    "track_view_url": "https://apps.apple.com/us/app/money-chart-%E3%83%AD%E3%83%BC%E3%82%BD%E3%82%AF%E8%B6%B3%E5%AE%B6%E8%A8%88%E7%B0%BF/id6830137450?uo=4",
+    "bundle_id": "jp.tama357cat.moneyflow"
+  },
+  {
+    "track_id": 6830238163,
+    "name": "Neon Fuse",
+    "seller_name": "JiHwan Im",
+    "primary_genre": "Games",
+    "price": 0,
+    "currency": "USD",
+    "release_date": "2026-11-05T08:00:00Z",
+    "storefronts": [
+      "us"
+    ],
+    "track_view_url": "https://apps.apple.com/us/app/neon-fuse/id6830238163?uo=4",
+    "bundle_id": "co.veloraexe.neonfuse"
+  },
+  {
+    "track_id": 6830209501,
+    "name": "NEW 리플레이",
+    "seller_name": "Kumho Jeong",
+    "primary_genre": "Games",
+    "price": 5.99,
+    "currency": "USD",
+    "release_date": "2026-11-05T08:00:00Z",
+    "storefronts": [
+      "us"
+    ],
+    "track_view_url": "https://apps.apple.com/us/app/new-%EB%A6%AC%ED%94%8C%EB%A0%88%EC%9D%B4/id6830209501?uo=4",
+    "bundle_id": "com.openmindworld.replay"
+  },
+  {
+    "track_id": 6830530714,
+    "name": "PlantShift",
+    "seller_name": "青龙 谭",
+    "primary_genre": "Productivity",
+    "price": 0,
+    "currency": "USD",
+    "release_date": "2026-11-05T08:00:00Z",
+    "storefronts": [
+      "us"
+    ],
+    "track_view_url": "https://apps.apple.com/us/app/plantshift/id6830530714?uo=4",
+    "bundle_id": "com.PlantShift.app"
+  },
+  {
+    "track_id": 6830113317,
+    "name": "Sleep On It: Impulse Buy Pause",
+    "seller_name": "Nagisa Imaki",
+    "primary_genre": "Lifestyle",
+    "price": 0,
+    "currency": "USD",
+    "release_date": "2026-11-05T08:00:00Z",
+    "storefronts": [
+      "us"
+    ],
+    "track_view_url": "https://apps.apple.com/us/app/sleep-on-it-impulse-buy-pause/id6830113317?uo=4",
+    "bundle_id": "com.eru61841.nekasechokin"
+  },
+  {
+    "track_id": 6830081705,
+    "name": "SwitchOn Body: Diet Planner",
+    "seller_name": "sejin choi",
+    "primary_genre": "Health & Fitness",
+    "price": 0,
+    "currency": "USD",
+    "release_date": "2026-11-05T08:00:00Z",
+    "storefronts": [
+      "us"
+    ],
+    "track_view_url": "https://apps.apple.com/us/app/switchon-body-diet-planner/id6830081705?uo=4",
+    "bundle_id": "kr.ideality.switchonthebody"
+  },
+  {
+    "track_id": 6830399064,
+    "name": "Tikket Scanner",
+    "seller_name": "Enterpra, s. r. o.",
+    "primary_genre": "Business",
+    "price": 0,
+    "currency": "USD",
+    "release_date": "2026-11-05T08:00:00Z",
+    "storefronts": [
+      "us"
+    ],
+    "track_view_url": "https://apps.apple.com/us/app/tikket-scanner/id6830399064?uo=4",
+    "bundle_id": "cz.tikket.scanner.ios"
+  },
+  {
+    "track_id": 6830491328,
+    "name": "WedgeWise",
+    "seller_name": "Tran Ninh An",
+    "primary_genre": "Lifestyle",
+    "price": 0,
+    "currency": "USD",
+    "release_date": "2026-11-05T08:00:00Z",
+    "storefronts": [
+      "us"
+    ],
+    "track_view_url": "https://apps.apple.com/us/app/wedgewise/id6830491328?uo=4",
+    "bundle_id": "com.wedgewise.studio"
+  },
+  {
+    "track_id": 6830168726,
+    "name": "WOOLER - Ruler & Level",
+    "seller_name": "SEUNG KYUN WOO",
+    "primary_genre": "Utilities",
+    "price": 0,
+    "currency": "USD",
+    "release_date": "2026-11-05T08:00:00Z",
+    "storefronts": [
+      "us"
+    ],
+    "track_view_url": "https://apps.apple.com/us/app/wooler-ruler-level/id6830168726?uo=4",
+    "bundle_id": "com.wseungkyun.kruler"
+  },
+  {
+    "track_id": 6830066413,
+    "name": "Workout Log: msl.pump Tracker",
+    "seller_name": "Hiroshi Ezaki",
+    "primary_genre": "Health & Fitness",
+    "price": 0,
+    "currency": "USD",
+    "release_date": "2026-11-05T08:00:00Z",
+    "storefronts": [
+      "us"
+    ],
+    "track_view_url": "https://apps.apple.com/us/app/workout-log-msl-pump-tracker/id6830066413?uo=4",
+    "bundle_id": "com.ezaki.msl-pump"
+  },
+  {
+    "track_id": 6830152930,
+    "name": "XenpaviLortum",
+    "seller_name": "Kerim Vines",
+    "primary_genre": "Entertainment",
+    "price": 0,
+    "currency": "USD",
+    "release_date": "2026-11-05T08:00:00Z",
+    "storefronts": [
+      "us"
+    ],
+    "track_view_url": "https://apps.apple.com/us/app/xenpavilortum/id6830152930?uo=4",
+    "bundle_id": "com.XenpaviLortum"
+  },
+  {
+    "track_id": 6830485407,
+    "name": "ZyphoraKenvil",
+    "seller_name": "Talim Sultan",
+    "primary_genre": "Entertainment",
+    "price": 0,
+    "currency": "USD",
+    "release_date": "2026-11-05T08:00:00Z",
+    "storefronts": [
+      "us"
+    ],
+    "track_view_url": "https://apps.apple.com/us/app/zyphorakenvil/id6830485407?uo=4",
+    "bundle_id": "com.ZyphoraKenvil"
+  },
+  {
+    "track_id": 6830365301,
+    "name": "На уроці",
+    "seller_name": "Yaroslav Bryliuk",
+    "primary_genre": "Education",
+    "price": 0,
+    "currency": "USD",
+    "release_date": "2026-11-05T08:00:00Z",
+    "storefronts": [
+      "us"
+    ],
+    "track_view_url": "https://apps.apple.com/us/app/%D0%BD%D0%B0-%D1%83%D1%80%D0%BE%D1%86%D1%96/id6830365301?uo=4",
+    "bundle_id": "ua.lesson.schedule"
+  },
+  {
+    "track_id": 6830084039,
+    "name": "소리길",
+    "seller_name": "kwan ju park",
+    "primary_genre": "Health & Fitness",
+    "price": 0,
+    "currency": "USD",
+    "release_date": "2026-11-05T08:00:00Z",
+    "storefronts": [
+      "us"
+    ],
+    "track_view_url": "https://apps.apple.com/us/app/%EC%86%8C%EB%A6%AC%EA%B8%B8/id6830084039?uo=4",
+    "bundle_id": "kr.co.aurafit.sorigil"
+  },
+  {
+    "track_id": 6830175143,
+    "name": "As I See You",
+    "seller_name": "TsuzuKit",
+    "primary_genre": "Photo & Video",
+    "price": 0,
+    "currency": "USD",
+    "release_date": "2026-11-04T08:00:00Z",
+    "storefronts": [
+      "us"
+    ],
+    "track_view_url": "https://apps.apple.com/us/app/as-i-see-you/id6830175143?uo=4",
+    "bundle_id": "com.tsuzukit.asiseeyou"
+  },
+  {
+    "track_id": 6830267213,
+    "name": "Blaze: Vertical Descent",
+    "seller_name": "ELRIC HUXLEY",
+    "primary_genre": "Games",
+    "price": 0,
+    "currency": "USD",
+    "release_date": "2026-11-04T08:00:00Z",
+    "storefronts": [
+      "us"
+    ],
+    "track_view_url": "https://apps.apple.com/us/app/blaze-vertical-descent/id6830267213?uo=4",
+    "bundle_id": "com.blaze.vertical.descent"
+  },
+  {
+    "track_id": 6830056066,
+    "name": "Bmcoretsn",
+    "seller_name": "Hayden Kingsway Claremont",
+    "primary_genre": "Utilities",
+    "price": 0,
+    "currency": "USD",
+    "release_date": "2026-11-04T08:00:00Z",
+    "storefronts": [
+      "us"
+    ],
+    "track_view_url": "https://apps.apple.com/us/app/bmcoretsn/id6830056066?uo=4",
+    "bundle_id": "com.choice-lens.Bmcoretsn"
+  },
+  {
+    "track_id": 6830225925,
+    "name": "BnopTrd",
+    "seller_name": "Rinke De ruiter",
+    "primary_genre": "Finance",
+    "price": 0,
+    "currency": "USD",
+    "release_date": "2026-11-04T08:00:00Z",
+    "storefronts": [
+      "us"
+    ],
+    "track_view_url": "https://apps.apple.com/us/app/bnoptrd/id6830225925?uo=4",
+    "bundle_id": "com.BnopTrd"
+  },
+  {
+    "track_id": 6830073984,
+    "name": "Calibrara",
+    "seller_name": "Minh Y Vo",
+    "primary_genre": "Utilities",
+    "price": 0,
+    "currency": "USD",
+    "release_date": "2026-11-04T08:00:00Z",
+    "storefronts": [
+      "us"
+    ],
+    "track_view_url": "https://apps.apple.com/us/app/calibrara/id6830073984?uo=4",
+    "bundle_id": "com.ewnd.calibrara"
+  },
+  {
+    "track_id": 6830165312,
+    "name": "Carrovix Hop Sprint Pro",
+    "seller_name": "Napusso Somroop",
+    "primary_genre": "Games",
+    "price": 0,
+    "currency": "USD",
+    "release_date": "2026-11-04T08:00:00Z",
+    "storefronts": [
+      "us"
+    ],
+    "track_view_url": "https://apps.apple.com/us/app/carrovix-hop-sprint-pro/id6830165312?uo=4",
+    "bundle_id": "com.carrovix.hopsprint"
+  },
+  {
+    "track_id": 6830677082,
+    "name": "ChotrmUmxs",
+    "seller_name": "Simon Davis",
+    "primary_genre": "Utilities",
+    "price": 0,
+    "currency": "USD",
+    "release_date": "2026-11-04T08:00:00Z",
+    "storefronts": [
+      "us"
+    ],
+    "track_view_url": "https://apps.apple.com/us/app/chotrmumxs/id6830677082?uo=4",
+    "bundle_id": "com.chotrmumxs.workshop"
+  },
+  {
+    "track_id": 6830766757,
+    "name": "DtrmoTrma",
+    "seller_name": "Joanne Warren",
+    "primary_genre": "Utilities",
+    "price": 0,
+    "currency": "USD",
+    "release_date": "2026-11-04T08:00:00Z",
+    "storefronts": [
+      "us"
+    ],
+    "track_view_url": "https://apps.apple.com/us/app/dtrmotrma/id6830766757?uo=4",
+    "bundle_id": "com.dtrmotrma.workshop"
+  },
+  {
+    "track_id": 6830232454,
+    "name": "Flotta",
+    "seller_name": "Raul Brindusan",
+    "primary_genre": "Business",
+    "price": 0,
+    "currency": "USD",
+    "release_date": "2026-11-04T08:00:00Z",
+    "storefronts": [
+      "us"
+    ],
+    "track_view_url": "https://apps.apple.com/us/app/flotta/id6830232454?uo=4",
+    "bundle_id": "codemint.Flotta"
+  },
+  {
+    "track_id": 6830298901,
+    "name": "Hitelvizsga",
+    "seller_name": "Oleg Gusev",
+    "primary_genre": "Education",
+    "price": 0,
+    "currency": "USD",
+    "release_date": "2026-11-04T08:00:00Z",
+    "storefronts": [
+      "us"
+    ],
+    "track_view_url": "https://apps.apple.com/us/app/hitelvizsga/id6830298901?uo=4",
+    "bundle_id": "life.backtoyour.hitelvizsga"
+  },
+  {
+    "track_id": 6830153567,
+    "name": "Hlídač termínů",
+    "seller_name": "KAREL MATUSIAK",
+    "primary_genre": "Finance",
+    "price": 0,
+    "currency": "USD",
+    "release_date": "2026-11-04T08:00:00Z",
+    "storefronts": [
+      "us"
+    ],
+    "track_view_url": "https://apps.apple.com/us/app/hl%C3%ADda%C4%8D-term%C3%ADn%C5%AF/id6830153567?uo=4",
+    "bundle_id": "cz.jinyuhel.hlidacterminu"
+  },
+  {
+    "track_id": 6830738711,
+    "name": "IndedentResve",
+    "seller_name": "Twin Oaks Juvenile Development, Inc.",
+    "primary_genre": "Utilities",
+    "price": 0,
+    "currency": "USD",
+    "release_date": "2026-11-04T08:00:00Z",
+    "storefronts": [
+      "us"
+    ],
+    "track_view_url": "https://apps.apple.com/us/app/indedentresve/id6830738711?uo=4",
+    "bundle_id": "com.indedentresve.support"
+  },
+  {
+    "track_id": 6830099489,
+    "name": "JAPANフライトルート",
+    "seller_name": "TAKUMI WATANABE",
+    "primary_genre": "Games",
+    "price": 0,
+    "currency": "USD",
+    "release_date": "2026-11-04T08:00:00Z",
+    "storefronts": [
+      "us"
+    ],
+    "track_view_url": "https://apps.apple.com/us/app/japan%E3%83%95%E3%83%A9%E3%82%A4%E3%83%88%E3%83%AB%E3%83%BC%E3%83%88/id6830099489?uo=4",
+    "bundle_id": "com.takumi0929.japanflightroute"
+  },
+  {
+    "track_id": 6830408466,
+    "name": "Juice Juice",
+    "seller_name": "Pavan Negilone Krishnamurthy",
+    "primary_genre": "Games",
+    "price": 0.99,
+    "currency": "USD",
+    "release_date": "2026-11-04T08:00:00Z",
+    "storefronts": [
+      "us"
+    ],
+    "track_view_url": "https://apps.apple.com/us/app/juice-juice/id6830408466?uo=4",
+    "bundle_id": "com.pavann.spatialpour"
+  },
+  {
+    "track_id": 6830486673,
+    "name": "KILNARC",
+    "seller_name": "Giang Vo Thanh",
+    "primary_genre": "Productivity",
+    "price": 0,
+    "currency": "USD",
+    "release_date": "2026-11-04T08:00:00Z",
+    "storefronts": [
+      "us"
+    ],
+    "track_view_url": "https://apps.apple.com/us/app/kilnarc/id6830486673?uo=4",
+    "bundle_id": "com.KilnThermo.app"
+  },
+  {
+    "track_id": 6830205448,
+    "name": "Kilnora",
+    "seller_name": "WIND TUNNEL HEATING & AIR CONDITIONING LLC",
+    "primary_genre": "Games",
+    "price": 0,
+    "currency": "USD",
+    "release_date": "2026-11-04T08:00:00Z",
+    "storefronts": [
+      "us"
+    ],
+    "track_view_url": "https://apps.apple.com/us/app/kilnora/id6830205448?uo=4",
+    "bundle_id": "com.GenriCifen.app"
+  },
+  {
+    "track_id": 6830069763,
+    "name": "Meskavon",
+    "seller_name": "TEKELI CEVHER",
+    "primary_genre": "Education",
+    "price": 0,
+    "currency": "USD",
+    "release_date": "2026-11-04T08:00:00Z",
+    "storefronts": [
+      "us"
+    ],
+    "track_view_url": "https://apps.apple.com/us/app/meskavon/id6830069763?uo=4",
+    "bundle_id": "com.Meskavon.gjt"
+  },
+  {
+    "track_id": 6830129734,
+    "name": "Motif-Shelf Atelier",
+    "seller_name": "Nguyen Duong Dinh",
+    "primary_genre": "Graphics & Design",
+    "price": 0,
+    "currency": "USD",
+    "release_date": "2026-11-04T08:00:00Z",
+    "storefronts": [
+      "us"
+    ],
+    "track_view_url": "https://apps.apple.com/us/app/motif-shelf-atelier/id6830129734?uo=4",
+    "bundle_id": "shelf.incho.atelierMotif"
+  },
+  {
+    "track_id": 6830048086,
+    "name": "Olivegig",
+    "seller_name": "Tran Duc Manh",
+    "primary_genre": "Productivity",
+    "price": 0,
+    "currency": "USD",
+    "release_date": "2026-11-04T08:00:00Z",
+    "storefronts": [
+      "us"
+    ],
+    "track_view_url": "https://apps.apple.com/us/app/olivegig/id6830048086?uo=4",
+    "bundle_id": "com.everycereseek.Olivegig"
+  },
+  {
+    "track_id": 6830453147,
+    "name": "OnyxKey - Telegraph Studio",
+    "seller_name": "Kahraman Olgun",
+    "primary_genre": "Utilities",
+    "price": 0,
+    "currency": "USD",
+    "release_date": "2026-11-04T08:00:00Z",
+    "storefronts": [
+      "us"
+    ],
+    "track_view_url": "https://apps.apple.com/us/app/onyxkey-telegraph-studio/id6830453147?uo=4",
+    "bundle_id": "com.onyx.cipherkit.vth38a5"
+  },
+  {
+    "track_id": 6830097252,
+    "name": "Prism Pals",
+    "seller_name": "Madhurima Chandra",
+    "primary_genre": "Games",
+    "price": 0,
+    "currency": "USD",
+    "release_date": "2026-11-04T08:00:00Z",
+    "storefronts": [
+      "us"
+    ],
+    "track_view_url": "https://apps.apple.com/us/app/prism-pals/id6830097252?uo=4",
+    "bundle_id": "com.lumalab.puzzle"
+  },
+  {
+    "track_id": 6830244496,
+    "name": "Rainbound Hotel Escape",
+    "seller_name": "OSBERT WETHERELL",
+    "primary_genre": "Games",
+    "price": 0,
+    "currency": "USD",
+    "release_date": "2026-11-04T08:00:00Z",
+    "storefronts": [
+      "us"
+    ],
+    "track_view_url": "https://apps.apple.com/us/app/rainbound-hotel-escape/id6830244496?uo=4",
+    "bundle_id": "com.rainbound.hotel.escape"
+  },
+  {
+    "track_id": 6830049017,
+    "name": "SeatSketch",
+    "seller_name": "Cemil Birsen",
+    "primary_genre": "Utilities",
+    "price": 0,
+    "currency": "USD",
+    "release_date": "2026-11-04T08:00:00Z",
+    "storefronts": [
+      "us"
+    ],
+    "track_view_url": "https://apps.apple.com/us/app/seatsketch/id6830049017?uo=4",
+    "bundle_id": "com.seatsketch.seatingplanner"
+  },
+  {
+    "track_id": 6830748858,
+    "name": "SoialWindMx",
+    "seller_name": "Twin Oaks Juvenile Development, Inc.",
+    "primary_genre": "Shopping",
+    "price": 0,
+    "currency": "USD",
+    "release_date": "2026-11-04T08:00:00Z",
+    "storefronts": [
+      "us"
+    ],
+    "track_view_url": "https://apps.apple.com/us/app/soialwindmx/id6830748858?uo=4",
+    "bundle_id": "com.soialwindmx.journal"
+  },
+  {
+    "track_id": 6830124975,
+    "name": "STAY ON TOP: Pip’s Climb",
+    "seller_name": "khaled el sbayti",
+    "primary_genre": "Games",
+    "price": 0,
+    "currency": "USD",
+    "release_date": "2026-11-04T08:00:00Z",
+    "storefronts": [
+      "us"
+    ],
+    "track_view_url": "https://apps.apple.com/us/app/stay-on-top-pips-climb/id6830124975?uo=4",
+    "bundle_id": "com.tarboushgames.stayontop"
+  },
+  {
+    "track_id": 6830508427,
+    "name": "Suplai",
+    "seller_name": "Drive Safe Driving School Inc",
+    "primary_genre": "Business",
+    "price": 0,
+    "currency": "USD",
+    "release_date": "2026-11-04T08:00:00Z",
+    "storefronts": [
+      "us"
+    ],
+    "track_view_url": "https://apps.apple.com/us/app/suplai/id6830508427?uo=4",
+    "bundle_id": "store.suplai.app"
+  },
+  {
+    "track_id": 6830346104,
+    "name": "TwinVision",
+    "seller_name": "ASTRA TECH, LLC",
+    "primary_genre": "Business",
+    "price": 0,
+    "currency": "USD",
+    "release_date": "2026-11-04T08:00:00Z",
+    "storefronts": [
+      "us"
+    ],
+    "track_view_url": "https://apps.apple.com/us/app/twinvision/id6830346104?uo=4",
+    "bundle_id": "com.theastralabs.twinvision"
+  },
+  {
+    "track_id": 6830180073,
+    "name": "Zafirok Accounting",
+    "seller_name": "Create Go LLC",
+    "primary_genre": "Business",
+    "price": 0,
+    "currency": "USD",
+    "release_date": "2026-11-04T08:00:00Z",
+    "storefronts": [
+      "us"
+    ],
+    "track_view_url": "https://apps.apple.com/us/app/zafirok-accounting/id6830180073?uo=4",
+    "bundle_id": "com.zafirok.accounting"
+  }
+]
