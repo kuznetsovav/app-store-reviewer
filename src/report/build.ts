@@ -123,6 +123,10 @@ export function coverageLines(d: ReportData, cfg: Config): string[] {
   for (const w of JSON.parse(r.warnings ?? "[]") as string[]) lines.push(`**Warning:** ${w}`);
   const finished = r.finished_at ? `finished ${formatTimes(Date.parse(r.finished_at), cfg.displayTimeZone)}` : "still running";
   lines.push(`Run #${r.id}: **${r.status}**${r.error ? ` (${r.error})` : ""}, ${fmt(r.calls)} calls, ${finished}.`);
+  for (const e of d.earlierRuns) {
+    const when = e.finished_at ? `finished ${formatTimes(Date.parse(e.finished_at), cfg.displayTimeZone)}` : "not finished";
+    lines.push(`Also includes apps from run #${e.id} earlier the same day: **${e.status}**, ${fmt(e.calls)} calls, ${when}. Its coverage details are in the git history of this file.`);
+  }
 
   const extendDone = r.phase === "rescan";
   if (extendDone) {

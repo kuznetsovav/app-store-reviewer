@@ -78,8 +78,9 @@ Output: a CSV and a Markdown report per day, committed to the repo.
   from the DB only (no API). `run [scan flags]` = scan then report; exit 0 on
   done/budget, 1 on aborted (the report is still written).
 - Discovery rule (`selectForReport` in `src/report/query.ts`), so consecutive
-  reports never lose or repeat an app: start = previous run's finish, end = this
-  run's finish. Listed: apps first stored in (start, end] released since start − 24h,
+  reports never lose or repeat an app: start = finish of the last run of an earlier
+  date, end = this run's finish. A second run on the same date rewrites that date's
+  report with a window spanning both runs (coverage names the earlier run). Listed: apps first stored in (start, end] released since start − 24h,
   plus apps stored earlier (pre-orders) whose release date arrived in (start, end].
   A fixed "24 h before finish" window lost apps that went live after their ID was
   scanned. Release dates compare by `windowMode`: `mixed` (default: precise as
@@ -103,7 +104,9 @@ Output: a CSV and a Markdown report per day, committed to the repo.
   `lookbackIds` inputs, passed via env; empty env values mean "unset"). Scheduled
   runs pass `--restart-finished` (a re-run of a failed job resumes); manual runs
   resume today's run. `APPSTORE_CONTACT_URL` = the repository URL. `check-log` runs
-  after the scan; `git push` is retried 3 times.
+  after the scan. Checkout takes the branch tip at job start (a run queued behind
+  another must see its commit). Push: `pull --rebase -X theirs`, then this run's
+  `reports/` + `state/` restored whole (they are newest), retried 3 times.
 - DB lives in the Actions cache (`db-<run_id>-<attempt>`, restore prefix `db-`) with a
   7-day artifact backup. `state/state.json` (frontier + last run) is committed every
   run; an empty DB seeds from it (`--seed` → state.json → spike frontier) and the

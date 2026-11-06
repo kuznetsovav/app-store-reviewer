@@ -276,6 +276,27 @@ describe("reviewer findings", () => {
     expect(new Set([...d4, ...d5]).size).toBe(d4.length + d5.length);
   });
 
+  it("a second run on the same day keeps the first run's apps in that day's report", () => {
+    const db = openDb(":memory:");
+    const cfg = testConfig();
+    addRun(db, "2026-11-04", "2026-11-04T07:37:00Z", "2026-11-04T13:02:00Z");
+    addRun(db, "2026-11-05", "2026-11-05T11:11:00Z", "2026-11-05T16:36:00Z");
+    addApp(db, 1, "A: found by the manual run", "2026-11-05T07:00:00Z", "2026-11-05T12:00:00Z");
+    const first = buildReport(loadReportData(db, "2026-11-05", cfg), cfg);
+    expect(first.rows.map((r) => r.track_id)).toEqual([1]);
+
+    addRun(db, "2026-11-05", "2026-11-05T16:37:00Z", "2026-11-05T18:34:00Z");
+    addApp(db, 2, "B: found by the scheduled run", "2026-11-05T07:00:00Z", "2026-11-05T17:00:00Z");
+    const second = buildReport(loadReportData(db, "2026-11-05", cfg), cfg);
+    expect(second.rows.map((r) => r.track_id).sort()).toEqual([1, 2]);
+    expect(second.md).toMatch(/Run #3: \*\*done\*\*/);
+    expect(second.md).toMatch(/Also includes apps from run #2 earlier the same day/);
+
+    addRun(db, "2026-11-06", "2026-11-06T05:20:00Z", "2026-11-06T11:00:00Z");
+    addApp(db, 3, "C: found next day", "2026-11-06T07:00:00Z", "2026-11-06T06:00:00Z");
+    expect(buildReport(loadReportData(db, "2026-11-06", cfg), cfg).rows.map((r) => r.track_id)).toEqual([3]);
+  });
+
   it("resumes correctly when stopped in the rescan phase", async () => {
     const s = setup();
     let batches = 0;

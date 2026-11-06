@@ -151,13 +151,24 @@ export function denseBuckets(db: Db, minPer1000: number, minIds = 1_000): Set<nu
   return new Set(rows);
 }
 
-/** The run before `beforeRunId` that finished (for report windows). */
-export function previousFinishedRun(db: Db, beforeRunId: number | null, beforeIso: string): RunRow | undefined {
+/**
+ * The last finished run of an earlier date (for report windows). Runs of the same date are
+ * skipped on purpose: a second run on one day rewrites that day's report, so the window
+ * must still start where the previous day's report ended.
+ */
+export function previousFinishedRun(db: Db, date: string, beforeRunId: number | null, beforeIso: string): RunRow | undefined {
   return (
     beforeRunId !== null
-      ? db.prepare("SELECT * FROM runs WHERE id < ? AND finished_at IS NOT NULL ORDER BY id DESC LIMIT 1").get(beforeRunId)
-      : db.prepare("SELECT * FROM runs WHERE finished_at IS NOT NULL AND finished_at <= ? ORDER BY finished_at DESC LIMIT 1").get(beforeIso)
+      ? db.prepare("SELECT * FROM runs WHERE run_date < ? AND id < ? AND finished_at IS NOT NULL ORDER BY id DESC LIMIT 1").get(date, beforeRunId)
+      : db
+          .prepare("SELECT * FROM runs WHERE run_date < ? AND finished_at IS NOT NULL AND finished_at <= ? ORDER BY finished_at DESC LIMIT 1")
+          .get(date, beforeIso)
   ) as RunRow | undefined;
+}
+
+/** Runs of `runDate` older than `beforeRunId`, oldest first. */
+export function earlierRunsForDate(db: Db, runDate: string, beforeRunId: number): RunRow[] {
+  return db.prepare("SELECT * FROM runs WHERE run_date = ? AND id < ? ORDER BY id").all(runDate, beforeRunId) as RunRow[];
 }
 
 export function addWarning(db: Db, runId: number, text: string): void {

@@ -2,6 +2,7 @@ import type { Config } from "../config.js";
 import type { Db } from "../db/index.js";
 import {
   appsReleasedSince,
+  earlierRunsForDate,
   lastFrontier,
   latestRunForDate,
   previousFinishedRun,
@@ -17,11 +18,13 @@ export interface ReportData {
   /** YYYY-MM-DD (UTC), same convention as runs.run_date. */
   date: string;
   run: RunRow | null;
-  /** The previous finished run's end (or windowEnd − 24h when there is none). */
+  /** The end of the last finished run of an earlier date (or windowEnd − 24h when there is none). */
   windowStart: number;
   /** This run's finish time (or now / end of day when there is none). */
   windowEnd: number;
   previousRun: RunRow | null;
+  /** Earlier runs of the same date; their apps are in this report too. */
+  earlierRuns: RunRow[];
   /** Apps selected for this report (see selectForReport). */
   apps: AppDbRow[];
   frontier: FrontierRow | undefined;
@@ -36,7 +39,8 @@ export interface ReportData {
  * this run's finish, an app is listed when either:
  *  - fresh: first stored in (start, end] and released on or after start − 24 h, or
  *  - matured: stored earlier (e.g. a pre-order) and its release date arrived in (start, end].
- * Each app therefore lands in exactly one report.
+ * Each app therefore lands in exactly one report. A date with several runs gets one report
+ * (named after the date) whose window spans all of them, from the previous date's last run.
  */
 export function selectForReport(a: Pick<AppDbRow, "first_seen_at" | "release_date">, start: number, end: number, mode: WindowMode, tz: string): boolean {
   const seen = Date.parse(a.first_seen_at);
@@ -49,10 +53,11 @@ export function loadReportData(db: Db, date: string, cfg: Config, now = Date.now
   const run = latestRunForDate(db, date) ?? null;
   const endOfDay = Date.parse(`${date}T00:00:00Z`) + DAY_MS;
   const windowEnd = run ? (run.finished_at ? Date.parse(run.finished_at) : now) : Math.min(endOfDay, now);
-  const previousRun = previousFinishedRun(db, run?.id ?? null, new Date(windowEnd).toISOString()) ?? null;
+  const previousRun = previousFinishedRun(db, date, run?.id ?? null, new Date(windowEnd).toISOString()) ?? null;
+  const earlierRuns = run ? earlierRunsForDate(db, date, run.id) : [];
   const windowStart = Math.min(windowEnd, previousRun?.finished_at ? Date.parse(previousRun.finished_at) : windowEnd - DAY_MS);
   // Pre-filter in SQL (index on release_date); 2 extra days cover date-only values in any zone.
   const lower = new Date(windowStart - 3 * DAY_MS).toISOString();
   const apps = appsReleasedSince(db, lower).filter((a) => selectForReport(a, windowStart, windowEnd, cfg.windowMode, cfg.windowTimeZone));
-  return { date, run, windowStart, windowEnd, previousRun, apps, frontier: lastFrontier(db), history: history.filter((h) => h.date < date) };
+  return { date, run, windowStart, windowEnd, previousRun, earlierRuns, apps, frontier: lastFrontier(db), history: history.filter((h) => h.date < date) };
 }

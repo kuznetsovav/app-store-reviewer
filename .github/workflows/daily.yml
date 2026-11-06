@@ -40,7 +40,11 @@ jobs:
       # resume an interrupted run (e.g. a re-run of a failed job). Manual runs resume.
       SCAN_FLAGS: ${{ github.event_name == 'schedule' && '--restart-finished' || '' }}
     steps:
+      # The branch tip when the job starts, not the commit that triggered it: a run queued
+      # behind another (concurrency group) must see the reports that run committed.
       - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.ref_name }}
 
       - uses: actions/setup-node@v7
         with:
@@ -118,8 +122,17 @@ jobs:
           msg=$(node -e 'const s = require("./state/state.json"); const n = s.newApps; console.log(`report ${s.reportDate}: ${n} new app${n === 1 ? "" : "s"}`)' 2>/dev/null) \
             || msg="report $(date -u +%F)"
           git commit -m "$msg"
+          ours=$(git rev-parse HEAD)
           for attempt in 1 2 3; do
-            if git pull --rebase && git push; then exit 0; fi
+            # This run's reports and state are the newest (runs never overlap), so they win
+            # conflicts; restoring them whole avoids a hunk-by-hunk mix of two reports.
+            if git pull --rebase -X theirs; then
+              git checkout "$ours" -- reports state
+              if ! git diff --cached --quiet; then git commit --amend --no-edit; fi
+              if git push; then exit 0; fi
+            else
+              git rebase --abort || true
+            fi
             echo "Push attempt $attempt failed; retrying in $((attempt * 10)) s."
             sleep $((attempt * 10))
           done
