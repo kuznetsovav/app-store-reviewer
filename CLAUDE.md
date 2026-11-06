@@ -74,7 +74,7 @@ Output: a CSV and a Markdown report per day, committed to the repo.
   so the next day continues upward instead of re-extending the same IDs.
 
 ## Reports
-- `report [--date YYYY-MM-DD]` builds `reports/YYYY-MM-DD.{csv,json,md}` + `latest.md`
+- `report [--date YYYY-MM-DD]` builds `reports/YYYY-MM-DD.{csv,json,md,html}` + `latest.{md,html}`
   from the DB only (no API). `run [scan flags]` = scan then report; exit 0 on
   done/budget, 1 on aborted (the report is still written).
 - Discovery rule (`selectForReport` in `src/report/query.ts`), so consecutive
@@ -92,9 +92,12 @@ Output: a CSV and a Markdown report per day, committed to the repo.
 - Anomaly line at the top when the count is < 50% or > 200% of the median of the
   last 7 reports (needs ≥ 3; read from `reports/*.json`).
 - Coverage names skipped ID ranges on budget/aborted runs, run warnings, and the
-  ~3-day scope. `latest.md` is only replaced by the newest date (backfills keep it).
+  ~3-day scope. `latest.md`/`latest.html` are only replaced by the newest date (backfills keep them).
 - Idempotent: `state.json` `updatedAt` is the run's finish time, so a repeated `run`
   on a finished day rewrites identical files and CI makes no second commit.
+- HTML (`src/report/html.ts`): one self-contained page (inline CSS/JS, light/dark, search,
+  genre filter, sortable table, App Store icons from `raw.artworkUrl100`). All text is
+  escaped; only http(s) URLs reach `href`/`src`.
 - CSV: RFC 4180 quoting, `storefronts` as `us;pl`, and a leading `'` on text that
   starts with `= + - @` (formula guard). JSON keeps raw values.
 - Reports built from scratch/test DBs are never committed to `reports/`.

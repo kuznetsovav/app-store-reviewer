@@ -24,21 +24,24 @@ export function readHistory(dir: string, date: string): { date: string; count: n
 }
 
 /**
- * Writes YYYY-MM-DD.csv/.json/.md and latest.md. latest.md is only replaced when this
- * date is the newest report in the folder, so backfilling an old date keeps it.
+ * Writes YYYY-MM-DD.csv/.json/.md/.html and latest.md/.html. The latest files are only
+ * replaced when this date is the newest report in the folder, so backfilling an old date keeps them.
  */
-export function writeReports(dir: string, date: string, out: Pick<ReportOutput, "csv" | "json" | "md">): { files: string[]; latestUpdated: boolean } {
+export function writeReports(dir: string, date: string, out: Pick<ReportOutput, "csv" | "json" | "md" | "html">): { files: string[]; latestUpdated: boolean } {
   mkdirSync(dir, { recursive: true });
-  const files = [`${date}.csv`, `${date}.json`, `${date}.md`].map((f) => join(dir, f));
+  const files = [`${date}.csv`, `${date}.json`, `${date}.md`, `${date}.html`].map((f) => join(dir, f));
   writeFileSync(files[0]!, out.csv);
   writeFileSync(files[1]!, out.json);
   writeFileSync(files[2]!, out.md);
+  writeFileSync(files[3]!, out.html);
   const newest = readdirSync(dir).filter((f) => DATED_MD.test(f)).sort().at(-1);
   const latestUpdated = newest === `${date}.md`;
   if (latestUpdated) {
-    const latest = join(dir, "latest.md");
-    writeFileSync(latest, out.md);
-    files.push(latest);
+    for (const [name, body] of [["latest.md", out.md], ["latest.html", out.html]] as const) {
+      const latest = join(dir, name);
+      writeFileSync(latest, body);
+      files.push(latest);
+    }
   }
   return { files, latestUpdated };
 }

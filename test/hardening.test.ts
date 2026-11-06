@@ -166,7 +166,7 @@ describe("guard 4: idempotency", () => {
       const out = buildReport(loadReportData(s.db, date, s.cfg, s.clock.now(), readHistory(dir, date)), s.cfg);
       writeReports(dir, date, out);
       writeState(statePath, buildState(s.db, getRun(s.db, res.run.id), date, out.count, s.clock.now()));
-      const files = ["2026-11-04.csv", "2026-11-04.json", "2026-11-04.md", "latest.md"].map((f) => readFileSync(join(dir, f), "utf8"));
+      const files = ["2026-11-04.csv", "2026-11-04.json", "2026-11-04.md", "2026-11-04.html", "latest.md", "latest.html"].map((f) => readFileSync(join(dir, f), "utf8"));
       return { res, files: [...files, readFileSync(statePath, "utf8")] };
     };
     const first = await cycle();
@@ -230,7 +230,7 @@ describe("guard 7: anomaly line", () => {
 
   it("reads history from earlier JSON reports and puts the line at the top", () => {
     const dir = mkdtempSync(join(tmpdir(), "hist-"));
-    const rows = (n: number) => ({ csv: "", md: "", json: JSON.stringify(Array.from({ length: n }, () => ({}))) });
+    const rows = (n: number) => ({ csv: "", md: "", html: "", json: JSON.stringify(Array.from({ length: n }, () => ({}))) });
     writeReports(dir, "2026-11-01", rows(20));
     writeReports(dir, "2026-11-02", rows(30));
     writeReports(dir, "2026-11-03", rows(25));

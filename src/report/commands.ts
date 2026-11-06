@@ -28,7 +28,7 @@ export function produceReport(db: Db, cfg: Config, date: string, now = Date.now(
   const out = buildReport(loadReportData(db, date, cfg, now, readHistory(cfg.reportsDir, date)), cfg);
   const written = writeReports(cfg.reportsDir, date, out);
   console.error([out.headline, ...written.files.map((f) => `  wrote ${f}`)].join("\n"));
-  if (!written.latestUpdated) console.error("  latest.md left alone: a newer report exists.");
+  if (!written.latestUpdated) console.error("  latest.md/.html left alone: a newer report exists.");
   return { out, written };
 }
 

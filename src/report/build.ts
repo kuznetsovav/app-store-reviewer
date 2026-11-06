@@ -2,6 +2,7 @@ import type { Config } from "../config.js";
 import type { AppDbRow, FailedRange } from "../db/repo.js";
 import { formatTimes } from "../scan/dates.js";
 import type { ReportData } from "./query.js";
+import { toHtml } from "./html.js";
 import { matchWatchlist } from "./watchlist.js";
 
 export const CSV_COLUMNS = [
@@ -37,6 +38,7 @@ export interface ReportOutput {
   csv: string;
   json: string;
   md: string;
+  html: string;
 }
 
 const fmt = (n: number) => n.toLocaleString("en-US");
@@ -236,5 +238,5 @@ export function buildReport(d: ReportData, cfg: Config): ReportOutput {
   const apps = sortApps(d.apps);
   const rows = apps.map(toRow);
   const md = toMarkdown(d, apps, cfg);
-  return { count: rows.length, headline: md.split("\n")[0]!.replace(/^# /, ""), rows, csv: toCsv(rows), json: JSON.stringify(rows, null, 2) + "\n", md };
+  return { count: rows.length, headline: md.split("\n")[0]!.replace(/^# /, ""), rows, csv: toCsv(rows), json: JSON.stringify(rows, null, 2) + "\n", md, html: toHtml(d, apps, cfg) };
 }

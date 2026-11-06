@@ -158,15 +158,40 @@ describe("report after a scan", () => {
 });
 
 describe("writeReports", () => {
-  it("writes all four files and keeps latest.md on a backfill", () => {
+  it("writes all six files and keeps latest.md/.html on a backfill", () => {
     const dir = mkdtempSync(join(tmpdir(), "reports-"));
-    const today = { csv: "a\n", json: "[]\n", md: "# today\n" };
+    const today = { csv: "a\n", json: "[]\n", md: "# today\n", html: "<p>today</p>\n" };
     const first = writeReports(dir, "2026-11-04", today);
     expect(first.latestUpdated).toBe(true);
-    expect(readdirSync(dir).sort()).toEqual(["2026-11-04.csv", "2026-11-04.json", "2026-11-04.md", "latest.md"]);
+    expect(readdirSync(dir).sort()).toEqual(["2026-11-04.csv", "2026-11-04.html", "2026-11-04.json", "2026-11-04.md", "latest.html", "latest.md"]);
 
-    const backfill = writeReports(dir, "2026-11-02", { csv: "b\n", json: "[]\n", md: "# old\n" });
+    const backfill = writeReports(dir, "2026-11-02", { csv: "b\n", json: "[]\n", md: "# old\n", html: "<p>old</p>\n" });
     expect(backfill.latestUpdated).toBe(false);
     expect(readFileSync(join(dir, "latest.md"), "utf8")).toBe("# today\n");
+    expect(readFileSync(join(dir, "latest.html"), "utf8")).toBe("<p>today</p>\n");
+  });
+});
+
+describe("toHtml", () => {
+  it("escapes app text and drops non-http links", () => {
+    const db = openDb(":memory:");
+    addApp(db, { trackId: 30, name: '<script>alert("x")</script>', sellerName: "A & B", trackViewUrl: "javascript:alert(1)", releaseDate: "2026-11-04T03:00:00Z" });
+    addApp(db, { trackId: 31, name: "Gift Planner", trackViewUrl: "https://apps.apple.com/us/app/id31", releaseDate: "2026-11-04T02:00:00Z" });
+    const { html } = buildReport(loadReportData(db, DATE, cfg, NOON), cfg);
+    expect(html).toMatch(/^<!doctype html>/);
+    expect(html).toContain("<title>2 new apps — 2026-11-04</title>");
+    expect(html).toContain("&lt;script&gt;alert(&quot;x&quot;)&lt;/script&gt;");
+    expect(html).not.toContain('<script>alert("x")');
+    expect(html).toContain("A &amp; B");
+    expect(html).not.toContain("javascript:");
+    expect(html).toContain('href="https://apps.apple.com/us/app/id31"');
+  });
+
+  it("renders the empty state without the table script", () => {
+    const db = openDb(":memory:");
+    const { html } = buildReport(loadReportData(db, DATE, cfg, NOON), cfg);
+    expect(html).toContain("No new apps in this window.");
+    expect(html).toContain("No scan ran on 2026-11-04");
+    expect(html).not.toContain("<script>");
   });
 });

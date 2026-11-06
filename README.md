@@ -3,7 +3,7 @@
 A daily list of iOS apps first released on the US App Store in the last 24 hours,
 built only from Apple's public [iTunes Lookup API](https://performance-partners.apple.com/search-api).
 Each day GitHub Actions scans recent App Store IDs and commits
-`reports/YYYY-MM-DD.{csv,json,md}` plus `reports/latest.md`.
+`reports/YYYY-MM-DD.{csv,json,md,html}` plus `reports/latest.{md,html}`.
 
 ## How it works
 
