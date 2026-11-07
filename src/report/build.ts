@@ -3,7 +3,8 @@ import type { AppDbRow, FailedRange } from "../db/repo.js";
 import { formatTimes } from "../scan/dates.js";
 import type { ReportData } from "./query.js";
 import { toHtml } from "./html.js";
-import { formatChange, formatShare, marketLine, marketStats, summarizeThemes, themesNote } from "./themes.js";
+import { descriptionOf, descriptionSnippet } from "./raw.js";
+import { formatChange, formatShare, hasDescription, marketLine, marketStats, signalsNote, summarizeSignals, summarizeThemes, themesNote, type TagSummary, type TaggableApp } from "./themes.js";
 import { matchWatchlist } from "./watchlist.js";
 
 export const CSV_COLUMNS = [
@@ -17,6 +18,7 @@ export const CSV_COLUMNS = [
   "storefronts",
   "track_view_url",
   "bundle_id",
+  "description",
 ] as const;
 
 export interface ReportRow {
@@ -30,6 +32,8 @@ export interface ReportRow {
   storefronts: string[];
   track_view_url: string | null;
   bundle_id: string | null;
+  /** Full App Store description; null when not stored (pruned raw JSON). */
+  description: string | null;
 }
 
 export interface ReportOutput {
@@ -76,8 +80,14 @@ export function toRow(a: AppDbRow): ReportRow {
     storefronts: JSON.parse(a.storefronts) as string[],
     track_view_url: a.track_view_url,
     bundle_id: a.bundle_id,
+    description: descriptionOf(a),
   };
 }
+
+export const toTaggable = (a: AppDbRow): TaggableApp => ({ name: a.name, description: descriptionOf(a) });
+
+/** Characters of the description shown next to each app in the Markdown and HTML lists. */
+export const SNIPPET_CHARS = 140;
 
 // ── CSV ──────────────────────────────────────────────────────────────────────
 
@@ -223,25 +233,39 @@ export function toMarkdown(d: ReportData, apps: AppDbRow[], cfg: Config): string
   }
   out.push("");
 
-  out.push("## Themes", "");
-  if (n === 0) out.push("_Nothing to count._");
-  else {
-    const s = summarizeThemes(apps, d.history);
-    out.push("| Theme | Apps | Share | Earlier | Change | Examples |", "| --- | ---: | ---: | ---: | ---: | --- |");
+  const tagged = apps.map(toTaggable);
+  const tagTable = (head: string, s: TagSummary) => {
+    out.push(`| ${head} | Apps | Share | Earlier | Change | Examples |`, "| --- | ---: | ---: | ---: | ---: | --- |");
     for (const r of s.rows) {
       out.push(`| ${mdCell(r.label)} | ${r.count} | ${formatShare(r.share)} | ${formatShare(r.previousShare)} | ${formatChange(r.share, r.previousShare)} | ${mdCell(r.examples.join(", "))} |`);
     }
-    out.push("", themesNote(s, n));
+  };
+
+  out.push("## Themes", "");
+  if (n === 0) out.push("_Nothing to count._");
+  else {
+    const s = summarizeThemes(tagged, d.history);
+    tagTable("Theme", s);
+    out.push("", themesNote(s, tagged.some(hasDescription)));
+  }
+  out.push("");
+
+  out.push("## Signals", "");
+  const signals = summarizeSignals(tagged, d.history);
+  if (signals.total === 0) out.push(n === 0 ? "_Nothing to count._" : "_No descriptions stored for these apps._");
+  else {
+    tagTable("Signal", signals);
+    out.push("", signalsNote(signals, n));
   }
   out.push("");
 
   out.push("## All new apps", "");
   if (n === 0) out.push("_No new apps in this window._");
   else {
-    out.push("| App | Seller | Genre | Price | Storefronts | Released |", "| --- | --- | --- | --- | --- | --- |");
+    out.push("| App | Seller | Genre | Price | Storefronts | Released | About |", "| --- | --- | --- | --- | --- | --- | --- |");
     for (const a of apps) {
       out.push(
-        `| ${mdLink(a.name, a.track_view_url)} | ${mdCell(a.seller_name)} | ${mdCell(a.primary_genre)} | ${formatPrice(a.price, a.currency)} | ${(JSON.parse(a.storefronts) as string[]).join(", ")} | ${mdCell(a.release_date)} |`,
+        `| ${mdLink(a.name, a.track_view_url)} | ${mdCell(a.seller_name)} | ${mdCell(a.primary_genre)} | ${formatPrice(a.price, a.currency)} | ${(JSON.parse(a.storefronts) as string[]).join(", ")} | ${mdCell(a.release_date)} | ${mdCell(descriptionSnippet(descriptionOf(a), SNIPPET_CHARS) || null)} |`,
       );
     }
   }

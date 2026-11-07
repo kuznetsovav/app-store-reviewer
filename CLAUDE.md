@@ -101,12 +101,22 @@ Output: a CSV and a Markdown report per day, committed to the repo.
 - HTML (`src/report/html.ts`): one self-contained page (inline CSS/JS, light/dark, search,
   genre filter, sortable table, App Store icons from `raw.artworkUrl100`). All text is
   escaped; only http(s) URLs reach `href`/`src`.
-- Themes (`src/report/themes.ts`, md + html): name-only regex tags (puzzle, AI, trackers,
-  faith, …; an app can match several), share vs. the pooled share of up to 7 earlier
-  reports (counted from their JSON names; compared only once those hold ≥ 100 apps),
-  plus a market line (single-app sellers, non-Latin names, median paid price). Names
-  only on purpose: descriptions mention privacy/AI/tracking everywhere. ~70% of names
-  are brands and match nothing; the note says so.
+- Descriptions (`src/report/raw.ts`, from `apps.raw`): full text in JSON and CSV
+  (`description`, null when pruned), a 140-char snippet in md/html; html search covers
+  the first 300 chars. A full day adds ~2 MB each to CSV and JSON.
+- Themes and signals (`src/report/themes.ts`, md + html), an app can match several:
+  - Themes = what the app is (puzzle, AI, trackers, faith, …): name patterns on the
+    name, stricter phrase patterns on the first 300 chars of the description. Short
+    words there name features ("no tracking", "Log ind", "add photos", "trading card
+    game"), so lead patterns are phrases; check precision on real descriptions before
+    widening one. ~60% of apps still match nothing; the note says so.
+  - Signals = how it pitches itself, phrases in the full description: no account, no
+    ads, offline/on-device, no tracking, subscription vs. one-time/"no subscription",
+    AI, widgets, iCloud, Watch, Siri, Health. 2026-11-07: 36% no account, 29% no ads.
+  - Share vs. the pooled share of up to 7 earlier reports, recounted from their JSON
+    (themes compare only with reports counted the same way, with or without
+    descriptions; signals only over described apps; needs ≥ 100 apps). Plus a market
+    line (single-app sellers, non-Latin names, median paid price).
 - CSV: RFC 4180 quoting, `storefronts` as `us;pl`, and a leading `'` on text that
   starts with `= + - @` (formula guard). JSON keeps raw values.
 - Reports built from scratch/test DBs are never committed to `reports/`.
@@ -143,6 +153,9 @@ Output: a CSV and a Markdown report per day, committed to the repo.
     books, podcasts.
   - "Last 24h" must treat day-level releaseDates (`T07:00:00Z` / `T08:00:00Z`) as
     a US Pacific calendar day, not an instant.
+- 2026-11-07 — Full descriptions in both CSV and JSON, accepting ~2 MB more per file
+  per day in `reports/`. JSON needs them anyway (signals are recounted from it); the
+  CSV keeps them so a spreadsheet has the whole text. Don't trim to a snippet.
 
 ## Measured facts (spike 2026-11-03, details in docs/spike-findings.md)
 - Max IDs per call: 200. Above 200, Lookup silently drops results (300 → 210 back,

@@ -11,14 +11,12 @@ import {
   type RunRow,
 } from "../db/repo.js";
 import { inRange, type WindowMode } from "../scan/dates.js";
+import type { TagHistory } from "./themes.js";
 
 const DAY_MS = 86_400_000;
 
-export interface ReportHistory {
+export interface ReportHistory extends TagHistory {
   date: string;
-  count: number;
-  /** Apps per theme id (see themes.ts). */
-  themes?: Record<string, number>;
 }
 
 export interface ReportData {

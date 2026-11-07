@@ -273,9 +273,9 @@ describe("guard 7: anomaly line", () => {
     writeReports(dir, "2026-11-03", rows(25));
     writeReports(dir, "2026-11-05", rows(99)); // after the report date: ignored
     expect(readHistory(dir, "2026-11-04")).toEqual([
-      { date: "2026-11-03", count: 25, themes: {} },
-      { date: "2026-11-02", count: 30, themes: {} },
-      { date: "2026-11-01", count: 20, themes: {} },
+      { date: "2026-11-03", count: 25, described: 0, themes: {}, signals: {} },
+      { date: "2026-11-02", count: 30, described: 0, themes: {}, signals: {} },
+      { date: "2026-11-01", count: 20, described: 0, themes: {}, signals: {} },
     ]);
     const cfg = testConfig();
     const md = buildReport(loadReportData(openDb(":memory:"), "2026-11-04", cfg, Date.parse("2026-11-04T12:00:00Z"), readHistory(dir, "2026-11-04")), cfg).md;

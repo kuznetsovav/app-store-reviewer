@@ -17,7 +17,7 @@ const DATE = "2026-11-04";
 const NOON = Date.parse("2026-11-04T12:00:00Z");
 
 function addApp(db: Db, o: Partial<AppRow> & { trackId: number }, seenAt = "2026-11-04T01:00:00Z") {
-  upsertApps(db, [{ row: { ...base, ...o, raw: { ...base.raw, trackId: o.trackId, trackName: o.name ?? base.name ?? undefined } }, storefronts: ["us"] }], seenAt);
+  upsertApps(db, [{ row: { ...base, ...o, raw: { ...base.raw, ...o.raw, trackId: o.trackId, trackName: o.name ?? base.name ?? undefined } }, storefronts: ["us"] }], seenAt);
 }
 
 /** Minimal RFC 4180 reader, to check the CSV round-trips. */
@@ -158,6 +158,23 @@ describe("report after a scan", () => {
     expect(out.md).toContain("No comparison yet");
     expect(out.md).toMatch(/\*\*Market:\*\* \d+ of \d+ sellers released a single app/);
     expect(out.html).toContain("<h2>Themes</h2>");
+    expect(out.html).toContain("<h2>Signals</h2>");
+  });
+
+  it("carries the description into JSON and CSV and a snippet into Markdown and HTML", () => {
+    const db = openDb(":memory:");
+    const description = "Pocket Herbarium is a plant journal.\n\nNo account, no ads. Works offline. <b>bold</b>";
+    addApp(db, { trackId: 40, name: "Pocket Herbarium", releaseDate: "2026-11-04T03:00:00Z", raw: { ...base.raw, description } });
+    const out = buildReport(loadReportData(db, DATE, cfg, NOON), cfg);
+    expect(out.rows[0]!.description).toBe(description);
+    expect(JSON.parse(out.json)[0].description).toBe(description);
+    const csv = parseCsv(out.csv);
+    expect(csv[1]![CSV_COLUMNS.indexOf("description")]).toBe(description);
+    expect(out.md).toContain("| Pocket Herbarium is a plant journal. No account, no ads. Works offline. <b>bold</b> |");
+    expect(out.md).toMatch(/\| Journals, notes & diaries \| 1 \|/);
+    expect(out.md).toMatch(/\| No account needed \| 1 \|/);
+    expect(out.html).toContain('<div class="desc">Pocket Herbarium is a plant journal. No account, no ads. Works offline. &lt;b&gt;bold&lt;/b&gt;</div>');
+    expect(out.html).toContain("pocket herbarium is a plant journal."); // searchable
   });
 });
 

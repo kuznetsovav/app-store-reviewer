@@ -2,12 +2,12 @@ import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 
 import { join } from "node:path";
 import type { ReportOutput } from "./build.js";
 import type { ReportHistory } from "./query.js";
-import { countThemes } from "./themes.js";
+import { SIGNALS, THEMES, countTags, hasDescription, type TaggableApp } from "./themes.js";
 
 const DATED_MD = /^\d{4}-\d{2}-\d{2}\.md$/;
 const DATED_JSON = /^(\d{4}-\d{2}-\d{2})\.json$/;
 
-/** New-app and theme counts of reports before `date`, newest first (at most 7). Used for the anomaly line and themes. */
+/** New-app, theme and signal counts of reports before `date`, newest first (at most 7). Used for the anomaly line and the themes/signals tables. */
 export function readHistory(dir: string, date: string): ReportHistory[] {
   if (!existsSync(dir)) return [];
   const out: ReportHistory[] = [];
@@ -17,8 +17,13 @@ export function readHistory(dir: string, date: string): ReportHistory[] {
     try {
       const rows = JSON.parse(readFileSync(join(dir, f), "utf8")) as unknown;
       if (Array.isArray(rows)) {
-        const names = rows.map((r) => (r && typeof r === "object" && typeof (r as { name?: unknown }).name === "string" ? (r as { name: string }).name : null));
-        out.push({ date: m[1]!, count: rows.length, themes: countThemes(names) });
+        const str = (r: unknown, k: string) => {
+          const v = r && typeof r === "object" ? (r as Record<string, unknown>)[k] : undefined;
+          return typeof v === "string" ? v : null;
+        };
+        const apps: TaggableApp[] = rows.map((r) => ({ name: str(r, "name"), description: str(r, "description") }));
+        const described = apps.filter(hasDescription);
+        out.push({ date: m[1]!, count: rows.length, described: described.length, themes: countTags(THEMES, apps), signals: countTags(SIGNALS, described) });
       }
     } catch {
       /* skip unreadable files */

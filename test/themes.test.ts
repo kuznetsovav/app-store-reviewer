@@ -2,41 +2,81 @@ import { mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
+import { descriptionOf, descriptionSnippet } from "../src/report/raw.js";
 import { readHistory } from "../src/report/write.js";
 import {
+  DESCRIPTION_LEAD,
   MIN_BASELINE_APPS,
-  countThemes,
+  SIGNALS,
+  THEMES,
+  countTags,
   formatChange,
   hasNonLatinLetter,
   marketLine,
   marketStats,
+  signalsNote,
+  signalsOf,
+  summarizeSignals,
   summarizeThemes,
   themesNote,
   themesOf,
-  type ThemeHistory,
+  type TagHistory,
 } from "../src/report/themes.js";
+
+const app = (name: string | null, description?: string | null) => ({ name, description });
 
 describe("themesOf", () => {
   it("tags names, several themes per app allowed", () => {
-    expect(themesOf("Kintaire: Mahjong Solitaire")).toEqual(["puzzle"]);
-    expect(themesOf("GLP-1 Dose Tracker AI: Shorty")).toEqual(expect.arrayContaining(["ai", "tracker", "health"]));
-    expect(themesOf("Quran Tilawah, Doa & Dzikir")).toEqual(["faith"]);
-    expect(themesOf("Zipcrate")).toEqual([]);
-    expect(themesOf(null)).toEqual([]);
+    expect(themesOf(app("Kintaire: Mahjong Solitaire"))).toEqual(["puzzle"]);
+    expect(themesOf(app("GLP-1 Dose Tracker AI: Shorty"))).toEqual(expect.arrayContaining(["ai", "tracker", "health"]));
+    expect(themesOf(app("Quran Tilawah, Doa & Dzikir"))).toEqual(["faith"]);
+    expect(themesOf(app("Zipcrate"))).toEqual([]);
+    expect(themesOf(app(null))).toEqual([]);
   });
 
   it("matches AI only as a capitalised word", () => {
-    expect(themesOf("Cataloger.AI")).toContain("ai");
-    expect(themesOf("Mediatrends AI")).toContain("ai");
-    expect(themesOf("Overseer Agents")).toContain("ai");
-    expect(themesOf("Ai no Uta")).not.toContain("ai");
-    expect(themesOf("Said & Done")).not.toContain("ai");
-    expect(themesOf("AIRPORT")).not.toContain("ai");
+    expect(themesOf(app("Cataloger.AI"))).toContain("ai");
+    expect(themesOf(app("Overseer Agents"))).toContain("ai");
+    expect(themesOf(app("Ai no Uta"))).not.toContain("ai");
+    expect(themesOf(app("Said & Done"))).not.toContain("ai");
+    expect(themesOf(app("AIRPORT"))).not.toContain("ai");
+  });
+
+  it("uses the description lead with stricter phrases", () => {
+    expect(themesOf(app("Zipcrate", "Zipcrate is a habit tracker for your plants."))).toContain("tracker");
+    expect(themesOf(app("Keelmark", "An IPTV player for your M3U playlists."))).toContain("remote");
+    // Words that name a feature, not the app's kind, don't count in the description.
+    expect(themesOf(app("Anywave", "Tracks come from open catalogs. No tracking. Log ind for more."))).toEqual([]);
+    expect(themesOf(app("Aura Clash", "An anime trading card game."))).not.toContain("finance");
+  });
+
+  it("ignores the description after the lead", () => {
+    const late = "x".repeat(DESCRIPTION_LEAD) + " A habit tracker.";
+    expect(themesOf(app("Zipcrate", late))).toEqual([]);
+  });
+});
+
+describe("signalsOf", () => {
+  it("reads the whole description", () => {
+    const d = "Plan trips. ".repeat(80) + "No account, no ads, no tracking. Works offline. Syncs with iCloud.";
+    expect(signalsOf(app("X", d))).toEqual(expect.arrayContaining(["no_account", "no_ads", "no_tracking", "offline", "icloud"]));
+  });
+
+  it("tells subscriptions from 'no subscription'", () => {
+    expect(signalsOf(app("X", "Pro is an auto-renewable subscription, monthly or yearly."))).toContain("subscription");
+    const once = signalsOf(app("X", "One payment. No subscription, ever."));
+    expect(once).toContain("one_time");
+    expect(once).not.toContain("subscription");
+    expect(signalsOf(app("X", "See the cost per year of your bike."))).not.toContain("subscription");
+  });
+
+  it("needs a description", () => {
+    expect(signalsOf(app("No ads: the game"))).toEqual([]);
   });
 });
 
 describe("summarizeThemes", () => {
-  const apps = [{ name: "Block Puzzle" }, { name: "Sudoku Daily" }, { name: "Habit Tracker" }, { name: "Zipcrate" }];
+  const apps = [app("Block Puzzle"), app("Sudoku Daily"), app("Habit Tracker"), app("Zipcrate")];
 
   it("counts, sorts by count and keeps examples in input order", () => {
     const s = summarizeThemes(apps);
@@ -46,10 +86,11 @@ describe("summarizeThemes", () => {
     expect(s.baselineApps).toBe(0);
   });
 
-  it("compares with the pooled share of earlier reports once they have enough apps", () => {
-    const history: ThemeHistory[] = [
-      { count: 60, themes: { puzzle: 3 } },
-      { count: 60, themes: { puzzle: 9, tracker: 6 } },
+  it("compares with the pooled share of earlier reports counted the same way", () => {
+    const history: TagHistory[] = [
+      { count: 60, described: 0, themes: { puzzle: 3 } },
+      { count: 60, described: 0, themes: { puzzle: 9, tracker: 6 } },
+      { count: 500, described: 500, themes: { puzzle: 400 } }, // counted with descriptions: not comparable
       { count: 500 }, // no theme counts: ignored
     ];
     const s = summarizeThemes(apps, history);
@@ -57,13 +98,28 @@ describe("summarizeThemes", () => {
     expect(s.baselineReports).toBe(2);
     expect(s.rows.find((r) => r.id === "puzzle")!.previousShare).toBeCloseTo(0.1);
     expect(formatChange(0.5, 0.1)).toBe("+40.0 pp");
-    expect(themesNote(s, 4)).toContain("previous 2 reports (120 apps)");
+    expect(themesNote(s, false)).toContain("previous 2 comparable reports (120 apps)");
+    expect(themesNote(s, false)).toContain("app names only");
+
+    const described = summarizeThemes([app("Block Puzzle", "A puzzle game.")], history);
+    expect(described.baselineApps).toBe(500);
+    expect(themesNote(described, true)).toContain(`first ${DESCRIPTION_LEAD} characters`);
   });
 
   it("does not compare against a tiny baseline", () => {
     const s = summarizeThemes(apps, [{ count: MIN_BASELINE_APPS - 1, themes: { puzzle: 50 } }]);
     expect(s.rows[0]!.previousShare).toBeNull();
-    expect(themesNote(s, 4)).toContain("No comparison yet");
+    expect(themesNote(s, false)).toContain("No comparison yet");
+  });
+});
+
+describe("summarizeSignals", () => {
+  it("counts only apps with a description, against described apps of earlier reports", () => {
+    const apps = [app("A", "No ads here."), app("B", "Free trial, then a monthly subscription."), app("C", null)];
+    const s = summarizeSignals(apps, [{ count: 300, described: 200, signals: { no_ads: 20 } }, { count: 50, described: 0, signals: {} }]);
+    expect(s.total).toBe(2);
+    expect(s.rows.find((r) => r.id === "no_ads")).toMatchObject({ count: 1, share: 0.5, previousShare: 0.1 });
+    expect(signalsNote(s, 3)).toContain("2 of 3 apps");
   });
 });
 
@@ -102,11 +158,30 @@ describe("marketStats", () => {
   });
 });
 
+describe("raw helpers", () => {
+  it("reads the description and makes one-line snippets", () => {
+    expect(descriptionOf({ raw: JSON.stringify({ description: "Hello\n\nworld" }) })).toBe("Hello\n\nworld");
+    expect(descriptionOf({ raw: "{}" })).toBeNull();
+    expect(descriptionOf({ raw: "not json" })).toBeNull();
+    expect(descriptionSnippet("Hello\n\nworld", 50)).toBe("Hello world");
+    expect(descriptionSnippet("abcdefghij", 5)).toBe("abcd…");
+    expect(descriptionSnippet(null, 5)).toBe("");
+  });
+});
+
 describe("readHistory", () => {
-  it("adds theme counts from each earlier report's names", () => {
+  it("adds theme and signal counts from each earlier report's names and descriptions", () => {
     const dir = mkdtempSync(join(tmpdir(), "reports-"));
-    writeFileSync(join(dir, "2026-11-03.json"), JSON.stringify([{ name: "Word Puzzle" }, { name: "Notes" }, { name: null }]));
+    const rows = [
+      { name: "Word Puzzle", description: "No ads." },
+      { name: "Notes", description: null },
+      { name: null }, // written before descriptions existed
+    ];
+    writeFileSync(join(dir, "2026-11-03.json"), JSON.stringify(rows));
     writeFileSync(join(dir, "2026-11-04.json"), JSON.stringify([{ name: "Today only" }]));
-    expect(readHistory(dir, "2026-11-04")).toEqual([{ date: "2026-11-03", count: 3, themes: countThemes(["Word Puzzle", "Notes"]) }]);
+    const apps = rows.map((r) => ({ name: r.name, description: r.description ?? null }));
+    expect(readHistory(dir, "2026-11-04")).toEqual([
+      { date: "2026-11-03", count: 3, described: 1, themes: countTags(THEMES, apps), signals: countTags(SIGNALS, [apps[0]!]) },
+    ]);
   });
 });

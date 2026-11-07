@@ -1,9 +1,22 @@
 import type { Config } from "../config.js";
 import type { AppDbRow } from "../db/repo.js";
 import { formatTimes, isDayLevel, zonedDate } from "../scan/dates.js";
-import { anomalyLine, coverageLines, formatPrice } from "./build.js";
+import { SNIPPET_CHARS, anomalyLine, coverageLines, formatPrice, toTaggable } from "./build.js";
 import type { ReportData } from "./query.js";
-import { formatChange, formatShare, marketLine, marketStats, summarizeThemes, themesNote } from "./themes.js";
+import { descriptionOf, descriptionSnippet, parseRaw } from "./raw.js";
+import {
+  descriptionLead,
+  formatChange,
+  formatShare,
+  hasDescription,
+  marketLine,
+  marketStats,
+  signalsNote,
+  summarizeSignals,
+  summarizeThemes,
+  themesNote,
+  type TagSummary,
+} from "./themes.js";
 import { matchWatchlist } from "./watchlist.js";
 
 const DAY_MS = 86_400_000;
@@ -33,13 +46,9 @@ export function safeUrl(u: string | null | undefined): string | null {
 }
 
 function iconUrl(a: AppDbRow): string | null {
-  try {
-    const raw = JSON.parse(a.raw) as Record<string, unknown>;
-    const u = raw.artworkUrl100 ?? raw.artworkUrl60;
-    return typeof u === "string" ? safeUrl(u) : null;
-  } catch {
-    return null;
-  }
+  const raw = parseRaw(a.raw);
+  const u = raw.artworkUrl100 ?? raw.artworkUrl60;
+  return typeof u === "string" ? safeUrl(u) : null;
 }
 
 /** Day-level dates as the Pacific calendar day Apple meant; precise ones in UTC. */
@@ -57,7 +66,8 @@ function appCell(a: AppDbRow): string {
   const url = safeUrl(a.track_view_url);
   const name = esc(a.name ?? "—");
   const title = url ? `<a href="${esc(url)}" target="_blank" rel="noopener noreferrer">${name}</a>` : name;
-  return `<div class="app">${img}<div><div class="name">${title}</div><div class="sub">${esc(a.seller_name ?? "—")}</div></div></div>`;
+  const about = descriptionSnippet(descriptionOf(a), SNIPPET_CHARS);
+  return `<div class="app">${img}<div><div class="name">${title}</div><div class="sub">${esc(a.seller_name ?? "—")}</div>${about ? `<div class="desc">${esc(about)}</div>` : ""}</div></div>`;
 }
 
 const STYLE = `
@@ -94,6 +104,7 @@ td.up{color:var(--ok)}td.down{color:var(--bad)}
 .app{display:flex;gap:10px;align-items:center;min-width:220px}
 .app img,.noicon{width:40px;height:40px;border-radius:9px;flex:none;background:var(--line)}
 .app .name{font-weight:500}.sub{color:var(--muted);font-size:13px}
+.desc{color:var(--muted);font-size:13px;max-width:62ch;margin-top:2px}
 .controls{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 12px}
 .controls input,.controls select{font:inherit;color:var(--text);background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:6px 10px}
 .controls input{flex:1 1 220px}
@@ -194,39 +205,45 @@ export function toHtml(d: ReportData, apps: AppDbRow[], cfg: Config): string {
     parts.push(`<p class="lede">${esc(marketLine(marketStats(apps), n))}</p>`);
   }
 
+  const tagged = apps.map(toTaggable);
+  const changeClass = (r: { share: number; previousShare: number | null }) =>
+    r.previousShare === null || Math.abs(r.share - r.previousShare) < 0.005 ? "" : r.share > r.previousShare ? " up" : " down";
+  const tagTable = (head: string, s: TagSummary, note: string) =>
+    `<div class="tablewrap"><table><thead><tr><th>${esc(head)}</th><th class="num">Apps</th><th class="num">Share</th><th class="num">Earlier</th><th class="num">Change</th><th>Examples</th></tr></thead><tbody>` +
+    s.rows
+      .map(
+        (r) =>
+          `<tr><td class="nowrap">${esc(r.label)}</td><td class="num">${r.count}</td><td class="num">${esc(formatShare(r.share))}</td>` +
+          `<td class="num">${esc(formatShare(r.previousShare))}</td><td class="num${changeClass(r)}">${esc(formatChange(r.share, r.previousShare))}</td>` +
+          `<td class="sub">${esc(r.examples.join(", "))}</td></tr>`,
+      )
+      .join("") +
+    `</tbody></table></div><p class="sub">${esc(note)}</p>`;
+
   parts.push(`<h2>Themes</h2>`);
   if (n === 0) parts.push(`<p class="empty">Nothing to count.</p>`);
   else {
-    const s = summarizeThemes(apps, d.history);
-    const changeClass = (r: { share: number; previousShare: number | null }) =>
-      r.previousShare === null || Math.abs(r.share - r.previousShare) < 0.005 ? "" : r.share > r.previousShare ? " up" : " down";
-    parts.push(
-      `<div class="tablewrap"><table><thead><tr><th>Theme</th><th class="num">Apps</th><th class="num">Share</th><th class="num">Earlier</th><th class="num">Change</th><th>Examples</th></tr></thead><tbody>` +
-        s.rows
-          .map(
-            (r) =>
-              `<tr><td class="nowrap">${esc(r.label)}</td><td class="num">${r.count}</td><td class="num">${esc(formatShare(r.share))}</td>` +
-              `<td class="num">${esc(formatShare(r.previousShare))}</td><td class="num${changeClass(r)}">${esc(formatChange(r.share, r.previousShare))}</td>` +
-              `<td class="sub">${esc(r.examples.join(", "))}</td></tr>`,
-          )
-          .join("") +
-        `</tbody></table></div>`,
-    );
-    parts.push(`<p class="sub">${esc(themesNote(s, n))}</p>`);
+    const s = summarizeThemes(tagged, d.history);
+    parts.push(tagTable("Theme", s, themesNote(s, tagged.some(hasDescription))));
   }
+
+  parts.push(`<h2>Signals</h2>`);
+  const signals = summarizeSignals(tagged, d.history);
+  if (signals.total === 0) parts.push(`<p class="empty">${n === 0 ? "Nothing to count." : "No descriptions stored for these apps."}</p>`);
+  else parts.push(tagTable("Signal", signals, signalsNote(signals, n)));
 
   parts.push(`<h2>All new apps</h2>`);
   if (n === 0) parts.push(`<p class="empty">No new apps in this window.</p>`);
   else {
     parts.push(
-      `<div class="controls"><input id="q" type="search" placeholder="Search name or seller" aria-label="Search apps">` +
+      `<div class="controls"><input id="q" type="search" placeholder="Search name, seller or description" aria-label="Search apps">` +
         `<select id="genre" aria-label="Filter by genre"><option value="">All genres</option>${genres.map(([g]) => `<option>${esc(g)}</option>`).join("")}</select>` +
         `<span class="sub" style="align-self:center">Showing <span id="shown">${n}</span> of ${n}</span></div>`,
     );
     const rows = apps.map((a) => {
       const sf = (JSON.parse(a.storefronts) as string[]).join(", ");
       const data =
-        `data-text="${esc(`${a.name ?? ""} ${a.seller_name ?? ""}`.toLowerCase())}" data-genre="${esc(a.primary_genre ?? "Unknown")}" ` +
+        `data-text="${esc(`${a.name ?? ""} ${a.seller_name ?? ""} ${descriptionLead(descriptionOf(a))}`.toLowerCase())}" data-genre="${esc(a.primary_genre ?? "Unknown")}" ` +
         `data-name="${esc((a.name ?? "").toLowerCase())}" data-price="${a.price ?? ""}" data-released="${esc(a.release_date ?? "")}"`;
       return (
         `<tr ${data}><td>${appCell(a)}</td><td>${esc(a.primary_genre ?? "—")}</td><td class="num">${esc(formatPrice(a.price, a.currency))}</td>` +
