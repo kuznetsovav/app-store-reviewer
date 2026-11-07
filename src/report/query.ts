@@ -14,6 +14,13 @@ import { inRange, type WindowMode } from "../scan/dates.js";
 
 const DAY_MS = 86_400_000;
 
+export interface ReportHistory {
+  date: string;
+  count: number;
+  /** Apps per theme id (see themes.ts). */
+  themes?: Record<string, number>;
+}
+
 export interface ReportData {
   /** YYYY-MM-DD (UTC), same convention as runs.run_date. */
   date: string;
@@ -28,8 +35,8 @@ export interface ReportData {
   /** Apps selected for this report (see selectForReport). */
   apps: AppDbRow[];
   frontier: FrontierRow | undefined;
-  /** New-app counts of earlier reports, newest first (for the anomaly line). */
-  history: { date: string; count: number }[];
+  /** New-app and theme counts of earlier reports, newest first (anomaly line, themes). */
+  history: ReportHistory[];
 }
 
 /**
@@ -49,7 +56,7 @@ export function selectForReport(a: Pick<AppDbRow, "first_seen_at" | "release_dat
   return false; // first seen after this report's end
 }
 
-export function loadReportData(db: Db, date: string, cfg: Config, now = Date.now(), history: { date: string; count: number }[] = []): ReportData {
+export function loadReportData(db: Db, date: string, cfg: Config, now = Date.now(), history: ReportHistory[] = []): ReportData {
   const run = latestRunForDate(db, date) ?? null;
   const endOfDay = Date.parse(`${date}T00:00:00Z`) + DAY_MS;
   const windowEnd = run ? (run.finished_at ? Date.parse(run.finished_at) : now) : Math.min(endOfDay, now);

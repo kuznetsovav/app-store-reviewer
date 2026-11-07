@@ -3,6 +3,7 @@ import type { AppDbRow } from "../db/repo.js";
 import { formatTimes, isDayLevel, zonedDate } from "../scan/dates.js";
 import { anomalyLine, coverageLines, formatPrice } from "./build.js";
 import type { ReportData } from "./query.js";
+import { formatChange, formatShare, marketLine, marketStats, summarizeThemes, themesNote } from "./themes.js";
 import { matchWatchlist } from "./watchlist.js";
 
 const DAY_MS = 86_400_000;
@@ -89,6 +90,7 @@ th[data-sort]{cursor:pointer;user-select:none}th[data-sort]:hover{color:var(--te
 th[aria-sort="ascending"]::after{content:" ▲"}th[aria-sort="descending"]::after{content:" ▼"}
 td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
 td.nowrap{white-space:nowrap}
+td.up{color:var(--ok)}td.down{color:var(--bad)}
 .app{display:flex;gap:10px;align-items:center;min-width:220px}
 .app img,.noicon{width:40px;height:40px;border-radius:9px;flex:none;background:var(--line)}
 .app .name{font-weight:500}.sub{color:var(--muted);font-size:13px}
@@ -189,6 +191,28 @@ export function toHtml(d: ReportData, apps: AppDbRow[], cfg: Config): string {
           .join("") +
         `</div></div>`,
     );
+    parts.push(`<p class="lede">${esc(marketLine(marketStats(apps), n))}</p>`);
+  }
+
+  parts.push(`<h2>Themes</h2>`);
+  if (n === 0) parts.push(`<p class="empty">Nothing to count.</p>`);
+  else {
+    const s = summarizeThemes(apps, d.history);
+    const changeClass = (r: { share: number; previousShare: number | null }) =>
+      r.previousShare === null || Math.abs(r.share - r.previousShare) < 0.005 ? "" : r.share > r.previousShare ? " up" : " down";
+    parts.push(
+      `<div class="tablewrap"><table><thead><tr><th>Theme</th><th class="num">Apps</th><th class="num">Share</th><th class="num">Earlier</th><th class="num">Change</th><th>Examples</th></tr></thead><tbody>` +
+        s.rows
+          .map(
+            (r) =>
+              `<tr><td class="nowrap">${esc(r.label)}</td><td class="num">${r.count}</td><td class="num">${esc(formatShare(r.share))}</td>` +
+              `<td class="num">${esc(formatShare(r.previousShare))}</td><td class="num${changeClass(r)}">${esc(formatChange(r.share, r.previousShare))}</td>` +
+              `<td class="sub">${esc(r.examples.join(", "))}</td></tr>`,
+          )
+          .join("") +
+        `</tbody></table></div>`,
+    );
+    parts.push(`<p class="sub">${esc(themesNote(s, n))}</p>`);
   }
 
   parts.push(`<h2>All new apps</h2>`);

@@ -154,6 +154,10 @@ describe("report after a scan", () => {
     expect(out.md).toContain("**done**");
     expect(out.md).not.toContain("Skipped");
     expect(out.count).toBe(2);
+    expect(out.md).toMatch(/## Themes\n\n\| Theme \| Apps \| Share \| Earlier \| Change \| Examples \|/);
+    expect(out.md).toContain("No comparison yet");
+    expect(out.md).toMatch(/\*\*Market:\*\* \d+ of \d+ sellers released a single app/);
+    expect(out.html).toContain("<h2>Themes</h2>");
   });
 });
 

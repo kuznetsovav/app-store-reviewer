@@ -1,20 +1,25 @@
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import type { ReportOutput } from "./build.js";
+import type { ReportHistory } from "./query.js";
+import { countThemes } from "./themes.js";
 
 const DATED_MD = /^\d{4}-\d{2}-\d{2}\.md$/;
 const DATED_JSON = /^(\d{4}-\d{2}-\d{2})\.json$/;
 
-/** New-app counts of reports before `date`, newest first (at most 7). Used for the anomaly line. */
-export function readHistory(dir: string, date: string): { date: string; count: number }[] {
+/** New-app and theme counts of reports before `date`, newest first (at most 7). Used for the anomaly line and themes. */
+export function readHistory(dir: string, date: string): ReportHistory[] {
   if (!existsSync(dir)) return [];
-  const out: { date: string; count: number }[] = [];
+  const out: ReportHistory[] = [];
   for (const f of readdirSync(dir).sort().reverse()) {
     const m = DATED_JSON.exec(f);
     if (!m || m[1]! >= date) continue;
     try {
       const rows = JSON.parse(readFileSync(join(dir, f), "utf8")) as unknown;
-      if (Array.isArray(rows)) out.push({ date: m[1]!, count: rows.length });
+      if (Array.isArray(rows)) {
+        const names = rows.map((r) => (r && typeof r === "object" && typeof (r as { name?: unknown }).name === "string" ? (r as { name: string }).name : null));
+        out.push({ date: m[1]!, count: rows.length, themes: countThemes(names) });
+      }
     } catch {
       /* skip unreadable files */
     }

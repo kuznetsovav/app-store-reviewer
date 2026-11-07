@@ -3,6 +3,7 @@ import type { AppDbRow, FailedRange } from "../db/repo.js";
 import { formatTimes } from "../scan/dates.js";
 import type { ReportData } from "./query.js";
 import { toHtml } from "./html.js";
+import { formatChange, formatShare, marketLine, marketStats, summarizeThemes, themesNote } from "./themes.js";
 import { matchWatchlist } from "./watchlist.js";
 
 export const CSV_COLUMNS = [
@@ -218,6 +219,19 @@ export function toMarkdown(d: ReportData, apps: AppDbRow[], cfg: Config): string
     const free = apps.filter((a) => a.price === 0).length;
     const unknown = apps.filter((a) => a.price === null).length;
     out.push("", `**Free:** ${free} · **Paid:** ${n - free - unknown}${unknown ? ` · **Unknown price:** ${unknown}` : ""}`);
+    out.push("", `**Market:** ${marketLine(marketStats(apps), n)}`);
+  }
+  out.push("");
+
+  out.push("## Themes", "");
+  if (n === 0) out.push("_Nothing to count._");
+  else {
+    const s = summarizeThemes(apps, d.history);
+    out.push("| Theme | Apps | Share | Earlier | Change | Examples |", "| --- | ---: | ---: | ---: | ---: | --- |");
+    for (const r of s.rows) {
+      out.push(`| ${mdCell(r.label)} | ${r.count} | ${formatShare(r.share)} | ${formatShare(r.previousShare)} | ${formatChange(r.share, r.previousShare)} | ${mdCell(r.examples.join(", "))} |`);
+    }
+    out.push("", themesNote(s, n));
   }
   out.push("");
 

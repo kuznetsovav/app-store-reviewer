@@ -101,6 +101,12 @@ Output: a CSV and a Markdown report per day, committed to the repo.
 - HTML (`src/report/html.ts`): one self-contained page (inline CSS/JS, light/dark, search,
   genre filter, sortable table, App Store icons from `raw.artworkUrl100`). All text is
   escaped; only http(s) URLs reach `href`/`src`.
+- Themes (`src/report/themes.ts`, md + html): name-only regex tags (puzzle, AI, trackers,
+  faith, …; an app can match several), share vs. the pooled share of up to 7 earlier
+  reports (counted from their JSON names; compared only once those hold ≥ 100 apps),
+  plus a market line (single-app sellers, non-Latin names, median paid price). Names
+  only on purpose: descriptions mention privacy/AI/tracking everywhere. ~70% of names
+  are brands and match nothing; the note says so.
 - CSV: RFC 4180 quoting, `storefronts` as `us;pl`, and a leading `'` on text that
   starts with `= + - @` (formula guard). JSON keeps raw values.
 - Reports built from scratch/test DBs are never committed to `reports/`.
