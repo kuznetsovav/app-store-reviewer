@@ -46,7 +46,10 @@ Output: a CSV and a Markdown report per day, committed to the repo.
   interrupted run too) or `--restart-finished` (new run only if today's finished).
 - `maxCallsPerRun` counts HTTP requests incl. retries, summed across resumes of the
   day's run; `maxMinutesPerRun` is per invocation. `maxConsecutiveFailures` (10)
-  failed batches → `aborted`. A 5xx gets only `maxServerErrorRetries` (1) retries;
+  failed batches in a row → the canary is looked up again: if it fails → `aborted`; if it
+  passes, it's a bad stretch of IDs (2026-11-07: Apple 500ed long runs of fresh IDs near
+  the frontier and the run aborted after 330 calls), so the run goes on with a warning,
+  and in extend that streak counts toward `emptyBatchesToStop`. No canary → `aborted`. A 5xx gets only `maxServerErrorRetries` (1) retries;
   403/429/network keep `maxRetries` (5). Failed batches go to `failed_ranges`; when the
   run ends as done or budget they are retried once, split in halves (≤3 levels, no 5xx
   retries) because Apple 500s on some batches every time. The main loop reserves 8 calls

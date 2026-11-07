@@ -65,6 +65,43 @@ describe("guard 1: canary", () => {
   });
 });
 
+describe("failure streaks: blocked or just a bad stretch of IDs?", () => {
+  const canary = { canaryIds: [1, 2, 3, 4, 5], canaryMinFound: 4, maxConsecutiveFailures: 3 };
+  const apps = { us: new Set([1, 2, 3, 4, 5, 1003, 1015, 1250, 950]) };
+  // Whole 10-ID batches in 1011–1050 answer 500; the halves of the end-of-run retry work.
+  const band = (ids: number[]) => ids.length === 10 && ids[0]! >= 1011 && ids[0]! <= 1041 && 500;
+
+  it("keeps going when the canary still answers, and recovers the band on the retry (2026-11-07)", async () => {
+    // More empty batches to stop than one streak adds, as in production (50 vs 10).
+    const s = setup({ world: world({ frontier: 1300, apps, fail: band }), cfg: { ...canary, emptyBatchesToStop: 5 } });
+    const res = await runScan(s.base());
+    expect(res.run.status).toBe("done");
+    expect(s.lines.find((l) => l.event === "failure_streak")).toMatchObject({ phase: "extend", failures: 3, first: 1011, last: 1040, healthy: true, canary: 5 });
+    expect(JSON.parse(res.run.warnings)).toContainEqual(expect.stringMatching(/^Apple answered errors to 3 batches in a row \(IDs 1,011 – 1,040\)/));
+    expect(lastFrontier(s.db)?.max_hit_id).toBe(1300);
+    expect(res.run.failed_ranges).toBe("[]");
+    expect(countApps(s.db)).toBe(4); // 950, 1003, 1015 (from the retry), 1250
+  });
+
+  it("still aborts when the canary fails too", async () => {
+    let canaryCalls = 0;
+    const fail = (ids: number[]) => (ids.includes(1) ? ++canaryCalls > 1 && 503 : band(ids));
+    const s = setup({ world: world({ frontier: 1300, apps, fail }), cfg: canary });
+    const res = await runScan(s.base());
+    expect(res.run.status).toBe("aborted");
+    expect(res.run.error).toMatch(/^3 consecutive failed batches \(last: .*500.*\); canary 0\/5 \(.*503/);
+    expect(JSON.parse(res.run.failed_ranges)).toHaveLength(3);
+  });
+
+  it("ends the frontier search when everything above the frontier answers 500", async () => {
+    const s = setup({ world: world({ apps, fail: (ids) => ids[0]! > 1060 && 500 }), cfg: canary });
+    const res = await runScan(s.base());
+    expect(res.run.status).toBe("done");
+    expect(res.run.extend_end).toBe(1090);
+    expect(lastFrontier(s.db)?.max_hit_id).toBe(1055);
+  });
+});
+
 describe("guard 1: empty answers in ranges that used to be dense", () => {
   it("aborts after N consecutive empty batches where earlier runs found plenty", async () => {
     let blocked = false;

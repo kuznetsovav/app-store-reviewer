@@ -147,6 +147,7 @@ export async function runScan(o: ScanOptions): Promise<ScanResult> {
   const inserted: AppRow[] = [];
   let known = p.phase === "rescan" ? knownIdsBetween(db, bottom, top) : new Set<number>();
   let consecutiveFailures = 0;
+  let streakWarned = false;
   const ctl: { stop: { status: RunStatus; error: string | null } | null } = { stop: null };
   const sf = cfg.storefronts.length;
   const schema = emptyStats();
@@ -226,12 +227,48 @@ export async function runScan(o: ScanOptions): Promise<ScanResult> {
     });
   }
 
-  function onFailure(phase: Phase, ids: number[], error: string) {
+  /** Records a failed batch; returns true when the failure streak is long enough to check Apple's health. */
+  function onFailure(phase: Phase, ids: number[]): boolean {
     consecutiveFailures++;
     p.failed.push({ phase, first: Math.min(...ids), last: Math.max(...ids) });
-    if (consecutiveFailures >= cfg.maxConsecutiveFailures) {
-      ctl.stop = { status: "aborted", error: `${consecutiveFailures} consecutive failed batches (last: ${error})` };
+    return consecutiveFailures >= cfg.maxConsecutiveFailures;
+  }
+
+  /**
+   * A long failure streak is either Apple blocking us or a stretch of IDs Apple 500s on
+   * (seen near the frontier: freshly created records). The canary tells them apart: if the
+   * known apps still come back, the run goes on and the failed ranges get their usual retry.
+   * In extend, those batches count as empty, so a frontier that only answers 500 still ends.
+   */
+  async function onFailureStreak(phase: Phase, error: string) {
+    const n = consecutiveFailures;
+    const streak = p.failed.slice(-n);
+    const from = Math.min(...streak.map((f) => f.first));
+    const to = Math.max(...streak.map((f) => f.last));
+    const health = cfg.canaryIds.length ? await probeCanary() : null;
+    if (health?.budget) {
+      ctl.stop = { status: "budget", error: null };
+      return;
     }
+    const healthy = health !== null && !health.error && health.found >= cfg.canaryMinFound;
+    log({ ts: iso(), run: runId, event: "failure_streak", phase, failures: n, first: from, last: to, healthy, ...(health ? { canary: health.found, of: cfg.canaryIds.length } : {}), ...(health?.error ? { error: health.error } : {}) });
+    if (!healthy) {
+      const why = health === null ? "" : `; canary ${health.found}/${cfg.canaryIds.length}${health.error ? ` (${health.error})` : ""}`;
+      ctl.stop = { status: "aborted", error: `${n} consecutive failed batches (last: ${error})${why}` };
+      return;
+    }
+    if (!streakWarned) {
+      streakWarned = true;
+      addWarning(
+        db,
+        runId,
+        `Apple answered errors to ${n} batches in a row (IDs ${from.toLocaleString("en-US")} – ${to.toLocaleString("en-US")}) ` +
+          `while the canary apps still came back, so the run kept going; failed IDs are listed under failed batches.`,
+      );
+    }
+    if (phase === "extend") p.empty_streak += n;
+    consecutiveFailures = 0;
+    saveProgress(db, runId, p);
   }
 
   /** Quiet-failure guards, checked after every successful batch. */
@@ -293,9 +330,8 @@ export async function runScan(o: ScanOptions): Promise<ScanResult> {
     saveProgress(db, runId, p);
   }
 
-  // ── Canary: known-released apps must come back, or Apple is answering empty ──
-  async function canary(): Promise<void> {
-    if (cfg.canaryIds.length === 0) return;
+  /** Looks up the canary apps once. */
+  async function probeCanary(): Promise<{ found: number; error: string | null; budget: boolean }> {
     const before = client.lookupCalls;
     let found = 0;
     let error: string | null = null;
@@ -305,14 +341,22 @@ export async function runScan(o: ScanOptions): Promise<ScanResult> {
       found = validateResults(res.results, schema).filter((x) => x.kind === "software" && typeof x.trackId === "number" && want.has(x.trackId)).length;
       if (res.status !== 200) error = `status ${res.status}`;
     } catch (e) {
-      if (e instanceof BudgetExceededError) {
-        ctl.stop = { status: "budget", error: null };
-        return;
-      }
+      if (e instanceof BudgetExceededError) return { found, error, budget: true };
       if (!(e instanceof RequestFailedError)) throw e;
       error = e.message;
     } finally {
       p.calls += client.lookupCalls - before;
+    }
+    return { found, error, budget: false };
+  }
+
+  // ── Canary: known-released apps must come back, or Apple is answering empty ──
+  async function canary(): Promise<void> {
+    if (cfg.canaryIds.length === 0) return;
+    const { found, error, budget } = await probeCanary();
+    if (budget) {
+      ctl.stop = { status: "budget", error: null };
+      return;
     }
     log({ ts: iso(), run: runId, event: "canary", found, of: cfg.canaryIds.length, ...(error ? { error } : {}) });
     if (error || found < cfg.canaryMinFound) {
@@ -360,9 +404,10 @@ export async function runScan(o: ScanOptions): Promise<ScanResult> {
       }
       p.next_id += cfg.batchSize;
       if (out.kind === "failed") {
-        onFailure("extend", ids, out.error);
+        const streak = onFailure("extend", ids);
         saveProgress(db, runId, p);
         logBatch("extend", ids, started, out);
+        if (streak) await onFailureStreak("extend", out.error);
         continue;
       }
       consecutiveFailures = 0;
@@ -384,9 +429,10 @@ export async function runScan(o: ScanOptions): Promise<ScanResult> {
       }
       p.next_id = ids.at(-1)! - 1;
       if (out.kind === "failed") {
-        onFailure("rescan", ids, out.error);
+        const streak = onFailure("rescan", ids);
         saveProgress(db, runId, p);
         logBatch("rescan", ids, started, out);
+        if (streak) await onFailureStreak("rescan", out.error);
         continue;
       }
       consecutiveFailures = 0;

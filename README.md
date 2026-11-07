@@ -111,7 +111,7 @@ variable; an empty value means "use config.json".
 | `idsPerDayEstimate` | 391000 | `APPSTORE_IDS_PER_DAY_ESTIMATE` | Used by `--dry-run` and the coverage note |
 | `maxRetries` | 5 | `APPSTORE_MAX_RETRIES` | Retries per request on 403/429, network errors, non-JSON 200s |
 | `maxServerErrorRetries` | 1 | `APPSTORE_MAX_SERVER_ERROR_RETRIES` | Retries per request on 5xx (capped by `maxRetries`) |
-| `maxConsecutiveFailures` | 10 | `APPSTORE_MAX_CONSECUTIVE_FAILURES` | Failed batches in a row before the run aborts |
+| `maxConsecutiveFailures` | 10 | `APPSTORE_MAX_CONSECUTIVE_FAILURES` | Failed batches in a row before the canary is rechecked; the run aborts only if it fails too |
 | `requestTimeoutMs` | 30000 | `APPSTORE_REQUEST_TIMEOUT_MS` | Per-request timeout |
 
 ## Daily job (GitHub Actions)
