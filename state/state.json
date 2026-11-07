@@ -1,21 +1,21 @@
 {
   "frontier": {
-    "max_hit_id": 6831712277,
-    "observed_at": "2026-11-07T11:48:42.432Z"
+    "max_hit_id": 6831974658,
+    "observed_at": "2026-11-07T13:05:08.557Z"
   },
   "lastRun": {
     "id": 5,
     "run_date": "2026-11-07",
-    "status": "aborted",
-    "phase": "extend",
-    "calls": 330,
-    "hits": 49,
-    "new_releases": 49,
-    "next_id": 6831714278,
-    "finished_at": "2026-11-07T11:48:42.432Z",
-    "error": "10 consecutive failed batches (last: Request failed with status 500 after 2 attempts)"
+    "status": "done",
+    "phase": "rescan",
+    "calls": 5850,
+    "hits": 1391,
+    "new_releases": 1391,
+    "next_id": 6830913476,
+    "finished_at": "2026-11-07T16:56:11.050Z",
+    "error": null
   },
   "reportDate": "2026-11-07",
-  "newApps": 49,
-  "updatedAt": "2026-11-07T11:48:42.432Z"
+  "newApps": 1391,
+  "updatedAt": "2026-11-07T16:56:11.050Z"
 }
