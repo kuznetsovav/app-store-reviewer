@@ -135,6 +135,9 @@ Output: a CSV and a Markdown report per day, committed to the repo.
   run records a warning that the report shows.
 - After `run`: `prune` (raw JSON → '{}' for apps below frontier − lookbackIds released
   over 3 days ago, then VACUUM), `notify`, commit `reports/` + `state/`.
+- `.github/workflows/pages.yml` publishes `reports/` to GitHub Pages (root = `latest.html`)
+  after each `daily` run (`workflow_run`: its GITHUB_TOKEN push triggers no `push`
+  workflows), on pushes to `reports/**`, and on manual dispatch. Pages source: GitHub Actions.
 - Lint the workflow with `actionlint` before changing it.
 
 ## Decisions

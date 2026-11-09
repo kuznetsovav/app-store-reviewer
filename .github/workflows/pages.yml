@@ -1,0 +1,50 @@
+name: pages
+
+# Publishes reports/ to GitHub Pages; the site root shows latest.html.
+# The daily job pushes with GITHUB_TOKEN, which never triggers `push` workflows,
+# so its reports are deployed via workflow_run when that job finishes.
+on:
+  workflow_run:
+    workflows: [daily]
+    types: [completed]
+  push:
+    branches: [main]
+    paths: ["reports/**"]
+  workflow_dispatch:
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      # Branch tip, so a deploy after the daily job sees the commit it just pushed.
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Build site
+        run: |
+          mkdir -p _site
+          cp -R reports/. _site/
+          if [ -f _site/latest.html ]; then cp _site/latest.html _site/index.html; fi
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - id: deployment
+        uses: actions/deploy-pages@v4
