@@ -5,6 +5,10 @@ built only from Apple's public [iTunes Lookup API](https://performance-partners.
 Each day GitHub Actions scans recent App Store IDs and commits
 `reports/YYYY-MM-DD.{csv,json,md,html}` plus `reports/latest.{md,html}`.
 
+A second daily job tracks **viral apps**: it snapshots Apple's public top charts and the
+rating counts of charting and newly found apps, and writes `reports/viral.{md,html,json}`
+(see [Viral apps report](#viral-apps-report)).
+
 ## How it works
 
 App Store IDs are assigned roughly in creation order. Each run:
@@ -73,6 +77,8 @@ npm ci && npx tsx src/cli.ts run
 | `prune` | Drop raw JSON of old apps and compact the database |
 | `check-log FILE [--rate N]` | Fail if any 60 s window in a run log had more calls than the rate limit |
 | `notify [--date YYYY-MM-DD]` | POST headline + watchlist to `NOTIFY_WEBHOOK_URL` (no-op if unset) |
+| `trends` | Snapshot top charts + rating counts, then write `reports/viral.*`. Exit 1 if aborted |
+| `trends-report [--date YYYY-MM-DD]` | Rebuild `reports/viral.*` from `data/trends.db`; no API calls |
 | `spike` | Re-measure the ID space (see docs/spike-findings.md) |
 
 Every command is `npx tsx src/cli.ts <command>`. Ctrl+C finishes the current batch
@@ -103,6 +109,11 @@ variable; an empty value means "use config.json".
 | `maxInvalidShare` | 0.05 | `APPSTORE_MAX_INVALID_SHARE` | Share of results failing validation that aborts the run |
 | `watchlist.keywords` | `["wishlist","gift"]` | `APPSTORE_WATCHLIST_KEYWORDS` (comma list) | Matched in name or description |
 | `watchlist.genres` | `[]` | `APPSTORE_WATCHLIST_GENRES` (comma list) | Matched against the app's genres |
+| `trends.maxCalls` | `400` | `APPSTORE_TRENDS_MAX_CALLS` | Lookup calls per day for rating snapshots (chart calls not counted) |
+| `trends.maxMinutes` | `45` | `APPSTORE_TRENDS_MAX_MINUTES` | Wall-clock limit per `trends` invocation |
+| `trends.maxApps` | `50000` | `APPSTORE_TRENDS_MAX_APPS` | Apps whose rating counts are tracked |
+| `trends.dbPath` | `data/trends.db` | `APPSTORE_TRENDS_DB_PATH` | Snapshot database |
+| `trends.genreIds`, `charts`, `countries` | 41 genres, 3 charts, `["us"]` | — | Which charts to snapshot |
 | `userAgent` | `appstore-new-apps/0.1` | `APPSTORE_USER_AGENT` | Sent with every request |
 | `contactUrl` | empty | `APPSTORE_CONTACT_URL` | Appended to the User-Agent. Don't use `example.com`: Apple's CDN rejects it |
 | `dbPath` | `data/appstore.db` | `APPSTORE_DB_PATH` | SQLite database (not committed) |
@@ -113,6 +124,28 @@ variable; an empty value means "use config.json".
 | `maxServerErrorRetries` | 1 | `APPSTORE_MAX_SERVER_ERROR_RETRIES` | Retries per request on 5xx (capped by `maxRetries`) |
 | `maxConsecutiveFailures` | 10 | `APPSTORE_MAX_CONSECUTIVE_FAILURES` | Failed batches in a row before the canary is rechecked; the run aborts only if it fails too |
 | `requestTimeoutMs` | 30000 | `APPSTORE_REQUEST_TIMEOUT_MS` | Per-request timeout |
+
+## Viral apps report
+
+Apple publishes no download numbers and no history, so the `trends` job builds its own:
+every day it saves Apple's top 100 for Top Free, Top Paid and Top Grossing (all apps plus
+40 genres, 123 charts) and the `userRatingCount` of every app that charted in the last
+60 days or appeared in a new-apps report in the last 30 days. `reports/viral.*` lists:
+
+- **Breakouts:** apps released in the last 30 days that are in a top chart today.
+- **Climbing the charts** over 7 and 30 days: biggest rank gain per app; a new entry
+  counts as a climb from #101.
+- **Fastest-growing ratings** over 7 and 30 days: new ratings ÷ the earlier count.
+- **Fast starters:** apps released in the last 30 days, by ratings per day.
+
+Breakouts and fast starters work from the first day. The 7- and 30-day comparisons need
+that many days of snapshots; until then they compare with the oldest snapshot and say so.
+Ratings stand in for downloads and are US-only by default (`trends.countries`).
+
+[.github/workflows/trends.yml](.github/workflows/trends.yml) runs at 20:37 UTC in the same
+concurrency group as the scan, so the two never call Apple at the same time. Its database
+(`data/trends.db`) is cached and backed up as the `trends-db` artifact for 90 days; a
+lost cache is restored from the newest backup.
 
 ## Daily job (GitHub Actions)
 

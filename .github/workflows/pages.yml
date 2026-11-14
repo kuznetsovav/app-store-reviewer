@@ -5,7 +5,7 @@ name: pages
 # so its reports are deployed via workflow_run when that job finishes.
 on:
   workflow_run:
-    workflows: [daily]
+    workflows: [daily, trends]
     types: [completed]
   push:
     branches: [main]

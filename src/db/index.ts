@@ -21,22 +21,27 @@ const MIGRATIONS = [
    );`,
 ];
 
-export function migrate(db: Db): void {
+export function migrate(db: Db, migrations: readonly string[] = MIGRATIONS): void {
   const current = db.pragma("user_version", { simple: true }) as number;
-  for (let v = current; v < MIGRATIONS.length; v++) {
+  for (let v = current; v < migrations.length; v++) {
     db.transaction(() => {
-      db.exec(MIGRATIONS[v]!);
+      db.exec(migrations[v]!);
       db.pragma(`user_version = ${v + 1}`);
     })();
   }
 }
 
-/** Opens (creating if needed) and migrates the database. Use ":memory:" in tests. */
-export function openDb(path: string): Db {
+/** Opens (creating if needed) and migrates a SQLite file. Use ":memory:" in tests. */
+export function openSqlite(path: string, migrations: readonly string[]): Db {
   if (path !== ":memory:") mkdirSync(dirname(path), { recursive: true });
   const db = new Database(path);
   db.pragma("journal_mode = WAL");
   db.pragma("foreign_keys = ON");
-  migrate(db);
+  migrate(db, migrations);
   return db;
+}
+
+/** The scanner's database (apps, runs, frontier, density). */
+export function openDb(path: string): Db {
+  return openSqlite(path, MIGRATIONS);
 }

@@ -4,6 +4,8 @@
 A daily job that lists iOS apps first released on the App Store in the last 24 hours,
 using only Apple's public iTunes Lookup API (https://itunes.apple.com/lookup).
 Output: a CSV and a Markdown report per day, committed to the repo.
+A second daily job (`trends`) snapshots Apple's public RSS top charts plus Lookup rating
+counts and writes a viral-apps report (`reports/viral.*`). No other data sources.
 
 ## How it works
 - App Store IDs are assigned roughly in creation order. We batch-look-up a rolling
@@ -26,11 +28,11 @@ Output: a CSV and a Markdown report per day, committed to the repo.
 - TypeScript, Node 20+, ESM, `tsx` for running, `vitest` for tests.
 - SQLite via `better-sqlite3`. No ORM.
 - Native `fetch`. No HTTP client library unless needed.
-- CLI entry: `src/cli.ts` with subcommands (`spike`, `scan`, `report`, `run`).
+- CLI entry: `src/cli.ts` with subcommands (`spike`, `scan`, `report`, `run`, `trends`, `trends-report`).
 
 ## Conventions
 - Small modules, pure functions where possible, I/O at the edges.
-- Every Apple API call goes through `src/lookup/client.ts`. (The optional webhook in
+- Every Apple API call (Lookup and RSS charts) goes through `src/lookup/client.ts`. (The optional webhook in
   `src/notify.ts` is the one other network call; it must never log its URL.)
 - Tests never hit the network: use recorded fixtures in `test/fixtures/`.
 - Log one JSON line per batch (range, ids, hits, status, ms).
@@ -121,6 +123,29 @@ Output: a CSV and a Markdown report per day, committed to the repo.
   starts with `= + - @` (formula guard). JSON keeps raw values.
 - Reports built from scratch/test DBs are never committed to `reports/`.
 
+## Trends (viral report)
+- `trends` (`src/trends/`): snapshot, then `reports/viral.{md,html,json}` (overwritten daily;
+  git history keeps old days). `trends-report [--date]` rebuilds them from the DB only.
+- Own DB `data/trends.db` (`trends.dbPath`, env `APPSTORE_TRENDS_DB_PATH`), never the
+  scanner's: snapshots can't be backfilled, so it has its own cache and a 90-day backup.
+- Charts: Apple's legacy feeds `itunes.apple.com/{cc}/rss/{topfree,toppaid,topgrossing}applications/limit=100/[genre=N/]json`
+  (the newer rss.marketingtools feed has no genres or grossing). 41 genre IDs × 3 charts =
+  123 calls; `GENRE_NAMES` in `src/trends/charts.ts` lists them and why 5 IDs are left out.
+- Ratings: `userRatingCount` via Lookup for the watch list = apps charted in the last
+  `chartWatchDays` (60) + apps from `reports/YYYY-MM-DD.json` of the last `newAppWatchDays`
+  (30), charted first, capped at `maxApps`. A NULL count = looked up, not returned.
+- Resumable per chart and per 200-ID batch; today's done charts/apps are skipped.
+  `trends.maxCalls` (400 Lookup calls, chart calls not counted) holds per UTC day across
+  resumes; `trends.maxMinutes` (45) per invocation. Guards: 10 failed requests in a row →
+  `aborted`; an empty overall chart or a ≥ 20-ID batch with no apps back counts as failed.
+- Report sections: breakouts (released ≤ 30 days and in a chart today), chart climbers
+  over 7/30 days (best move per app; entering the top 100 = climb from #101; only charts
+  present on both days; gain ≥ `minRankGain`), rating risers over 7/30 days (sorted by
+  gain ÷ max(base, 100); an app untracked on the base day counts only if released after
+  it, from 0), fast starters (ratings per day since release). Windows compare with the
+  latest snapshot ≥ N days old, else the oldest one, marked partial.
+- Ratings are a download proxy only: per storefront, lagging up to a day.
+
 ## Daily job
 - `.github/workflows/daily.yml`: 05:17 UTC + manual dispatch (`maxCallsPerRun`,
   `lookbackIds` inputs, passed via env; empty env values mean "unset"). Scheduled
@@ -135,8 +160,13 @@ Output: a CSV and a Markdown report per day, committed to the repo.
   run records a warning that the report shows.
 - After `run`: `prune` (raw JSON → '{}' for apps below frontier − lookbackIds released
   over 3 days ago, then VACUUM), `notify`, commit `reports/` + `state/`.
+- `.github/workflows/trends.yml`: 20:37 UTC + manual dispatch (`maxCalls`). Same
+  concurrency group as `daily` (`daily-scan`), so the two never call Apple at once.
+  DB cache `trends-db-<run_id>-<attempt>` (restore prefix `trends-db-`); on a cache miss it
+  downloads the newest `trends-db` artifact (90-day retention) with `gh`. `check-log` runs
+  on its log. Commits only `reports/viral.*` with the same pull/restore/push loop.
 - `.github/workflows/pages.yml` publishes `reports/` to GitHub Pages (root = `latest.html`)
-  after each `daily` run (`workflow_run`: its GITHUB_TOKEN push triggers no `push`
+  after each `daily` or `trends` run (`workflow_run`: its GITHUB_TOKEN push triggers no `push`
   workflows), on pushes to `reports/**`, and on manual dispatch. Pages source: GitHub Actions.
 - Lint the workflow with `actionlint` before changing it.
 
@@ -161,6 +191,10 @@ Output: a CSV and a Markdown report per day, committed to the repo.
   CSV keeps them so a spreadsheet has the whole text. Don't trim to a snippet.
 
 ## Measured facts (spike 2026-11-03, details in docs/spike-findings.md)
+- Chart feeds (2026-11-14): the legacy `itunes.apple.com/us/rss/...` feeds return at most
+  100 entries even with limit=200; the newer `rss.marketingtools.apple.com` feed 504s at 200.
+  Genre IDs 6022, 6025, 7007, 7008 return empty charts; 6021 returns News apps. Entries
+  in game-subgenre charts are all labelled "Games".
 - Max IDs per call: 200. Above 200, Lookup silently drops results (300 → 210 back,
   still 200 OK); 500 → 502, 1000 → 400. Never raise `batchSize` above 200.
 - Hits per 1,000 IDs near the frontier: ~90 (all content) rising to ~440 at 3M below.
