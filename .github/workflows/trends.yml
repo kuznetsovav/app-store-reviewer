@@ -1,0 +1,145 @@
+name: trends
+
+# Daily snapshot of Apple's top charts and the rating counts of tracked apps, then
+# reports/viral.{md,html,json}. Apple keeps no history, so every missed day is a gap.
+on:
+  schedule:
+    - cron: "37 20 * * *" # 20:37 UTC, after the daily scan has usually finished
+  workflow_dispatch:
+    inputs:
+      maxCalls:
+        description: "Lookup call budget for today's rating snapshot (empty = config.json, 400)"
+        required: false
+        default: ""
+        type: string
+
+# Same group as the daily scan: one API client at a time (CLAUDE.md hard rule). A run
+# that arrives while the scan is going waits for it.
+concurrency:
+  group: daily-scan
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+  actions: read # to restore the DB from an earlier run's artifact
+
+jobs:
+  trends:
+    runs-on: ubuntu-latest
+    # ~123 chart calls + ~250 Lookup calls at 18/min ≈ 21 min; maxMinutes (45) caps the snapshot.
+    timeout-minutes: 60
+    env:
+      APPSTORE_TRENDS_MAX_CALLS: ${{ inputs.maxCalls }}
+      APPSTORE_CONTACT_URL: ${{ github.server_url }}/${{ github.repository }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.ref_name }}
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Restore trends database
+        id: restore-db
+        uses: actions/cache/restore@v6
+        with:
+          path: data/trends.db
+          key: trends-db-${{ github.run_id }}-${{ github.run_attempt }}
+          restore-keys: trends-db-
+
+      # The snapshots can't be re-fetched, so a lost cache falls back to the newest backup.
+      - name: Restore from the latest backup artifact
+        if: steps.restore-db.outputs.cache-matched-key == ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          mkdir -p data
+          for id in $(gh run list --repo "$GITHUB_REPOSITORY" --workflow trends.yml --limit 30 --json databaseId --jq '.[].databaseId'); do
+            if gh run download "$id" --repo "$GITHUB_REPOSITORY" --name trends-db --dir data 2>/dev/null; then
+              echo "::warning::Trends DB cache missing; restored the backup from run $id."
+              exit 0
+            fi
+          done
+          echo "::warning::No trends database in cache or artifacts. Snapshot history starts today."
+
+      - name: Snapshot and report
+        id: run
+        run: |
+          mkdir -p logs
+          set +e
+          npx tsx src/cli.ts trends 2>&1 | tee logs/trends.log
+          code=${PIPESTATUS[0]}
+          echo "exit=$code" >> "$GITHUB_OUTPUT"
+          echo "Trends exited with $code"
+
+      - name: Check the rate limit held
+        if: always() && hashFiles('logs/trends.log') != ''
+        run: npx tsx src/cli.ts check-log logs/trends.log
+
+      - name: Save database to cache
+        if: always() && hashFiles('data/trends.db') != ''
+        uses: actions/cache/save@v6
+        with:
+          path: data/trends.db
+          key: trends-db-${{ github.run_id }}-${{ github.run_attempt }}
+
+      - name: Back up database as artifact
+        if: always() && hashFiles('data/trends.db') != ''
+        uses: actions/upload-artifact@v7
+        with:
+          name: trends-db
+          path: data/trends.db
+          retention-days: 90
+          if-no-files-found: warn
+
+      - name: Commit the viral report
+        if: always() && hashFiles('reports/viral.json') != ''
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          files="reports/viral.md reports/viral.html reports/viral.json"
+          # shellcheck disable=SC2086 # three fixed paths
+          git add $files
+          if git diff --cached --quiet; then
+            echo "Nothing to commit."
+            exit 0
+          fi
+          msg=$(node -e 'console.log("viral report " + require("./reports/viral.json").date)' 2>/dev/null) || msg="viral report $(date -u +%F)"
+          git commit -m "$msg"
+          ours=$(git rev-parse HEAD)
+          for attempt in 1 2 3; do
+            # Runs never overlap (concurrency group), so this run's viral.* are the newest.
+            if git pull --rebase -X theirs; then
+              # shellcheck disable=SC2086
+              git checkout "$ours" -- $files
+              if ! git diff --cached --quiet; then git commit --amend --no-edit; fi
+              if git push; then exit 0; fi
+            else
+              git rebase --abort || true
+            fi
+            echo "Push attempt $attempt failed; retrying in $((attempt * 10)) s."
+            sleep $((attempt * 10))
+          done
+          echo "::error::Could not push the viral report after 3 attempts."
+          exit 1
+
+      - name: Upload logs
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: trends-logs
+          path: logs/
+          retention-days: 14
+          if-no-files-found: warn
+
+      - name: Fail if the snapshot aborted
+        if: always() && steps.run.outputs.exit != '0'
+        env:
+          TRENDS_EXIT: ${{ steps.run.outputs.exit }}
+        run: |
+          echo "::error::trends exited with code ${TRENDS_EXIT:-unknown}. The report and database were still saved."
+          exit 1

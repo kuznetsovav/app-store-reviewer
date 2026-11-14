@@ -70,7 +70,7 @@ function appCell(a: AppDbRow): string {
   return `<div class="app">${img}<div><div class="name">${title}</div><div class="sub">${esc(a.seller_name ?? "—")}</div>${about ? `<div class="desc">${esc(about)}</div>` : ""}</div></div>`;
 }
 
-const STYLE = `
+export const STYLE = `
 :root{--bg:#f7f7f5;--surface:#fff;--text:#1c1c1e;--muted:#6b6b70;--line:#e4e4e0;--accent:#0a66d8;--bar:#9db8e0;--warn-bg:#fff4dc;--warn-line:#e9b949;--ok:#1d7a46;--bad:#b3261e}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#141416;--surface:#1d1d20;--text:#ececef;--muted:#9a9aa2;--line:#2e2e33;--accent:#6aa8ff;--bar:#3a5a8a;--warn-bg:#3a2f12;--warn-line:#a07a1c;--ok:#5bc48a;--bad:#ff8a80}}
 :root[data-theme="dark"]{--bg:#141416;--surface:#1d1d20;--text:#ececef;--muted:#9a9aa2;--line:#2e2e33;--accent:#6aa8ff;--bar:#3a5a8a;--warn-bg:#3a2f12;--warn-line:#a07a1c;--ok:#5bc48a;--bad:#ff8a80}
@@ -256,7 +256,7 @@ export function toHtml(d: ReportData, apps: AppDbRow[], cfg: Config): string {
     );
   }
 
-  parts.push(`<footer>Built from Apple's public iTunes Lookup API. Same data as ${esc(d.date)}.csv / .json / .md.</footer>`);
+  parts.push(`<footer>Built from Apple's public iTunes Lookup API. Same data as ${esc(d.date)}.csv / .json / .md. <a href="viral.html">Viral apps →</a></footer>`);
 
   return (
     `<!doctype html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width,initial-scale=1">\n` +

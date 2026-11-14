@@ -43,6 +43,16 @@ async function main(): Promise<void> {
       await notifyCommand(args);
       return;
     }
+    case "trends": {
+      const { trendsCommand } = await import("./trends/commands.js");
+      await trendsCommand(args);
+      return;
+    }
+    case "trends-report": {
+      const { trendsReportCommand } = await import("./trends/commands.js");
+      trendsReportCommand(args);
+      return;
+    }
     default:
       console.error(
         [
@@ -54,6 +64,8 @@ async function main(): Promise<void> {
           "  run [scan options]                                  scan, then report, then write state/state.json; exit 1 if aborted",
           "  prune                                               drop raw JSON of old apps and compact the DB",
           "  check-log FILE [--rate N]                           fail if any 60 s window in a run log exceeds the rate limit",
+          "  trends                                              snapshot top charts + rating counts, then write reports/viral.*; exit 1 if aborted",
+          "  trends-report [--date YYYY-MM-DD]                   write reports/viral.* from data/trends.db (no API calls)",
           "  notify [--date YYYY-MM-DD]                          POST headline + watchlist to NOTIFY_WEBHOOK_URL (no-op if unset)",
         ].join("\n"),
       );
