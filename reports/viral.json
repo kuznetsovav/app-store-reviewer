@@ -1,0 +1,2298 @@
+{
+  "date": "2026-11-15",
+  "country": "us",
+  "coverage": {
+    "chartDays": 1,
+    "firstChartDate": "2026-11-15",
+    "ratingDays": 1,
+    "firstRatingDate": "2026-11-15",
+    "chartsToday": 123,
+    "appsCharting": 8918,
+    "appsRated": 17211,
+    "run": {
+      "id": 1,
+      "snap_date": "2026-11-15",
+      "started_at": "2026-11-15T00:13:21.225Z",
+      "finished_at": "2026-11-15T00:25:31.598Z",
+      "status": "done",
+      "chart_calls": 123,
+      "lookup_calls": 87,
+      "charts_ok": 123,
+      "charts_failed": 0,
+      "apps_tracked": 17375,
+      "error": null
+    }
+  },
+  "breakouts": [
+    {
+      "app": {
+        "trackId": 6752607219,
+        "name": "Warhammer Survivors",
+        "seller": "Auroch Digital Ltd",
+        "genre": "Games",
+        "releaseDate": "2026-11-10T08:00:00Z",
+        "price": 7.19,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/warhammer-survivors/id6752607219?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/5a/69/16/5a6916fb-9333-89b5-0238-d3621bb63225/AppIcon-1x_U007emarketing-0-8-0-85-220-0.png/100x100bb.jpg"
+      },
+      "ageDays": 5,
+      "best": {
+        "chart": "toppaid",
+        "genreId": 0,
+        "genreName": "All apps",
+        "rank": 5
+      },
+      "charts": 4,
+      "ratings": 53
+    },
+    {
+      "app": {
+        "trackId": 6803329435,
+        "name": "Chromagraph Camera",
+        "seller": "Chromatic Applications LLC",
+        "genre": "Photo & Video",
+        "releaseDate": "2026-10-20T07:00:00Z",
+        "price": 12.99,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/chromagraph-camera/id6803329435?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/57/a2/6f/57a26f23-bb49-3f97-87e1-9399cca9d853/AppIcon-0-0-1x_U007epad-0-0-0-1-0-85-220.png/100x100bb.jpg"
+      },
+      "ageDays": 26,
+      "best": {
+        "chart": "toppaid",
+        "genreId": 0,
+        "genreName": "All apps",
+        "rank": 9
+      },
+      "charts": 2,
+      "ratings": 240
+    },
+    {
+      "app": {
+        "trackId": 6816896250,
+        "name": "Tiny Computers",
+        "seller": "Fountain Interactive Ltd",
+        "genre": "Entertainment",
+        "releaseDate": "2026-10-23T07:00:00Z",
+        "price": 2.99,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/tiny-computers/id6816896250?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/b4/25/0b/b4250b10-48b9-1186-1407-af72a4913299/AppIcon-0-0-1x_U007epad-0-1-0-85-220.png/100x100bb.jpg"
+      },
+      "ageDays": 23,
+      "best": {
+        "chart": "toppaid",
+        "genreId": 0,
+        "genreName": "All apps",
+        "rank": 10
+      },
+      "charts": 2,
+      "ratings": 110
+    },
+    {
+      "app": {
+        "trackId": 6762192063,
+        "name": "Absolum",
+        "seller": "Playdigious",
+        "genre": "Games",
+        "releaseDate": "2026-11-05T08:00:00Z",
+        "price": 8.99,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/absolum/id6762192063?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/95/9e/48/959e4815-c5cd-dc62-733f-6bd938061cde/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/100x100bb.jpg"
+      },
+      "ageDays": 10,
+      "best": {
+        "chart": "toppaid",
+        "genreId": 0,
+        "genreName": "All apps",
+        "rank": 13
+      },
+      "charts": 4,
+      "ratings": 78
+    },
+    {
+      "app": {
+        "trackId": 6788134172,
+        "name": "Poppy Playtime Chapter 5",
+        "seller": "Mob Entertainment, Inc",
+        "genre": "Games",
+        "releaseDate": "2026-11-06T08:00:00Z",
+        "price": 6.99,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/poppy-playtime-chapter-5/id6788134172?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/14/de/91/14de9127-8958-6f84-abf8-8ed083360584/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/100x100bb.jpg"
+      },
+      "ageDays": 9,
+      "best": {
+        "chart": "toppaid",
+        "genreId": 0,
+        "genreName": "All apps",
+        "rank": 14
+      },
+      "charts": 5,
+      "ratings": 189
+    },
+    {
+      "app": {
+        "trackId": 6822194774,
+        "name": "TypeDraw",
+        "seller": "Trautmann & Dorre GbR Shaped Agency",
+        "genre": "Productivity",
+        "releaseDate": "2026-10-20T07:00:00Z",
+        "price": 4.99,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/typedraw/id6822194774?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/c2/42/a4/c242a47b-e6a8-a6ac-dfb9-91ab0627e626/AppIcon-0-0-1x_U007epad-0-1-85-220.png/100x100bb.jpg"
+      },
+      "ageDays": 26,
+      "best": {
+        "chart": "toppaid",
+        "genreId": 0,
+        "genreName": "All apps",
+        "rank": 20
+      },
+      "charts": 2,
+      "ratings": 88
+    },
+    {
+      "app": {
+        "trackId": 6783953753,
+        "name": "Batomon Showdown",
+        "seller": "EKA Games LLC",
+        "genre": "Games",
+        "releaseDate": "2026-10-30T07:00:00Z",
+        "price": 5.99,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/batomon-showdown/id6783953753?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/ae/36/dc/ae36dc5d-2069-cd8a-5ea4-c575f0d7d6ee/AppIcon-0-0-1x_U007ephone-0-11-0-85-220.png/100x100bb.jpg"
+      },
+      "ageDays": 16,
+      "best": {
+        "chart": "toppaid",
+        "genreId": 0,
+        "genreName": "All apps",
+        "rank": 22
+      },
+      "charts": 3,
+      "ratings": 72
+    },
+    {
+      "app": {
+        "trackId": 6763063611,
+        "name": "Bills Must Be Paid",
+        "seller": "Rike Games",
+        "genre": "Games",
+        "releaseDate": "2026-11-01T07:00:00Z",
+        "price": 5.99,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/bills-must-be-paid/id6763063611?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/dc/ad/ce/dcadce0c-0210-d03c-ac89-2b9ad76fbb97/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/100x100bb.jpg"
+      },
+      "ageDays": 14,
+      "best": {
+        "chart": "toppaid",
+        "genreId": 0,
+        "genreName": "All apps",
+        "rank": 29
+      },
+      "charts": 4,
+      "ratings": 230
+    },
+    {
+      "app": {
+        "trackId": 6801113954,
+        "name": "Booster Pack Heroes",
+        "seller": "Funday Games ApS",
+        "genre": "Games",
+        "releaseDate": "2026-11-10T08:00:00Z",
+        "price": 6.99,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/booster-pack-heroes/id6801113954?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/ce/f2/9d/cef29df4-fc77-061a-7dab-a29eaea3d2b9/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/100x100bb.jpg"
+      },
+      "ageDays": 5,
+      "best": {
+        "chart": "toppaid",
+        "genreId": 0,
+        "genreName": "All apps",
+        "rank": 33
+      },
+      "charts": 4,
+      "ratings": 48
+    },
+    {
+      "app": {
+        "trackId": 6778380721,
+        "name": "Thrifty Business",
+        "seller": "Spellgarden Games UK Limited",
+        "genre": "Games",
+        "releaseDate": "2026-11-10T08:00:00Z",
+        "price": 7.99,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/thrifty-business/id6778380721?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/45/27/32/452732b4-0742-75f3-e96e-8f35def38a15/AppIcon-1x_U007emarketing-0-8-0-85-220-0.png/100x100bb.jpg"
+      },
+      "ageDays": 5,
+      "best": {
+        "chart": "toppaid",
+        "genreId": 0,
+        "genreName": "All apps",
+        "rank": 34
+      },
+      "charts": 4,
+      "ratings": 9
+    },
+    {
+      "app": {
+        "trackId": 1252260233,
+        "name": "The House of Tesla",
+        "seller": "Blue Brain Games, s.r.o.",
+        "genre": "Games",
+        "releaseDate": "2026-10-20T07:00:00Z",
+        "price": 6.99,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/the-house-of-tesla/id1252260233?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/4d/16/4a/4d164a11-13a5-2397-ae4c-c93852f4cff0/AppIcon-1x_U007emarketing-0-8-0-85-220-0.png/100x100bb.jpg"
+      },
+      "ageDays": 26,
+      "best": {
+        "chart": "toppaid",
+        "genreId": 0,
+        "genreName": "All apps",
+        "rank": 39
+      },
+      "charts": 4,
+      "ratings": 37
+    },
+    {
+      "app": {
+        "trackId": 6812658213,
+        "name": "A Fool's Errand",
+        "seller": "IORAMA AB",
+        "genre": "Games",
+        "releaseDate": "2026-11-02T08:00:00Z",
+        "price": 2.99,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/a-fools-errand/id6812658213?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/41/ab/a6/41aba6d0-7b1e-1fe9-9568-560181f6f958/iOS_AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/100x100bb.jpg"
+      },
+      "ageDays": 13,
+      "best": {
+        "chart": "toppaid",
+        "genreId": 0,
+        "genreName": "All apps",
+        "rank": 48
+      },
+      "charts": 3,
+      "ratings": 12
+    },
+    {
+      "app": {
+        "trackId": 6771652722,
+        "name": "ONE PIECE: Grand Gourmet",
+        "seller": "Bandai Namco Entertainment Inc.",
+        "genre": "Games",
+        "releaseDate": "2026-10-22T07:00:00Z",
+        "price": 12.99,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/one-piece-grand-gourmet/id6771652722?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/ad/21/fe/ad21feac-4a5c-6aa2-6f95-7009a9d5c564/AppIcon-0-0-1x_U007emarketing-0-6-85-220.png/100x100bb.jpg"
+      },
+      "ageDays": 24,
+      "best": {
+        "chart": "toppaid",
+        "genreId": 0,
+        "genreName": "All apps",
+        "rank": 56
+      },
+      "charts": 4,
+      "ratings": 335
+    },
+    {
+      "app": {
+        "trackId": 1116232218,
+        "name": "POSTAL Classic & Uncut",
+        "seller": "Desi Network Inc",
+        "genre": "Games",
+        "releaseDate": "2026-11-10T08:00:00Z",
+        "price": 1.99,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/postal-classic-uncut/id1116232218?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/89/8f/7e/898f7e54-135f-0139-8f7f-6ecd0c3c2db9/AppIcon-0-0-1x_U007epad-0-1-85-220.png/100x100bb.jpg"
+      },
+      "ageDays": 5,
+      "best": {
+        "chart": "toppaid",
+        "genreId": 0,
+        "genreName": "All apps",
+        "rank": 58
+      },
+      "charts": 3,
+      "ratings": 32
+    },
+    {
+      "app": {
+        "trackId": 6754094013,
+        "name": "Zombie Assault: Resurgence",
+        "seller": "Ninja Kiwi Limited",
+        "genre": "Games",
+        "releaseDate": "2026-10-28T07:00:00Z",
+        "price": 9.99,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/zombie-assault-resurgence/id6754094013?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/3b/b5/4f/3bb54fff-c2f3-add3-ed68-dd1624a32326/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/100x100bb.jpg"
+      },
+      "ageDays": 18,
+      "best": {
+        "chart": "toppaid",
+        "genreId": 0,
+        "genreName": "All apps",
+        "rank": 71
+      },
+      "charts": 4,
+      "ratings": 106
+    },
+    {
+      "app": {
+        "trackId": 6826606004,
+        "name": "Pocket Midway",
+        "seller": "RDub Studios, LLC",
+        "genre": "Games",
+        "releaseDate": "2026-11-06T08:00:00Z",
+        "price": 2.99,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/pocket-midway/id6826606004?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/6f/3f/f0/6f3ff09b-ce6c-9a60-f381-6aa506f58eee/PocketMidway-0-0-1x_U007ephone-0-1-sRGB-85-220.png/100x100bb.jpg"
+      },
+      "ageDays": 9,
+      "best": {
+        "chart": "toppaid",
+        "genreId": 0,
+        "genreName": "All apps",
+        "rank": 95
+      },
+      "charts": 4,
+      "ratings": 3
+    },
+    {
+      "app": {
+        "trackId": 6772922295,
+        "name": "Transformers: Eternal War",
+        "seller": "HOOLAI GAME LIMITED",
+        "genre": "Games",
+        "releaseDate": "2026-11-11T08:00:00Z",
+        "price": 0,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/transformers-eternal-war/id6772922295?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/20/4f/c5/204fc5b5-682c-eba9-6fd1-617b8f7d581b/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/100x100bb.jpg"
+      },
+      "ageDays": 4,
+      "best": {
+        "chart": "topfree",
+        "genreId": 7014,
+        "genreName": "Games: Role Playing",
+        "rank": 1
+      },
+      "charts": 6,
+      "ratings": 653
+    },
+    {
+      "app": {
+        "trackId": 6740521489,
+        "name": "PUBG MOBILE FLASH",
+        "seller": "Tencent Mobile International Limited",
+        "genre": "Games",
+        "releaseDate": "2026-11-13T08:00:00Z",
+        "price": 0,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/pubg-mobile-flash/id6740521489?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/74/5e/cd/745ecdd3-06e9-0bf9-6c1a-2541a8025888/AppIcon-1x_U007emarketing-0-8-0-85-220-0.png/100x100bb.jpg"
+      },
+      "ageDays": 2,
+      "best": {
+        "chart": "topfree",
+        "genreId": 7017,
+        "genreName": "Games: Strategy",
+        "rank": 1
+      },
+      "charts": 3,
+      "ratings": 286
+    },
+    {
+      "app": {
+        "trackId": 6787238415,
+        "name": "Nextpad++",
+        "seller": "Andrey Letov",
+        "genre": "Developer Tools",
+        "releaseDate": "2026-11-11T08:00:00Z",
+        "price": 9.99,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/nextpad/id6787238415?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/2d/da/14/2dda1497-f0c1-23f5-4317-459acd666193/npp-0-0-1x_U007epad-0-1-0-sRGB-85-220.png/100x100bb.jpg"
+      },
+      "ageDays": 4,
+      "best": {
+        "chart": "toppaid",
+        "genreId": 6026,
+        "genreName": "Developer Tools",
+        "rank": 1
+      },
+      "charts": 2,
+      "ratings": 0
+    },
+    {
+      "app": {
+        "trackId": 6824655215,
+        "name": "Tidy Everything!",
+        "seller": "SayGames LTD",
+        "genre": "Games",
+        "releaseDate": "2026-11-02T08:00:00Z",
+        "price": 0,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/tidy-everything/id6824655215?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/17/44/14/174414ae-5341-7e37-607e-a71a2fddc8b2/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/100x100bb.jpg"
+      },
+      "ageDays": 13,
+      "best": {
+        "chart": "topfree",
+        "genreId": 7009,
+        "genreName": "Games: Family",
+        "rank": 2
+      },
+      "charts": 5,
+      "ratings": 42
+    },
+    {
+      "app": {
+        "trackId": 6825181273,
+        "name": "AltoPaint: Oil & Watercolor",
+        "seller": "High Line Labs LLC",
+        "genre": "Graphics & Design",
+        "releaseDate": "2026-10-23T07:00:00Z",
+        "price": 5.99,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/altopaint-oil-watercolor/id6825181273?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/da/26/f2/da26f2b0-6cd5-a568-bac2-85dc3ad611b8/AppIcon-0-0-1x_U007epad-0-1-85-220.png/100x100bb.jpg"
+      },
+      "ageDays": 23,
+      "best": {
+        "chart": "toppaid",
+        "genreId": 6027,
+        "genreName": "Graphics & Design",
+        "rank": 2
+      },
+      "charts": 1,
+      "ratings": 3
+    },
+    {
+      "app": {
+        "trackId": 6817314923,
+        "name": "SCRAM: Hide and Seek",
+        "seller": "Moveera Pty Ltd",
+        "genre": "Games",
+        "releaseDate": "2026-10-30T07:00:00Z",
+        "price": 0,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/scram-hide-and-seek/id6817314923?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/63/21/d2/6321d23c-fab1-6733-9ed6-fefb9f671e5e/AppIcon-0-0-1x_U007ephone-0-1-85-220.png/100x100bb.jpg"
+      },
+      "ageDays": 16,
+      "best": {
+        "chart": "topfree",
+        "genreId": 7009,
+        "genreName": "Games: Family",
+        "rank": 3
+      },
+      "charts": 5,
+      "ratings": 310
+    },
+    {
+      "app": {
+        "trackId": 6825865577,
+        "name": "CodeRaft",
+        "seller": "MUHAMMAD RAFAY SALMAN",
+        "genre": "Developer Tools",
+        "releaseDate": "2026-11-11T08:00:00Z",
+        "price": 9.99,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/coderaft/id6825865577?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/32/ba/c1/32bac1a2-1ed8-3880-be20-48a46222785b/AppIcon-0-0-1x_U007ephone-0-1-85-220.png/100x100bb.jpg"
+      },
+      "ageDays": 4,
+      "best": {
+        "chart": "toppaid",
+        "genreId": 6026,
+        "genreName": "Developer Tools",
+        "rank": 3
+      },
+      "charts": 2,
+      "ratings": 4
+    },
+    {
+      "app": {
+        "trackId": 6798884743,
+        "name": "kept. shelf",
+        "seller": "SUSHMITHA REDDY MUPPIDI",
+        "genre": "Shopping",
+        "releaseDate": "2026-11-13T08:00:00Z",
+        "price": 4.99,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/kept-shelf/id6798884743?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/4b/5c/a6/4b5ca651-9564-d792-c570-606801d2bd0d/AppIcon-0-0-1x_U007ephone-0-1-85-220.png/100x100bb.jpg"
+      },
+      "ageDays": 2,
+      "best": {
+        "chart": "toppaid",
+        "genreId": 6024,
+        "genreName": "Shopping",
+        "rank": 3
+      },
+      "charts": 1,
+      "ratings": 0
+    },
+    {
+      "app": {
+        "trackId": 6811266895,
+        "name": "Hialeah Pay Calculator",
+        "seller": "Ivan Ivanov",
+        "genre": "Finance",
+        "releaseDate": "2026-10-30T07:00:00Z",
+        "price": 1.99,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/hialeah-pay-calculator/id6811266895?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/9a/12/e1/9a12e107-bb18-6369-a909-d7ff4294a7d9/AppIcon-0-0-1x_U007epad-0-1-85-220.png/100x100bb.jpg"
+      },
+      "ageDays": 16,
+      "best": {
+        "chart": "toppaid",
+        "genreId": 6015,
+        "genreName": "Finance",
+        "rank": 3
+      },
+      "charts": 1,
+      "ratings": 0
+    },
+    {
+      "app": {
+        "trackId": 6786448308,
+        "name": "Pocket GM: Baseball Sim",
+        "seller": "Jonathan Howell",
+        "genre": "Games",
+        "releaseDate": "2026-11-01T07:00:00Z",
+        "price": 2.99,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/pocket-gm-baseball-sim/id6786448308?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/28/3f/25/283f253a-206f-fb2b-1bff-0fc4c261c303/AppIcon-0-0-1x_U007emarketing-0-5-0-85-220.png/100x100bb.jpg"
+      },
+      "ageDays": 14,
+      "best": {
+        "chart": "toppaid",
+        "genreId": 7016,
+        "genreName": "Games: Sports",
+        "rank": 5
+      },
+      "charts": 2,
+      "ratings": 30
+    },
+    {
+      "app": {
+        "trackId": 6828132471,
+        "name": "Retro Blackjack",
+        "seller": "EEO Advertising LLC",
+        "genre": "Games",
+        "releaseDate": "2026-11-13T08:00:00Z",
+        "price": 2.99,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/retro-blackjack/id6828132471?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/23/63/60/2363606e-b9f9-cadb-53b4-1f5f0904766a/AppIcon-0-0-1x_U007epad-0-1-85-220.png/100x100bb.jpg"
+      },
+      "ageDays": 2,
+      "best": {
+        "chart": "toppaid",
+        "genreId": 7006,
+        "genreName": "Games: Casino",
+        "rank": 5
+      },
+      "charts": 2,
+      "ratings": 0
+    },
+    {
+      "app": {
+        "trackId": 6822361297,
+        "name": "Allianz Richmond Marathon",
+        "seller": "Max Vogel Group LLC",
+        "genre": "Sports",
+        "releaseDate": "2026-10-28T07:00:00Z",
+        "price": 0,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/allianz-richmond-marathon/id6822361297?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/2b/27/15/2b27156e-0aea-3d7d-5156-b454d9437b9d/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/100x100bb.jpg"
+      },
+      "ageDays": 18,
+      "best": {
+        "chart": "topfree",
+        "genreId": 6004,
+        "genreName": "Sports",
+        "rank": 5
+      },
+      "charts": 1,
+      "ratings": 1
+    },
+    {
+      "app": {
+        "trackId": 6826478625,
+        "name": "Pocket Mac Lab",
+        "seller": "Declann Tan",
+        "genre": "Productivity",
+        "releaseDate": "2026-11-01T07:00:00Z",
+        "price": 5.99,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/pocket-mac-lab/id6826478625?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/aa/19/dc/aa19dc93-37e9-cebe-f023-950cc2c4e285/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/100x100bb.jpg"
+      },
+      "ageDays": 14,
+      "best": {
+        "chart": "toppaid",
+        "genreId": 6007,
+        "genreName": "Productivity",
+        "rank": 5
+      },
+      "charts": 1,
+      "ratings": 12
+    },
+    {
+      "app": {
+        "trackId": 6819295797,
+        "name": "Rarest Krill: Trivia & Quiz",
+        "seller": "Celian Ghelid",
+        "genre": "Games",
+        "releaseDate": "2026-10-28T07:00:00Z",
+        "price": 0,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/rarest-krill-trivia-quiz/id6819295797?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/30/12/c3/3012c33a-a396-fd9e-e6ef-1fbc7dd63c28/AppIcon-0-0-1x_U007epad-0-1-85-220.png/100x100bb.jpg"
+      },
+      "ageDays": 18,
+      "best": {
+        "chart": "topfree",
+        "genreId": 7018,
+        "genreName": "Games: Trivia",
+        "rank": 6
+      },
+      "charts": 2,
+      "ratings": 23
+    },
+    {
+      "app": {
+        "trackId": 6818847474,
+        "name": "The Voicer Choicer",
+        "seller": "Aitor Barbany",
+        "genre": "Games",
+        "releaseDate": "2026-10-28T07:00:00Z",
+        "price": 0,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/the-voicer-choicer/id6818847474?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/ae/bd/9e/aebd9e3d-ce66-ae86-92f3-0c13522dbc50/AppIcon-0-0-1x_U007epad-0-11-0-85-220.png/100x100bb.jpg"
+      },
+      "ageDays": 18,
+      "best": {
+        "chart": "topfree",
+        "genreId": 7011,
+        "genreName": "Games: Music",
+        "rank": 6
+      },
+      "charts": 1,
+      "ratings": 1905
+    },
+    {
+      "app": {
+        "trackId": 6821610088,
+        "name": "Miniature Studio",
+        "seller": "Jake Ellis",
+        "genre": "Graphics & Design",
+        "releaseDate": "2026-10-22T07:00:00Z",
+        "price": 2.99,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/miniature-studio/id6821610088?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/d5/b0/c7/d5b0c731-5d7d-f4cb-d71c-cdcd7c753145/AppIcon-0-0-1x_U007epad-0-1-85-220.png/100x100bb.jpg"
+      },
+      "ageDays": 24,
+      "best": {
+        "chart": "toppaid",
+        "genreId": 6027,
+        "genreName": "Graphics & Design",
+        "rank": 6
+      },
+      "charts": 1,
+      "ratings": 1
+    },
+    {
+      "app": {
+        "trackId": 6821710782,
+        "name": "Satisfy: ASMR Fidget Toys",
+        "seller": "Pietro Messineo",
+        "genre": "Entertainment",
+        "releaseDate": "2026-11-04T08:00:00Z",
+        "price": 2.99,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/satisfy-asmr-fidget-toys/id6821710782?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/9e/80/37/9e80371f-6256-a6fc-72d3-aa78e5ab70bc/AppIcon-0-0-1x_U007epad-0-1-85-220.png/100x100bb.jpg"
+      },
+      "ageDays": 11,
+      "best": {
+        "chart": "toppaid",
+        "genreId": 6016,
+        "genreName": "Entertainment",
+        "rank": 6
+      },
+      "charts": 1,
+      "ratings": 2
+    },
+    {
+      "app": {
+        "trackId": 6833613428,
+        "name": "Clackity – Duo Flip Clock",
+        "seller": "Brian Lowen",
+        "genre": "Utilities",
+        "releaseDate": "2026-11-12T08:00:00Z",
+        "price": 2.99,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/clackity-duo-flip-clock/id6833613428?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/62/35/d7/6235d7f2-534c-c58e-5120-47a7fa94d2e5/AppIcon-0-0-1x_U007ephone-0-1-85-220.png/100x100bb.jpg"
+      },
+      "ageDays": 3,
+      "best": {
+        "chart": "toppaid",
+        "genreId": 6002,
+        "genreName": "Utilities",
+        "rank": 7
+      },
+      "charts": 1,
+      "ratings": 0
+    },
+    {
+      "app": {
+        "trackId": 6820756745,
+        "name": "Post Club: A Little Typewriter",
+        "seller": "LARRY LE CHEN",
+        "genre": "Lifestyle",
+        "releaseDate": "2026-11-03T08:00:00Z",
+        "price": 4.99,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/post-club-a-little-typewriter/id6820756745?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/a9/18/63/a9186364-af44-ca3f-250f-af3a5a7d488e/AppIcon-0-0-1x_U007ephone-0-1-85-220.png/100x100bb.jpg"
+      },
+      "ageDays": 12,
+      "best": {
+        "chart": "toppaid",
+        "genreId": 6012,
+        "genreName": "Lifestyle",
+        "rank": 8
+      },
+      "charts": 1,
+      "ratings": 2
+    },
+    {
+      "app": {
+        "trackId": 6833103142,
+        "name": "Desky - Desktop Mode Switching",
+        "seller": "Vincent Neo",
+        "genre": "Utilities",
+        "releaseDate": "2026-11-12T08:00:00Z",
+        "price": 1.99,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/desky-desktop-mode-switching/id6833103142?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/ea/2a/b2/ea2ab291-2a9f-d8d6-ea5c-649565c5ca84/AppIcon-0-0-1x_U007ephone-0-1-85-220.png/100x100bb.jpg"
+      },
+      "ageDays": 3,
+      "best": {
+        "chart": "toppaid",
+        "genreId": 6002,
+        "genreName": "Utilities",
+        "rank": 8
+      },
+      "charts": 1,
+      "ratings": 0
+    },
+    {
+      "app": {
+        "trackId": 6825787585,
+        "name": "Krillion: Daily Trivia Dive",
+        "seller": "Adnan Ali",
+        "genre": "Games",
+        "releaseDate": "2026-11-01T07:00:00Z",
+        "price": 0,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/krillion-daily-trivia-dive/id6825787585?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/1c/4c/16/1c4c1685-0ddb-02c5-2d29-4ac77dc1e9c8/AppIcon-0-0-1x_U007epad-0-1-85-220.png/100x100bb.jpg"
+      },
+      "ageDays": 14,
+      "best": {
+        "chart": "topfree",
+        "genreId": 7018,
+        "genreName": "Games: Trivia",
+        "rank": 9
+      },
+      "charts": 3,
+      "ratings": 42
+    },
+    {
+      "app": {
+        "trackId": 6763765691,
+        "name": "Tasted.com: What's for Dinner?",
+        "seller": "Valeriu Ciobanu",
+        "genre": "Food & Drink",
+        "releaseDate": "2026-10-31T07:00:00Z",
+        "price": 9.99,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/tasted-com-whats-for-dinner/id6763765691?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/e2/15/d6/e215d617-64a4-5099-3ff0-c968f67d3c15/AppIcon-0-0-1x_U007ephone-0-1-85-220.png/100x100bb.jpg"
+      },
+      "ageDays": 15,
+      "best": {
+        "chart": "toppaid",
+        "genreId": 6023,
+        "genreName": "Food & Drink",
+        "rank": 9
+      },
+      "charts": 1,
+      "ratings": 0
+    },
+    {
+      "app": {
+        "trackId": 6816180865,
+        "name": "Usage Meter for OpenRouter",
+        "seller": "Yuxuan Hu",
+        "genre": "Developer Tools",
+        "releaseDate": "2026-10-24T07:00:00Z",
+        "price": 0.99,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/usage-meter-for-openrouter/id6816180865?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/45/78/18/45781833-942b-b6dc-a092-1373595325f2/AppIcon-0-0-1x_U007ephone-0-1-85-220.png/100x100bb.jpg"
+      },
+      "ageDays": 22,
+      "best": {
+        "chart": "toppaid",
+        "genreId": 6026,
+        "genreName": "Developer Tools",
+        "rank": 9
+      },
+      "charts": 1,
+      "ratings": 1
+    },
+    {
+      "app": {
+        "trackId": 6821809258,
+        "name": "Backtrail Pro",
+        "seller": "Blackfox Media LLC",
+        "genre": "Social Networking",
+        "releaseDate": "2026-11-01T07:00:00Z",
+        "price": 0.99,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/backtrail-pro/id6821809258?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/e4/3a/c1/e43ac1d8-f7c6-2626-16a5-6392b0ab2ed2/AppIcon-0-0-1x_U007epad-0-1-85-220.png/100x100bb.jpg"
+      },
+      "ageDays": 14,
+      "best": {
+        "chart": "toppaid",
+        "genreId": 6005,
+        "genreName": "Social Networking",
+        "rank": 9
+      },
+      "charts": 1,
+      "ratings": 0
+    },
+    {
+      "app": {
+        "trackId": 6829190945,
+        "name": "Roomy for Duo: Full Width",
+        "seller": "Julian Christopher Siebert",
+        "genre": "Utilities",
+        "releaseDate": "2026-11-01T07:00:00Z",
+        "price": 0.99,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/roomy-for-duo-full-width/id6829190945?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/72/e5/92/72e592f9-cc96-fa82-8445-c9ab971abd68/AppIcon-0-0-1x_U007ephone-0-1-85-220.png/100x100bb.jpg"
+      },
+      "ageDays": 14,
+      "best": {
+        "chart": "toppaid",
+        "genreId": 6002,
+        "genreName": "Utilities",
+        "rank": 9
+      },
+      "charts": 1,
+      "ratings": 0
+    },
+    {
+      "app": {
+        "trackId": 6799906854,
+        "name": "17-0 Football Manager",
+        "seller": "FunCraft, Inc",
+        "genre": "Games",
+        "releaseDate": "2026-10-29T07:00:00Z",
+        "price": 0,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/17-0-football-manager/id6799906854?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/28/10/ef/2810ef60-73ca-67cc-cfc8-eb5d7cabee22/AppIcon-0-0-1x_U007epad-0-1-85-220.png/100x100bb.jpg"
+      },
+      "ageDays": 17,
+      "best": {
+        "chart": "topfree",
+        "genreId": 7016,
+        "genreName": "Games: Sports",
+        "rank": 10
+      },
+      "charts": 3,
+      "ratings": 383
+    },
+    {
+      "app": {
+        "trackId": 6823347789,
+        "name": "Snowflaker",
+        "seller": "Floyd Hayes",
+        "genre": "Graphics & Design",
+        "releaseDate": "2026-11-13T08:00:00Z",
+        "price": 0.99,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/snowflaker/id6823347789?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/3a/63/66/3a636696-f60e-93d3-2d34-f10d3f682d3a/AppIcon-0-0-1x_U007ephone-0-1-85-220.png/100x100bb.jpg"
+      },
+      "ageDays": 2,
+      "best": {
+        "chart": "toppaid",
+        "genreId": 6027,
+        "genreName": "Graphics & Design",
+        "rank": 10
+      },
+      "charts": 1,
+      "ratings": 0
+    },
+    {
+      "app": {
+        "trackId": 6828383349,
+        "name": "DuoFridge",
+        "seller": "bigearcompany",
+        "genre": "Lifestyle",
+        "releaseDate": "2026-11-08T08:00:00Z",
+        "price": 1.99,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/duofridge/id6828383349?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/9a/9b/f9/9a9bf951-a042-9ae1-91fe-013853f3e44a/AppIcon-0-0-1x_U007ephone-0-1-85-220.png/100x100bb.jpg"
+      },
+      "ageDays": 7,
+      "best": {
+        "chart": "toppaid",
+        "genreId": 6012,
+        "genreName": "Lifestyle",
+        "rank": 10
+      },
+      "charts": 1,
+      "ratings": 1
+    },
+    {
+      "app": {
+        "trackId": 6831618502,
+        "name": "Pretend Piano: Air Instruments",
+        "seller": "剑锋 梁",
+        "genre": "Music",
+        "releaseDate": "2026-11-08T08:00:00Z",
+        "price": 0.99,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/pretend-piano-air-instruments/id6831618502?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/c8/3e/90/c83e9034-3867-57e4-8871-14f4069cddc1/AppIcon-1x_U007ephone-0-1-85-220-0.png/100x100bb.jpg"
+      },
+      "ageDays": 7,
+      "best": {
+        "chart": "toppaid",
+        "genreId": 6011,
+        "genreName": "Music",
+        "rank": 10
+      },
+      "charts": 1,
+      "ratings": 0
+    },
+    {
+      "app": {
+        "trackId": 6832336159,
+        "name": "Snow Day Radar",
+        "seller": "HALL ENTERPRISES LLC",
+        "genre": "Weather",
+        "releaseDate": "2026-11-11T08:00:00Z",
+        "price": 0,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/snow-day-radar/id6832336159?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/10/07/c6/1007c62e-cdff-573e-7cc5-2145b05193f6/AppIcon-0-0-1x_U007ephone-0-1-85-220.png/100x100bb.jpg"
+      },
+      "ageDays": 4,
+      "best": {
+        "chart": "topfree",
+        "genreId": 6001,
+        "genreName": "Weather",
+        "rank": 10
+      },
+      "charts": 1,
+      "ratings": 0
+    },
+    {
+      "app": {
+        "trackId": 6818168418,
+        "name": "Flipcorder: Retro Camcorder",
+        "seller": "Lotus Apps, LLC",
+        "genre": "Photo & Video",
+        "releaseDate": "2026-10-23T07:00:00Z",
+        "price": 4.99,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/flipcorder-retro-camcorder/id6818168418?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/b3/01/98/b30198b2-ce3e-79e0-348a-54a076b26892/AppIcon-0-0-1x_U007ephone-0-0-0-1-0-85-220.png/100x100bb.jpg"
+      },
+      "ageDays": 23,
+      "best": {
+        "chart": "toppaid",
+        "genreId": 6008,
+        "genreName": "Photo & Video",
+        "rank": 11
+      },
+      "charts": 1,
+      "ratings": 30
+    },
+    {
+      "app": {
+        "trackId": 6740617332,
+        "name": "UnGodly",
+        "seller": "Azra Games Inc",
+        "genre": "Games",
+        "releaseDate": "2026-11-11T08:00:00Z",
+        "price": 0,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/ungodly/id6740617332?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/a4/59/d4/a459d461-f137-f9b4-d6ca-6515a0301c71/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/100x100bb.jpg"
+      },
+      "ageDays": 4,
+      "best": {
+        "chart": "topfree",
+        "genreId": 7014,
+        "genreName": "Games: Role Playing",
+        "rank": 12
+      },
+      "charts": 4,
+      "ratings": 479
+    },
+    {
+      "app": {
+        "trackId": 6808757069,
+        "name": "Prompt22 – SSH Terminal",
+        "seller": "Robin Scherrer",
+        "genre": "Developer Tools",
+        "releaseDate": "2026-11-01T07:00:00Z",
+        "price": 5.99,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/prompt22-ssh-terminal/id6808757069?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/09/e5/a9/09e5a949-e950-4aed-9c2a-4e79fadc1837/Prompt22-0-0-1x_U007epad-0-1-85-220.png/100x100bb.jpg"
+      },
+      "ageDays": 14,
+      "best": {
+        "chart": "toppaid",
+        "genreId": 6026,
+        "genreName": "Developer Tools",
+        "rank": 12
+      },
+      "charts": 1,
+      "ratings": 0
+    },
+    {
+      "app": {
+        "trackId": 6826587140,
+        "name": "Midnight Fridge",
+        "seller": "PAPER CODE ADRIANNA BLASZCZYNSKA",
+        "genre": "Games",
+        "releaseDate": "2026-10-31T07:00:00Z",
+        "price": 2.99,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/midnight-fridge/id6826587140?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/ed/5c/22/ed5c2217-7561-6c53-f97b-f0d5da39bf2f/AppIcon-0-0-1x_U007ephone-0-1-85-220.png/100x100bb.jpg"
+      },
+      "ageDays": 15,
+      "best": {
+        "chart": "toppaid",
+        "genreId": 7003,
+        "genreName": "Games: Arcade",
+        "rank": 13
+      },
+      "charts": 2,
+      "ratings": 10
+    }
+  ],
+  "climbers": [
+    {
+      "days": 7,
+      "baseDate": null,
+      "partial": false,
+      "rows": []
+    },
+    {
+      "days": 30,
+      "baseDate": null,
+      "partial": false,
+      "rows": []
+    }
+  ],
+  "ratings": [
+    {
+      "days": 7,
+      "baseDate": null,
+      "partial": false,
+      "rows": []
+    },
+    {
+      "days": 30,
+      "baseDate": null,
+      "partial": false,
+      "rows": []
+    }
+  ],
+  "fastStarters": [
+    {
+      "app": {
+        "trackId": 6758332966,
+        "name": "BLEACH Mirrors High",
+        "seller": "Bandai Namco Entertainment Inc.",
+        "genre": "Games",
+        "releaseDate": "2026-10-27T07:00:00Z",
+        "price": 0,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/bleach-mirrors-high/id6758332966?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/7b/61/05/7b610557-8f8d-1191-bb11-d794c958527f/AppIcon-0-0-1x_U007emarketing-0-8-85-220.png/100x100bb.jpg"
+      },
+      "ageDays": 19,
+      "ratings": 12686,
+      "perDay": 667.6842105263158,
+      "avg": 4.85787,
+      "best": {
+        "chart": "topfree",
+        "genreId": 7014,
+        "genreName": "Games: Role Playing",
+        "rank": 16
+      }
+    },
+    {
+      "app": {
+        "trackId": 6444520814,
+        "name": "Monster Hunter Outlanders",
+        "seller": "PROXIMA BETA PTE.LIMITED",
+        "genre": "Games",
+        "releaseDate": "2026-10-28T07:00:00Z",
+        "price": 0,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/monster-hunter-outlanders/id6444520814?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/00/73/e0/0073e0c8-a9e4-1956-8966-f83a136ee71e/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/100x100bb.jpg"
+      },
+      "ageDays": 18,
+      "ratings": 4498,
+      "perDay": 249.88888888888889,
+      "avg": 4.81325,
+      "best": {
+        "chart": "topgrossing",
+        "genreId": 7001,
+        "genreName": "Games: Action",
+        "rank": 28
+      }
+    },
+    {
+      "app": {
+        "trackId": 6772922295,
+        "name": "Transformers: Eternal War",
+        "seller": "HOOLAI GAME LIMITED",
+        "genre": "Games",
+        "releaseDate": "2026-11-11T08:00:00Z",
+        "price": 0,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/transformers-eternal-war/id6772922295?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/20/4f/c5/204fc5b5-682c-eba9-6fd1-617b8f7d581b/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/100x100bb.jpg"
+      },
+      "ageDays": 4,
+      "ratings": 653,
+      "perDay": 163.25,
+      "avg": 4.49158,
+      "best": {
+        "chart": "topfree",
+        "genreId": 7014,
+        "genreName": "Games: Role Playing",
+        "rank": 1
+      }
+    },
+    {
+      "app": {
+        "trackId": 6740521489,
+        "name": "PUBG MOBILE FLASH",
+        "seller": "Tencent Mobile International Limited",
+        "genre": "Games",
+        "releaseDate": "2026-11-13T08:00:00Z",
+        "price": 0,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/pubg-mobile-flash/id6740521489?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/74/5e/cd/745ecdd3-06e9-0bf9-6c1a-2541a8025888/AppIcon-1x_U007emarketing-0-8-0-85-220-0.png/100x100bb.jpg"
+      },
+      "ageDays": 2,
+      "ratings": 286,
+      "perDay": 143,
+      "avg": 4.36014,
+      "best": {
+        "chart": "topfree",
+        "genreId": 7017,
+        "genreName": "Games: Strategy",
+        "rank": 1
+      }
+    },
+    {
+      "app": {
+        "trackId": 6740617332,
+        "name": "UnGodly",
+        "seller": "Azra Games Inc",
+        "genre": "Games",
+        "releaseDate": "2026-11-11T08:00:00Z",
+        "price": 0,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/ungodly/id6740617332?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/a4/59/d4/a459d461-f137-f9b4-d6ca-6515a0301c71/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/100x100bb.jpg"
+      },
+      "ageDays": 4,
+      "ratings": 479,
+      "perDay": 119.75,
+      "avg": 4.53444,
+      "best": {
+        "chart": "topfree",
+        "genreId": 7014,
+        "genreName": "Games: Role Playing",
+        "rank": 12
+      }
+    },
+    {
+      "app": {
+        "trackId": 6818847474,
+        "name": "The Voicer Choicer",
+        "seller": "Aitor Barbany",
+        "genre": "Games",
+        "releaseDate": "2026-10-28T07:00:00Z",
+        "price": 0,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/the-voicer-choicer/id6818847474?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/ae/bd/9e/aebd9e3d-ce66-ae86-92f3-0c13522dbc50/AppIcon-0-0-1x_U007epad-0-11-0-85-220.png/100x100bb.jpg"
+      },
+      "ageDays": 18,
+      "ratings": 1905,
+      "perDay": 105.83333333333333,
+      "avg": 4.55013,
+      "best": {
+        "chart": "topfree",
+        "genreId": 7011,
+        "genreName": "Games: Music",
+        "rank": 6
+      }
+    },
+    {
+      "app": {
+        "trackId": 6815260519,
+        "name": "Ludo Go! - Dice Board Games",
+        "seller": "Easybrain Ltd",
+        "genre": "Games",
+        "releaseDate": "2026-10-20T07:00:00Z",
+        "price": 0,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/ludo-go-dice-board-games/id6815260519?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/30/6c/fd/306cfdb2-dde0-6c89-7084-f90f12d52e49/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/100x100bb.jpg"
+      },
+      "ageDays": 26,
+      "ratings": 2199,
+      "perDay": 84.57692307692308,
+      "avg": 4.80355,
+      "best": {
+        "chart": "topfree",
+        "genreId": 7004,
+        "genreName": "Games: Board",
+        "rank": 25
+      }
+    },
+    {
+      "app": {
+        "trackId": 1615755735,
+        "name": "No Man's Sky",
+        "seller": "Hello Games Ltd",
+        "genre": "Games",
+        "releaseDate": "2026-10-28T07:00:00Z",
+        "price": 0,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/no-mans-sky/id1615755735?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/cc/7e/0a/cc7e0afc-5d17-a423-63cd-f14f0c8761a3/AppIcon-0-0-1x_U007epad-0-1-85-220.png/100x100bb.jpg"
+      },
+      "ageDays": 18,
+      "ratings": 1093,
+      "perDay": 60.72222222222222,
+      "avg": 4.49221,
+      "best": {
+        "chart": "topfree",
+        "genreId": 7002,
+        "genreName": "Games: Adventure",
+        "rank": 39
+      }
+    },
+    {
+      "app": {
+        "trackId": 6812166638,
+        "name": "Sort Streak: Color Puzzle",
+        "seller": "OAKEVER GAMES PTE. LTD.",
+        "genre": "Games",
+        "releaseDate": "2026-10-29T07:00:00Z",
+        "price": 0,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/sort-streak-color-puzzle/id6812166638?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/3e/bb/9b/3ebb9b5e-540e-81a9-7b51-49383883ae02/AppIcon-0-0-1x_U007epad-0-11-0-85-220.png/100x100bb.jpg"
+      },
+      "ageDays": 17,
+      "ratings": 491,
+      "perDay": 28.88235294117647,
+      "avg": 4.67617,
+      "best": {
+        "chart": "topfree",
+        "genreId": 7012,
+        "genreName": "Games: Puzzle",
+        "rank": 67
+      }
+    },
+    {
+      "app": {
+        "trackId": 6799906854,
+        "name": "17-0 Football Manager",
+        "seller": "FunCraft, Inc",
+        "genre": "Games",
+        "releaseDate": "2026-10-29T07:00:00Z",
+        "price": 0,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/17-0-football-manager/id6799906854?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/28/10/ef/2810ef60-73ca-67cc-cfc8-eb5d7cabee22/AppIcon-0-0-1x_U007epad-0-1-85-220.png/100x100bb.jpg"
+      },
+      "ageDays": 17,
+      "ratings": 383,
+      "perDay": 22.529411764705884,
+      "avg": 4.93994,
+      "best": {
+        "chart": "topfree",
+        "genreId": 7016,
+        "genreName": "Games: Sports",
+        "rank": 10
+      }
+    },
+    {
+      "app": {
+        "trackId": 6823260015,
+        "name": "دربونة - تطبيق الملاحة العراقي",
+        "seller": "HAQIBAT ELMOMEN",
+        "genre": "Navigation",
+        "releaseDate": "2026-10-20T07:00:00Z",
+        "price": 0,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/%D8%AF%D8%B1%D8%A8%D9%88%D9%86%D8%A9-%D8%AA%D8%B7%D8%A8%D9%8A%D9%82-%D8%A7%D9%84%D9%85%D9%84%D8%A7%D8%AD%D8%A9-%D8%A7%D9%84%D8%B9%D8%B1%D8%A7%D9%82%D9%8A/id6823260015?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/fa/cf/42/facf4269-c685-5489-a190-d19048fbccb3/AppIcon-0-1x_U007epad-0-11-0-85-220-0.png/100x100bb.jpg"
+      },
+      "ageDays": 26,
+      "ratings": 575,
+      "perDay": 22.115384615384617,
+      "avg": 4.44174,
+      "best": {
+        "chart": "topfree",
+        "genreId": 6010,
+        "genreName": "Navigation",
+        "rank": 32
+      }
+    },
+    {
+      "app": {
+        "trackId": 6788134172,
+        "name": "Poppy Playtime Chapter 5",
+        "seller": "Mob Entertainment, Inc",
+        "genre": "Games",
+        "releaseDate": "2026-11-06T08:00:00Z",
+        "price": 6.99,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/poppy-playtime-chapter-5/id6788134172?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/14/de/91/14de9127-8958-6f84-abf8-8ed083360584/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/100x100bb.jpg"
+      },
+      "ageDays": 9,
+      "ratings": 189,
+      "perDay": 21,
+      "avg": 4.75661,
+      "best": {
+        "chart": "toppaid",
+        "genreId": 0,
+        "genreName": "All apps",
+        "rank": 14
+      }
+    },
+    {
+      "app": {
+        "trackId": 6791941005,
+        "name": "GTL｜Getting Out Messenger",
+        "seller": "PROMSTAR SERVICE, SRL",
+        "genre": "Social Networking",
+        "releaseDate": "2026-10-16T07:00:00Z",
+        "price": 0,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/gtl-getting-out-messenger/id6791941005?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/ca/11/cf/ca11cf7c-2d97-75c4-b8f3-c6e9e62e173f/AppIcon-0-0-1x_U007ephone-0-1-0-85-220.jpeg/100x100bb.jpg"
+      },
+      "ageDays": 30,
+      "ratings": 621,
+      "perDay": 20.7,
+      "avg": 4.41385,
+      "best": {
+        "chart": "topfree",
+        "genreId": 6005,
+        "genreName": "Social Networking",
+        "rank": 31
+      }
+    },
+    {
+      "app": {
+        "trackId": 6814697708,
+        "name": "Duck War",
+        "seller": "HM Games Pty Ltd",
+        "genre": "Games",
+        "releaseDate": "2026-10-20T07:00:00Z",
+        "price": 0,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/duck-war/id6814697708?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/26/d9/cf/26d9cfa1-8368-1d73-df79-c1edadeb22b8/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/100x100bb.jpg"
+      },
+      "ageDays": 26,
+      "ratings": 527,
+      "perDay": 20.26923076923077,
+      "avg": 4.75521,
+      "best": {
+        "chart": "topfree",
+        "genreId": 7001,
+        "genreName": "Games: Action",
+        "rank": 60
+      }
+    },
+    {
+      "app": {
+        "trackId": 6817314923,
+        "name": "SCRAM: Hide and Seek",
+        "seller": "Moveera Pty Ltd",
+        "genre": "Games",
+        "releaseDate": "2026-10-30T07:00:00Z",
+        "price": 0,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/scram-hide-and-seek/id6817314923?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/63/21/d2/6321d23c-fab1-6733-9ed6-fefb9f671e5e/AppIcon-0-0-1x_U007ephone-0-1-85-220.png/100x100bb.jpg"
+      },
+      "ageDays": 16,
+      "ratings": 310,
+      "perDay": 19.375,
+      "avg": 4.91613,
+      "best": {
+        "chart": "topfree",
+        "genreId": 7009,
+        "genreName": "Games: Family",
+        "rank": 3
+      }
+    },
+    {
+      "app": {
+        "trackId": 6763063611,
+        "name": "Bills Must Be Paid",
+        "seller": "Rike Games",
+        "genre": "Games",
+        "releaseDate": "2026-11-01T07:00:00Z",
+        "price": 5.99,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/bills-must-be-paid/id6763063611?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/dc/ad/ce/dcadce0c-0210-d03c-ac89-2b9ad76fbb97/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/100x100bb.jpg"
+      },
+      "ageDays": 14,
+      "ratings": 230,
+      "perDay": 16.428571428571427,
+      "avg": 4.87391,
+      "best": {
+        "chart": "toppaid",
+        "genreId": 0,
+        "genreName": "All apps",
+        "rank": 29
+      }
+    },
+    {
+      "app": {
+        "trackId": 6771652722,
+        "name": "ONE PIECE: Grand Gourmet",
+        "seller": "Bandai Namco Entertainment Inc.",
+        "genre": "Games",
+        "releaseDate": "2026-10-22T07:00:00Z",
+        "price": 12.99,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/one-piece-grand-gourmet/id6771652722?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/ad/21/fe/ad21feac-4a5c-6aa2-6f95-7009a9d5c564/AppIcon-0-0-1x_U007emarketing-0-6-85-220.png/100x100bb.jpg"
+      },
+      "ageDays": 24,
+      "ratings": 335,
+      "perDay": 13.958333333333334,
+      "avg": 4.71642,
+      "best": {
+        "chart": "toppaid",
+        "genreId": 0,
+        "genreName": "All apps",
+        "rank": 56
+      }
+    },
+    {
+      "app": {
+        "trackId": 6820516041,
+        "name": "Fineliner",
+        "seller": "Overcast Radio, LLC",
+        "genre": "Graphics & Design",
+        "releaseDate": "2026-10-28T07:00:00Z",
+        "price": 0,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/fineliner/id6820516041?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/60/a6/24/60a62467-c250-e4fa-3f39-45fcca81b546/AppIcon-0-0-1x_U007epad-0-0-0-1-0-85-220.png/100x100bb.jpg"
+      },
+      "ageDays": 18,
+      "ratings": 247,
+      "perDay": 13.722222222222221,
+      "avg": 4.74899,
+      "best": {
+        "chart": "topfree",
+        "genreId": 6027,
+        "genreName": "Graphics & Design",
+        "rank": 81
+      }
+    },
+    {
+      "app": {
+        "trackId": 6794850484,
+        "name": "3ball: Basketball 1v1",
+        "seller": "ADAM ROBERT WALKER",
+        "genre": "Games",
+        "releaseDate": "2026-11-06T08:00:00Z",
+        "price": 0,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/3ball-basketball-1v1/id6794850484?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/c1/1f/2e/c11f2e27-a148-8230-fbeb-e80b64dde179/AppIcon-0-0-1x_U007epad-0-1-sRGB-85-220.png/100x100bb.jpg"
+      },
+      "ageDays": 9,
+      "ratings": 117,
+      "perDay": 13,
+      "avg": 4.66667,
+      "best": {
+        "chart": "topfree",
+        "genreId": 7016,
+        "genreName": "Games: Sports",
+        "rank": 71
+      }
+    },
+    {
+      "app": {
+        "trackId": 6778489790,
+        "name": "Wordeex",
+        "seller": "Ganko srl",
+        "genre": "Games",
+        "releaseDate": "2026-10-26T07:00:00Z",
+        "price": 0,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/wordeex/id6778489790?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/6d/27/d8/6d27d8ae-728e-45a4-7d02-e5b2f5fd9d98/AppIcon-0-0-1x_U007epad-0-1-85-220.png/100x100bb.jpg"
+      },
+      "ageDays": 20,
+      "ratings": 247,
+      "perDay": 12.35,
+      "avg": 4.59919,
+      "best": {
+        "chart": "topfree",
+        "genreId": 7019,
+        "genreName": "Games: Word",
+        "rank": 43
+      }
+    },
+    {
+      "app": {
+        "trackId": 6809296295,
+        "name": "Rummy 500 - Classic Card Games",
+        "seller": "Shanghai Diguo Network Technology Co., Ltd.",
+        "genre": "Games",
+        "releaseDate": "2026-10-16T07:00:00Z",
+        "price": 0,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/rummy-500-classic-card-games/id6809296295?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/82/38/65/82386568-f264-847e-8f8e-3930bfe9f77b/AppIcon-0-0-1x_U007emarketing-0-11-0-85-220.jpeg/100x100bb.jpg"
+      },
+      "ageDays": 30,
+      "ratings": 353,
+      "perDay": 11.766666666666667,
+      "avg": 4.73088,
+      "best": {
+        "chart": "topfree",
+        "genreId": 7005,
+        "genreName": "Games: Card",
+        "rank": 71
+      }
+    },
+    {
+      "app": {
+        "trackId": 6818155512,
+        "name": "Tiny Hunter: Hunt & Explore",
+        "seller": "Qiiwi Games AB",
+        "genre": "Games",
+        "releaseDate": "2026-10-23T07:00:00Z",
+        "price": 0,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/tiny-hunter-hunt-explore/id6818155512?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/b1/07/86/b107867f-093a-012e-23a1-87d0388096ac/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/100x100bb.jpg"
+      },
+      "ageDays": 23,
+      "ratings": 263,
+      "perDay": 11.434782608695652,
+      "avg": 4.76806,
+      "best": {
+        "chart": "topfree",
+        "genreId": 7002,
+        "genreName": "Games: Adventure",
+        "rank": 56
+      }
+    },
+    {
+      "app": {
+        "trackId": 6752607219,
+        "name": "Warhammer Survivors",
+        "seller": "Auroch Digital Ltd",
+        "genre": "Games",
+        "releaseDate": "2026-11-10T08:00:00Z",
+        "price": 7.19,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/warhammer-survivors/id6752607219?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/5a/69/16/5a6916fb-9333-89b5-0238-d3621bb63225/AppIcon-1x_U007emarketing-0-8-0-85-220-0.png/100x100bb.jpg"
+      },
+      "ageDays": 5,
+      "ratings": 53,
+      "perDay": 10.6,
+      "avg": 4.33962,
+      "best": {
+        "chart": "toppaid",
+        "genreId": 0,
+        "genreName": "All apps",
+        "rank": 5
+      }
+    },
+    {
+      "app": {
+        "trackId": 6801113954,
+        "name": "Booster Pack Heroes",
+        "seller": "Funday Games ApS",
+        "genre": "Games",
+        "releaseDate": "2026-11-10T08:00:00Z",
+        "price": 6.99,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/booster-pack-heroes/id6801113954?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/ce/f2/9d/cef29df4-fc77-061a-7dab-a29eaea3d2b9/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/100x100bb.jpg"
+      },
+      "ageDays": 5,
+      "ratings": 48,
+      "perDay": 9.6,
+      "avg": 4.9375,
+      "best": {
+        "chart": "toppaid",
+        "genreId": 0,
+        "genreName": "All apps",
+        "rank": 33
+      }
+    },
+    {
+      "app": {
+        "trackId": 6803329435,
+        "name": "Chromagraph Camera",
+        "seller": "Chromatic Applications LLC",
+        "genre": "Photo & Video",
+        "releaseDate": "2026-10-20T07:00:00Z",
+        "price": 12.99,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/chromagraph-camera/id6803329435?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/57/a2/6f/57a26f23-bb49-3f97-87e1-9399cca9d853/AppIcon-0-0-1x_U007epad-0-0-0-1-0-85-220.png/100x100bb.jpg"
+      },
+      "ageDays": 26,
+      "ratings": 240,
+      "perDay": 9.23076923076923,
+      "avg": 4.09583,
+      "best": {
+        "chart": "toppaid",
+        "genreId": 0,
+        "genreName": "All apps",
+        "rank": 9
+      }
+    },
+    {
+      "app": {
+        "trackId": 6480453979,
+        "name": "Saints Row: The Third",
+        "seller": "Feral Interactive Ltd",
+        "genre": "Games",
+        "releaseDate": "2026-10-29T07:00:00Z",
+        "price": 19.99,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/saints-row-the-third/id6480453979?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/c0/cf/96/c0cf96f0-71f8-074a-9664-5c55f5eb8e7f/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/100x100bb.jpg"
+      },
+      "ageDays": 17,
+      "ratings": 138,
+      "perDay": 8.117647058823529,
+      "avg": 4.28986,
+      "best": {
+        "chart": "toppaid",
+        "genreId": 7001,
+        "genreName": "Games: Action",
+        "rank": 54
+      }
+    },
+    {
+      "app": {
+        "trackId": 6762192063,
+        "name": "Absolum",
+        "seller": "Playdigious",
+        "genre": "Games",
+        "releaseDate": "2026-11-05T08:00:00Z",
+        "price": 8.99,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/absolum/id6762192063?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/95/9e/48/959e4815-c5cd-dc62-733f-6bd938061cde/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/100x100bb.jpg"
+      },
+      "ageDays": 10,
+      "ratings": 78,
+      "perDay": 7.8,
+      "avg": 4.65385,
+      "best": {
+        "chart": "toppaid",
+        "genreId": 0,
+        "genreName": "All apps",
+        "rank": 13
+      }
+    },
+    {
+      "app": {
+        "trackId": 6480134807,
+        "name": "WendyQuest",
+        "seller": "81 Monkeys Game Studios Inc.",
+        "genre": "Games",
+        "releaseDate": "2026-11-03T08:00:00Z",
+        "price": 0,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/wendyquest/id6480134807?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/44/c9/f0/44c9f0de-db73-6707-5af4-d1534cb0ef6c/AppIcon-1x_U007emarketing-0-8-0-85-220-0.png/100x100bb.jpg"
+      },
+      "ageDays": 12,
+      "ratings": 93,
+      "perDay": 7.75,
+      "avg": 4.62366,
+      "best": {
+        "chart": "topfree",
+        "genreId": 7002,
+        "genreName": "Games: Adventure",
+        "rank": 19
+      }
+    },
+    {
+      "app": {
+        "trackId": 6738163891,
+        "name": "VAMPIR",
+        "seller": "Netmarble Corporation",
+        "genre": "Games",
+        "releaseDate": "2026-10-27T07:00:00Z",
+        "price": 0,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/vampir/id6738163891?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/2b/68/b0/2b68b05a-1e09-34b0-ffbd-74827ea374aa/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/100x100bb.jpg"
+      },
+      "ageDays": 19,
+      "ratings": 145,
+      "perDay": 7.631578947368421,
+      "avg": 3.08276,
+      "best": {
+        "chart": "topgrossing",
+        "genreId": 7001,
+        "genreName": "Games: Action",
+        "rank": 62
+      }
+    },
+    {
+      "app": {
+        "trackId": 6803276000,
+        "name": "Claude Duet by Anthropic",
+        "seller": "Anthropic PBC",
+        "genre": "Productivity",
+        "releaseDate": "2026-10-26T07:00:00Z",
+        "price": 0,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/claude-duet-by-anthropic/id6803276000?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/49/19/d8/4919d827-9ee4-624c-c5ef-a5d6fbe8787b/AppIcon-0-0-1x_U007epad-0-1-85-220.png/100x100bb.jpg"
+      },
+      "ageDays": 20,
+      "ratings": 143,
+      "perDay": 7.15,
+      "avg": 4.36364,
+      "best": {
+        "chart": "topfree",
+        "genreId": 6007,
+        "genreName": "Productivity",
+        "rank": 19
+      }
+    },
+    {
+      "app": {
+        "trackId": 1116232218,
+        "name": "POSTAL Classic & Uncut",
+        "seller": "Desi Network Inc",
+        "genre": "Games",
+        "releaseDate": "2026-11-10T08:00:00Z",
+        "price": 1.99,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/postal-classic-uncut/id1116232218?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/89/8f/7e/898f7e54-135f-0139-8f7f-6ecd0c3c2db9/AppIcon-0-0-1x_U007epad-0-1-85-220.png/100x100bb.jpg"
+      },
+      "ageDays": 5,
+      "ratings": 32,
+      "perDay": 6.4,
+      "avg": 4.78125,
+      "best": {
+        "chart": "toppaid",
+        "genreId": 0,
+        "genreName": "All apps",
+        "rank": 58
+      }
+    },
+    {
+      "app": {
+        "trackId": 6754094013,
+        "name": "Zombie Assault: Resurgence",
+        "seller": "Ninja Kiwi Limited",
+        "genre": "Games",
+        "releaseDate": "2026-10-28T07:00:00Z",
+        "price": 9.99,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/zombie-assault-resurgence/id6754094013?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/3b/b5/4f/3bb54fff-c2f3-add3-ed68-dd1624a32326/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/100x100bb.jpg"
+      },
+      "ageDays": 18,
+      "ratings": 106,
+      "perDay": 5.888888888888889,
+      "avg": 4.35849,
+      "best": {
+        "chart": "toppaid",
+        "genreId": 0,
+        "genreName": "All apps",
+        "rank": 71
+      }
+    },
+    {
+      "app": {
+        "trackId": 6746749685,
+        "name": "Lil' Guardsman",
+        "seller": "Plug In Digital",
+        "genre": "Games",
+        "releaseDate": "2026-11-10T08:00:00Z",
+        "price": 0,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/lil-guardsman/id6746749685?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/bd/98/69/bd98695c-940b-efdc-9b83-51b98a2788d5/AltIcon8-0-0-1x_U007epad-0-1-85-220.png/100x100bb.jpg"
+      },
+      "ageDays": 5,
+      "ratings": 26,
+      "perDay": 5.2,
+      "avg": 4.76923,
+      "best": {
+        "chart": "topfree",
+        "genreId": 7002,
+        "genreName": "Games: Adventure",
+        "rank": 83
+      }
+    },
+    {
+      "app": {
+        "trackId": 6799810207,
+        "name": "WarpLane VPN - Proxy for Phone",
+        "seller": "Brother Business Limited",
+        "genre": "Utilities",
+        "releaseDate": "2026-10-20T07:00:00Z",
+        "price": 0,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/warplane-vpn-proxy-for-phone/id6799810207?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/17/25/7f/17257f2b-9a08-cc81-8d83-9e761aa024c8/AppIcon-0-0-1x_U007ephone-0-1-0-85-220.png/100x100bb.jpg"
+      },
+      "ageDays": 26,
+      "ratings": 134,
+      "perDay": 5.153846153846154,
+      "avg": 4.60447,
+      "best": {
+        "chart": "topfree",
+        "genreId": 6002,
+        "genreName": "Utilities",
+        "rank": 89
+      }
+    },
+    {
+      "app": {
+        "trackId": 6816896250,
+        "name": "Tiny Computers",
+        "seller": "Fountain Interactive Ltd",
+        "genre": "Entertainment",
+        "releaseDate": "2026-10-23T07:00:00Z",
+        "price": 2.99,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/tiny-computers/id6816896250?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/b4/25/0b/b4250b10-48b9-1186-1407-af72a4913299/AppIcon-0-0-1x_U007epad-0-1-0-85-220.png/100x100bb.jpg"
+      },
+      "ageDays": 23,
+      "ratings": 110,
+      "perDay": 4.782608695652174,
+      "avg": 4.59999,
+      "best": {
+        "chart": "toppaid",
+        "genreId": 0,
+        "genreName": "All apps",
+        "rank": 10
+      }
+    },
+    {
+      "app": {
+        "trackId": 6783953753,
+        "name": "Batomon Showdown",
+        "seller": "EKA Games LLC",
+        "genre": "Games",
+        "releaseDate": "2026-10-30T07:00:00Z",
+        "price": 5.99,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/batomon-showdown/id6783953753?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/ae/36/dc/ae36dc5d-2069-cd8a-5ea4-c575f0d7d6ee/AppIcon-0-0-1x_U007ephone-0-11-0-85-220.png/100x100bb.jpg"
+      },
+      "ageDays": 16,
+      "ratings": 72,
+      "perDay": 4.5,
+      "avg": 4.80556,
+      "best": {
+        "chart": "toppaid",
+        "genreId": 0,
+        "genreName": "All apps",
+        "rank": 22
+      }
+    },
+    {
+      "app": {
+        "trackId": 6817187484,
+        "name": "Untraced: Find the Suspect",
+        "seller": "XUAN TUNG NGO",
+        "genre": "Entertainment",
+        "releaseDate": "2026-10-22T07:00:00Z",
+        "price": 0,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/untraced-find-the-suspect/id6817187484?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/90/e6/50/90e650ce-6ca0-fc25-4dbe-57b0652f7f3b/AppIcon-0-0-1x_U007ephone-0-1-85-220.png/100x100bb.jpg"
+      },
+      "ageDays": 24,
+      "ratings": 101,
+      "perDay": 4.208333333333333,
+      "avg": 4.23762,
+      "best": {
+        "chart": "topfree",
+        "genreId": 6016,
+        "genreName": "Entertainment",
+        "rank": 41
+      }
+    },
+    {
+      "app": {
+        "trackId": 6484505984,
+        "name": "Whee - TikTok Chat",
+        "seller": "TIKTOK PTE. LTD.",
+        "genre": "Social Networking",
+        "releaseDate": "2026-10-23T07:00:00Z",
+        "price": 0,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/whee-tiktok-chat/id6484505984?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/e5/17/2a/e5172a4b-57df-c6ef-abd5-1562172f395b/AppIcon-0-0-1x_U007ephone-0-1-0-85-220.png/100x100bb.jpg"
+      },
+      "ageDays": 23,
+      "ratings": 96,
+      "perDay": 4.173913043478261,
+      "avg": 4.70833,
+      "best": {
+        "chart": "topfree",
+        "genreId": 6005,
+        "genreName": "Social Networking",
+        "rank": 40
+      }
+    },
+    {
+      "app": {
+        "trackId": 6823556212,
+        "name": "Карта БПЛА — радар онлайн",
+        "seller": "Kirill Konishchev",
+        "genre": "News",
+        "releaseDate": "2026-10-22T07:00:00Z",
+        "price": 0,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/%D0%BA%D0%B0%D1%80%D1%82%D0%B0-%D0%B1%D0%BF%D0%BB%D0%B0-%D1%80%D0%B0%D0%B4%D0%B0%D1%80-%D0%BE%D0%BD%D0%BB%D0%B0%D0%B9%D0%BD/id6823556212?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/28/0c/32/280c3272-89de-e1af-d546-69ee66fb05dc/AppIcon-0-0-1x_U007ephone-0-1-0-85-220.png/100x100bb.jpg"
+      },
+      "ageDays": 24,
+      "ratings": 96,
+      "perDay": 4,
+      "avg": 4.79167,
+      "best": {
+        "chart": "topfree",
+        "genreId": 6009,
+        "genreName": "News",
+        "rank": 87
+      }
+    },
+    {
+      "app": {
+        "trackId": 6831095082,
+        "name": "Hangi Kapı",
+        "seller": "Ahmet Ozturk",
+        "genre": "Games",
+        "releaseDate": "2026-11-07T08:00:00Z",
+        "price": 0,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/hangi-kap%C4%B1/id6831095082?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/bc/dc/a2/bcdca2f7-07a6-b77e-9e13-1277589a0475/AppIcon-0-0-1x_U007epad-0-1-85-220.png/100x100bb.jpg"
+      },
+      "ageDays": 8,
+      "ratings": 31,
+      "perDay": 3.875,
+      "avg": 4.87097,
+      "best": null
+    },
+    {
+      "app": {
+        "trackId": 6824573064,
+        "name": "Millionaire Classic : Trivia",
+        "seller": "EVRIKA GAMES LLC-FZ",
+        "genre": "Games",
+        "releaseDate": "2026-11-05T08:00:00Z",
+        "price": 0,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/millionaire-classic-trivia/id6824573064?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/10/71/3c/10713c2c-46f2-2015-59db-048fef1abba7/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/100x100bb.jpg"
+      },
+      "ageDays": 10,
+      "ratings": 34,
+      "perDay": 3.4,
+      "avg": 4.82353,
+      "best": {
+        "chart": "topfree",
+        "genreId": 7018,
+        "genreName": "Games: Trivia",
+        "rank": 17
+      }
+    },
+    {
+      "app": {
+        "trackId": 6822194774,
+        "name": "TypeDraw",
+        "seller": "Trautmann & Dorre GbR Shaped Agency",
+        "genre": "Productivity",
+        "releaseDate": "2026-10-20T07:00:00Z",
+        "price": 4.99,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/typedraw/id6822194774?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/c2/42/a4/c242a47b-e6a8-a6ac-dfb9-91ab0627e626/AppIcon-0-0-1x_U007epad-0-1-85-220.png/100x100bb.jpg"
+      },
+      "ageDays": 26,
+      "ratings": 88,
+      "perDay": 3.3846153846153846,
+      "avg": 4.44318,
+      "best": {
+        "chart": "toppaid",
+        "genreId": 0,
+        "genreName": "All apps",
+        "rank": 20
+      }
+    },
+    {
+      "app": {
+        "trackId": 6745489251,
+        "name": "Roam - Make Games",
+        "seller": "Roam App LTD",
+        "genre": "Games",
+        "releaseDate": "2026-10-19T07:00:00Z",
+        "price": 0,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/roam-make-games/id6745489251?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/13/a4/69/13a4692d-7bee-9714-a632-b34b82ef3f94/AppIcon-0-0-1x_U007epad-0-1-0-85-220.png/100x100bb.jpg"
+      },
+      "ageDays": 27,
+      "ratings": 91,
+      "perDay": 3.3703703703703702,
+      "avg": 4.68132,
+      "best": {
+        "chart": "topfree",
+        "genreId": 7002,
+        "genreName": "Games: Adventure",
+        "rank": 61
+      }
+    },
+    {
+      "app": {
+        "trackId": 6754231707,
+        "name": "Serato DJ",
+        "seller": "Serato Limited",
+        "genre": "Music",
+        "releaseDate": "2026-10-18T07:00:00Z",
+        "price": 0,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/serato-dj/id6754231707?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/b8/0b/c4/b80bc42b-80df-a54c-d7d3-e198252de2d6/AppIcon-0-0-1x_U007epad-0-1-0-P3-85-220.png/100x100bb.jpg"
+      },
+      "ageDays": 28,
+      "ratings": 94,
+      "perDay": 3.357142857142857,
+      "avg": 3.91489,
+      "best": {
+        "chart": "topfree",
+        "genreId": 6011,
+        "genreName": "Music",
+        "rank": 85
+      }
+    },
+    {
+      "app": {
+        "trackId": 6824655215,
+        "name": "Tidy Everything!",
+        "seller": "SayGames LTD",
+        "genre": "Games",
+        "releaseDate": "2026-11-02T08:00:00Z",
+        "price": 0,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/tidy-everything/id6824655215?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/17/44/14/174414ae-5341-7e37-607e-a71a2fddc8b2/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/100x100bb.jpg"
+      },
+      "ageDays": 13,
+      "ratings": 42,
+      "perDay": 3.230769230769231,
+      "avg": 2.92857,
+      "best": {
+        "chart": "topfree",
+        "genreId": 7009,
+        "genreName": "Games: Family",
+        "rank": 2
+      }
+    },
+    {
+      "app": {
+        "trackId": 6785993031,
+        "name": "Sword Drill: Bible Trivia",
+        "seller": "Story Labs Limited Liability Company",
+        "genre": "Games",
+        "releaseDate": "2026-11-07T08:00:00Z",
+        "price": 0,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/sword-drill-bible-trivia/id6785993031?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/e6/0c/be/e60cbe56-5704-dfed-a99b-1d50863a08d0/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/100x100bb.jpg"
+      },
+      "ageDays": 8,
+      "ratings": 25,
+      "perDay": 3.125,
+      "avg": 4.96,
+      "best": {
+        "chart": "topfree",
+        "genreId": 7018,
+        "genreName": "Games: Trivia",
+        "rank": 46
+      }
+    },
+    {
+      "app": {
+        "trackId": 6823045499,
+        "name": "IvyPod",
+        "seller": "Jeremy Siegel",
+        "genre": "Music",
+        "releaseDate": "2026-11-06T08:00:00Z",
+        "price": 2.99,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/ivypod/id6823045499?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/de/a0/c7/dea0c7a4-d4e3-1438-0b59-a1f6120f559c/AppIcon-0-0-1x_U007ephone-0-1-85-220.png/100x100bb.jpg"
+      },
+      "ageDays": 9,
+      "ratings": 28,
+      "perDay": 3.111111111111111,
+      "avg": 4.89286,
+      "best": {
+        "chart": "toppaid",
+        "genreId": 6011,
+        "genreName": "Music",
+        "rank": 15
+      }
+    },
+    {
+      "app": {
+        "trackId": 6831332154,
+        "name": "Hamamcan Run",
+        "seller": "Dimster Design LLC",
+        "genre": "Games",
+        "releaseDate": "2026-11-06T08:00:00Z",
+        "price": 0,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/hamamcan-run/id6831332154?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple221/v4/c9/ca/10/c9ca1073-ceda-22c8-d527-3a2d6460d5da/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/100x100bb.jpg"
+      },
+      "ageDays": 9,
+      "ratings": 28,
+      "perDay": 3.111111111111111,
+      "avg": 4.64286,
+      "best": null
+    },
+    {
+      "app": {
+        "trackId": 6825787585,
+        "name": "Krillion: Daily Trivia Dive",
+        "seller": "Adnan Ali",
+        "genre": "Games",
+        "releaseDate": "2026-11-01T07:00:00Z",
+        "price": 0,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/krillion-daily-trivia-dive/id6825787585?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/1c/4c/16/1c4c1685-0ddb-02c5-2d29-4ac77dc1e9c8/AppIcon-0-0-1x_U007epad-0-1-85-220.png/100x100bb.jpg"
+      },
+      "ageDays": 14,
+      "ratings": 42,
+      "perDay": 3,
+      "avg": 4.30952,
+      "best": {
+        "chart": "topfree",
+        "genreId": 7018,
+        "genreName": "Games: Trivia",
+        "rank": 9
+      }
+    },
+    {
+      "app": {
+        "trackId": 6798749152,
+        "name": "Castle Combo",
+        "seller": "MANTITA GAMES, SOCIEDAD LIMITADA",
+        "genre": "Games",
+        "releaseDate": "2026-10-19T07:00:00Z",
+        "price": 3.99,
+        "currency": "USD",
+        "url": "https://apps.apple.com/us/app/castle-combo/id6798749152?uo=4",
+        "artwork": "https://is1-ssl.mzstatic.com/image/thumb/Purple211/v4/3e/e1/59/3ee159cd-4e08-d9bd-45e8-6147878a2e8b/AppIcon-0-0-1x_U007emarketing-0-8-0-85-220.png/100x100bb.jpg"
+      },
+      "ageDays": 27,
+      "ratings": 62,
+      "perDay": 2.2962962962962963,
+      "avg": 4.98386,
+      "best": {
+        "chart": "toppaid",
+        "genreId": 7005,
+        "genreName": "Games: Card",
+        "rank": 15
+      }
+    }
+  ]
+}
