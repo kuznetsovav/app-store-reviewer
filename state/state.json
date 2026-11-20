@@ -1,21 +1,21 @@
 {
   "frontier": {
-    "max_hit_id": 6836858980,
-    "observed_at": "2026-11-19T16:34:06.244Z"
+    "max_hit_id": 6837364708,
+    "observed_at": "2026-11-20T16:25:02.701Z"
   },
   "lastRun": {
-    "id": 17,
-    "run_date": "2026-11-19",
+    "id": 18,
+    "run_date": "2026-11-20",
     "status": "budget",
     "phase": "rescan",
-    "calls": 5828,
-    "hits": 1684,
-    "new_releases": 1680,
-    "next_id": 6835734835,
-    "finished_at": "2026-11-19T19:50:55.330Z",
+    "calls": 5829,
+    "hits": 1003,
+    "new_releases": 995,
+    "next_id": 6836241543,
+    "finished_at": "2026-11-20T19:25:29.800Z",
     "error": null
   },
-  "reportDate": "2026-11-19",
-  "newApps": 1684,
-  "updatedAt": "2026-11-19T19:50:55.330Z"
+  "reportDate": "2026-11-20",
+  "newApps": 1003,
+  "updatedAt": "2026-11-20T19:25:29.800Z"
 }
